@@ -20,7 +20,7 @@
 from openerp import models, fields, api
 
 from openerp.addons.l10n_br_account.models.l10n_br_account import (
-    L10n_brTaxDefinition
+    L10nBrTaxDefinition
 )
 
 
@@ -102,7 +102,7 @@ class ResCompany(models.Model):
     #         'account.tax', 'Other Costs Sale Tax')
 
 
-class L10n_brTaxDefinitionCompanyProduct(L10n_brTaxDefinition, models.Model):
+class L10nBrTaxDefinitionCompanyProduct(L10nBrTaxDefinition, models.Model):
     _name = 'l10n_br_tax.definition.company.product'
 
     company_id = fields.Many2one('res.company', 'Empresa')

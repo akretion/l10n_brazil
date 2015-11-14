@@ -21,8 +21,8 @@ from openerp import models, fields, api
 from openerp.addons import decimal_precision as dp
 
 from openerp.addons.l10n_br_account.models.l10n_br_account import (
-    L10n_brTaxDefinition,
-    L10n_brTaxDefinitionTemplate
+    L10nBrTaxDefinition,
+    L10nBrTaxDefinitionTemplate
 )
 
 
@@ -86,7 +86,7 @@ class AccountProductFiscalClassificationTemplate(models.Model):
          u'Já existe um classificação fiscal com esse código!')]
 
 
-class L10nBrTaxDefinitionTemplateModel(L10n_brTaxDefinitionTemplate):
+class L10nBrTaxDefinitionTemplateModel(L10nBrTaxDefinitionTemplate):
     """Model for tax definition template"""
 
     fiscal_classification_id = fields.Many2one(
@@ -216,7 +216,7 @@ class AccountProductFiscalClassification(models.Model):
          u'Já existe um classificação fiscal com esse código!')]
 
 
-class L10nBrTaxDefinitionModel(L10n_brTaxDefinition):
+class L10nBrTaxDefinitionModel(L10nBrTaxDefinition):
     _name = 'l10n_br_tax.definition.model'
 
     fiscal_classification_id = fields.Many2one(
