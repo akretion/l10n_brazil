@@ -1280,6 +1280,8 @@ class AccountInvoiceTax(models.Model):
                 freight_value=line.freight_value,
                 other_costs_value=line.other_costs_value)['taxes']
             for tax in taxes:
+                tax_price_unit = tax.get('price_unit', 0.00)
+                tax_quantity = tax.get('quantity', 0.00)
                 val = {
                     'invoice_id': invoice.id,
                     'name': tax['name'],
@@ -1287,8 +1289,8 @@ class AccountInvoiceTax(models.Model):
                     'manual': False,
                     'sequence': tax['sequence'],
                     'base': currency.round(
-                        tax['price_unit'] *
-                        line['quantity']),
+                        tax_price_unit *
+                        tax_quantity),
                 }
                 if invoice.type in ('out_invoice', 'in_invoice'):
                     val['base_code_id'] = tax['base_code_id']
