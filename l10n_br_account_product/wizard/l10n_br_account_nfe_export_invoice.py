@@ -86,7 +86,7 @@ class L10nBrAccountNfeExportInvoice(models.TransientModel):
 
     @api.multi
     def nfe_export(self):
-        for export in self:
+        for data in self:
             active_ids = self._context.get('active_ids', [])
 
             if not active_ids:
@@ -132,28 +132,28 @@ class L10nBrAccountNfeExportInvoice(models.TransientModel):
                     name = 'nfes%s-%s.%s' % (
                         time.strftime('%d-%m-%Y'),
                         self.env['ir.sequence'].get('nfe.export'),
-                        export.file_type)
+                        data.file_type)
                 else:
                     name = 'nfe%s.%s' % (export_inv_numbers[0],
-                                         export.file_type)
+                                         data.file_type)
 
                 mod_serializer = __import__(
                     ('openerp.addons.l10n_br_account_product'
                      '.sped.nfe.serializer.') +
-                    export.file_type, globals(), locals(), export.file_type)
+                    data.file_type, globals(), locals(), data.file_type)
 
                 func = getattr(mod_serializer, 'nfe_export')
 
                 str_nfe_version = inv.nfe_version
 
                 nfes = func(self._cr, self._uid, export_inv_ids,
-                            export.nfe_environment, str_nfe_version,
+                            data.nfe_environment, str_nfe_version,
                             self._context)
 
                 for nfe in nfes:
                     nfe_file = nfe['nfe'].encode('utf8')
 
-                export.write({
+                data.write({
                     'file': base64.b64encode(nfe_file),
                     'state': 'done',
                     'name': name,
@@ -162,22 +162,20 @@ class L10nBrAccountNfeExportInvoice(models.TransientModel):
             if err_msg:
                 raise UserError(_('Error!'), _("'%s'") % _(err_msg, ))
 
-            mod_obj = self.env['ir.model.data']
-            resource_id = mod_obj.search_read(
-                [('model', '=', 'ir.ui.view'),
-                 ('name',
-                  '=',
-                  'l10n_br_account_product_nfe_export_invoice_form')
-                 ], ['res_id'])
+            view_rec = self.env['ir.model.data'].get_object_reference(
+                'l10n_br_account_product',
+                'l10n_br_account_product_nfe_export_invoice_form')
+            view_id = view_rec and view_rec[1] or False
 
             return {
-                'type': 'ir.actions.act_window',
-                'res_model': self._name,
-                'view_mode': 'form',
                 'view_type': 'form',
-                'res_id': export.id,
-                'views': [(resource_id[0]['res_id'], 'form')],
+                'view_id': [view_id],
+                'view_mode': 'form',
+                'res_model': 'l10n_br_account_product.nfe_export_invoice',
+                'res_id': data.id,
+                'type': 'ir.actions.act_window',
                 'target': 'new',
+                'context': data.env.context,
             }
 
 
