@@ -86,14 +86,14 @@ class ResCompany(models.Model):
     nfe_a1_file = fields.Binary('Arquivo NFe A1')
     nfe_a1_password = fields.Char('Senha NFe A1', size=64)
     freight_tax_id = fields.Many2one(
-            'account.tax', string='Freight Sale Tax',
-            domain=[('domain', '=', 'freight')])
+        'account.tax', string='Freight Sale Tax',
+        domain=[('domain', '=', 'freight')])
     insurance_tax_id = fields.Many2one(
-            'account.tax', string='Insurance Sale Tax',
-            domain=[('domain', '=', 'insurance')])
+        'account.tax', string='Insurance Sale Tax',
+        domain=[('domain', '=', 'insurance')])
     other_costs_tax_id = fields.Many2one(
-            'account.tax', string='Other Costs Sale Tax',
-            domain=[('domain', '=', 'other_costs')])
+        'account.tax', string='Other Costs Sale Tax',
+        domain=[('domain', '=', 'other_costs')])
     # refund_freight_tax_id = fields.Many2one(
     #         'account.tax', 'Freight Sale Tax')
     # refund_insurance_tax_id = fields.Many2one(

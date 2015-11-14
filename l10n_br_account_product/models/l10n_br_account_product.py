@@ -84,7 +84,7 @@ class L10nbrAccountCFOP(models.Model):
                  (x['name'] and ' - ' + x['name'] or '')) for x in reads]
 
 
-class L10n_brAccountServiceType(models.Model):
+class L10nBrAccountServiceType(models.Model):
     _name = 'l10n_br_account.service.type'
     _description = u'Cadastro de Operações Fiscais de Serviço'
 
@@ -110,7 +110,7 @@ class L10n_brAccountServiceType(models.Model):
         return result
 
 
-class L10nbrAccountDocumentRelated(models.Model):
+class L10nBrAccountDocumentRelated(models.Model):
     _name = 'l10n_br_account_product.document.related'
 
     invoice_id = fields.Many2one('account.invoice', 'Documento Fiscal',

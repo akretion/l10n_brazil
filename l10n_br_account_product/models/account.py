@@ -18,7 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 ###############################################################################
 
-from datetime import datetime
 
 from openerp import models, fields, api
 
@@ -112,16 +111,16 @@ class AccountTax(models.Model):
             cr, uid, [uid], context=context)[0].company_id
 
         if not (company.insurance_tax_id and
-                    company.freight_tax_id and
-                    company.other_costs_tax_id):
+                company.freight_tax_id and
+                company.other_costs_tax_id):
             from openerp.exceptions import MissingError
             raise MissingError('Please define insurance, freight and other '
                                'costs accounts in the company')
 
         costs = {
-            company.insurance_tax_id : insurance_value,
-            company.freight_tax_id : freight_value,
-            company.other_costs_tax_id : other_costs_value,
+            company.insurance_tax_id: insurance_value,
+            company.freight_tax_id: freight_value,
+            company.other_costs_tax_id: other_costs_value,
         }
 
         for tax in costs:
@@ -136,14 +135,14 @@ class AccountTax(models.Model):
                     'id': tax.id,
                     'ref_base_code_id': tax.ref_base_code_id.id,
                     'account_analytic_collected_id':
-                        tax.account_analytic_collected_id.id,
+                    tax.account_analytic_collected_id.id,
                     'tax_code_id': tax.tax_code_id.id,
                     'ref_tax_sign': tax.ref_tax_sign,
                     'type': tax.type,
                     'ref_base_sign': tax.ref_base_sign,
                     'base_code_id': tax.base_code_id.id,
                     'account_analytic_paid_id':
-                        tax.account_analytic_paid_id.id,
+                    tax.account_analytic_paid_id.id,
                     'name': tax.name,
                     'account_collected_id': tax.account_collected_id.id,
                     'amount': costs[tax],

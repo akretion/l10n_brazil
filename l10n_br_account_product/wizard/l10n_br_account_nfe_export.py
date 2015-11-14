@@ -34,8 +34,8 @@ class L10n_brAccountNfeExport(orm.TransientModel):
     }
     _defaults = {
         'company_id': lambda self, cr, uid, c:
-            self.pool.get('res.company')._company_default_get(
-                cr, uid, 'account.invoice', context=c),
+        self.pool.get('res.company')._company_default_get(
+            cr, uid, 'account.invoice', context=c),
     }
 
     def _get_invoice_ids(self, cr, uid, data, context=None):
