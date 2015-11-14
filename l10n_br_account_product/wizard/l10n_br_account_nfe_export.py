@@ -25,18 +25,17 @@ class L10nBrAccountNfeExport(models.TransientModel):
     _name = 'l10n_br_account_product.nfe_export'
     _inherit = 'l10n_br_account_product.nfe_export_invoice'
     
-    company_id = fields.Many2one('res.company', 'Company')
-
     company_id = fields.Many2one(
-        'res.company',
+        comodel_name='res.company',
         string='Company',
         default=lambda self: self.env['res.company']._company_default_get(
             'l10n_br_account_product.nfe_export'))
     import_status_draft = fields.Boolean(
         string="Importar NFs com status em rascunho")
     nfe_export_result = fields.One2many(
-        'l10n_br_account_product.nfe_export_result', 'wizard_id',
-        'NFe Export Result')
+        comodel_name='l10n_br_account_product.nfe_export_result',
+        inverse_name='wizard_id',
+        string='NFe Export Result')
 
     @api.multi
     def _get_invoice_ids(self, data):
@@ -52,5 +51,7 @@ class L10nBrAccountNfeExportResult(models.TransientModel):
     _inherit = 'l10n_br_account_product.nfe_export_invoice_result'
 
     wizard_id = fields.Many2one(
-            'l10n_br_account_product.nfe_export', string='Wizard ID',
-            ondelete='cascade', select=True)
+        comodel_name='l10n_br_account_product.nfe_export',
+        string='Wizard ID',
+        ondelete='cascade',
+        select=True)
