@@ -24,7 +24,7 @@ class L10nBrAccountNfeExport(models.TransientModel):
     """ Exportar Nota Fiscal Eletrônica """
     _name = 'l10n_br_account_product.nfe_export'
     _inherit = 'l10n_br_account_product.nfe_export_invoice'
-    
+
     company_id = fields.Many2one(
         comodel_name='res.company',
         string='Company',

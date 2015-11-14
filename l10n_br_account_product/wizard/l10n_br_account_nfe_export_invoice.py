@@ -147,8 +147,8 @@ class L10nBrAccountNfeExportInvoice(models.TransientModel):
                 str_nfe_version = inv.nfe_version
 
                 nfes = func(self._cr, self._uid, export_inv_ids,
-                            export.nfe_environment,
-                    str_nfe_version, self._context)
+                            export.nfe_environment, str_nfe_version,
+                            self._context)
 
                 for nfe in nfes:
                     nfe_file = nfe['nfe'].encode('utf8')
@@ -163,15 +163,12 @@ class L10nBrAccountNfeExportInvoice(models.TransientModel):
                 raise UserError(_('Error!'), _("'%s'") % _(err_msg, ))
 
             mod_obj = self.env['ir.model.data']
-            resource_id = mod_obj.search_read([
-                ('model', '=', 'ir.ui.view'),
-                (
-                    'name',
-                    '=',
-                    'l10n_br_account_product_nfe_export_invoice_form'
-                 )
-            ],
-                ['res_id'])
+            resource_id = mod_obj.search_read(
+                [('model', '=', 'ir.ui.view'),
+                 ('name',
+                  '=',
+                  'l10n_br_account_product_nfe_export_invoice_form')
+                 ], ['res_id'])
 
             return {
                 'type': 'ir.actions.act_window',
@@ -199,4 +196,3 @@ class L10nBrAccountNfeExportInvoiceResult(models.TransientModel):
         ],
         string='Status')
     message = fields.Char(string='Mensagem', size=255)
-
