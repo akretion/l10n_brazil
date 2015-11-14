@@ -30,7 +30,6 @@
     ],
     'demo': [],
     'category': 'Localisation',
-    'active': False,
     'installable': True,
     'auto_install': True,
 }
