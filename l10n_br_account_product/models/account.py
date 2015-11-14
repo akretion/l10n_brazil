@@ -2,6 +2,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2013  Renato Lima - Akretion                                  #
+# Copyright (C) 2015  Luis Felipe Miléo - KMEE                                #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU Affero General Public License as published by #
@@ -17,7 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 ###############################################################################
 
-from datetime import datetime
 
 from openerp import models, fields, api
 
@@ -98,6 +98,58 @@ class AccountTax(models.Model):
 
         result['taxes'] = taxes
         return result
+
+    def _compute_costs(self, cr, uid, insurance_value, freight_value,
+                       other_costs_value, context=False):
+        result = []
+        total_included = 0.0
+
+        if not (insurance_value or freight_value or other_costs_value):
+            return False
+
+        company = self.pool.get('res.users').browse(
+            cr, uid, [uid], context=context)[0].company_id
+
+        if not (company.insurance_tax_id and
+                company.freight_tax_id and
+                company.other_costs_tax_id):
+            from openerp.exceptions import MissingError
+            raise MissingError('Please define insurance, freight and other '
+                               'costs accounts in the company')
+
+        costs = {
+            company.insurance_tax_id: insurance_value,
+            company.freight_tax_id: freight_value,
+            company.other_costs_tax_id: other_costs_value,
+        }
+
+        for tax in costs:
+            if costs[tax]:
+                result.append({
+                    'domain': tax.domain,
+                    'ref_tax_code_id': tax.ref_tax_code_id,
+                    'sequence': tax.sequence,
+                    'total_base': costs[tax],
+                    'account_paid_id': tax.account_paid_id.id,
+                    'base_sign': tax.base_sign,
+                    'id': tax.id,
+                    'ref_base_code_id': tax.ref_base_code_id.id,
+                    'account_analytic_collected_id':
+                    tax.account_analytic_collected_id.id,
+                    'tax_code_id': tax.tax_code_id.id,
+                    'ref_tax_sign': tax.ref_tax_sign,
+                    'type': tax.type,
+                    'ref_base_sign': tax.ref_base_sign,
+                    'base_code_id': tax.base_code_id.id,
+                    'account_analytic_paid_id':
+                    tax.account_analytic_paid_id.id,
+                    'name': tax.name,
+                    'account_collected_id': tax.account_collected_id.id,
+                    'amount': costs[tax],
+                    'tax_sign': tax.tax_sign,
+                })
+                total_included += costs[tax]
+        return result, total_included
 
     # TODO
     # Refatorar este método, para ficar mais simples e não repetir
@@ -229,33 +281,14 @@ class AccountTax(models.Model):
             if result_icmsst['taxes'][0]['percent']:
                 calculed_taxes += result_icmsst['taxes']
 
-        # Estimate Taxes
-        if fiscal_position and fiscal_position.asset_operation:
-            obj_tax_estimate = self.pool.get('l10n_br_tax.estimate')
-            date = datetime.now().strftime('%Y-%m-%d')
-            tax_estimate_ids = obj_tax_estimate.search(
-                cr, uid, [('fiscal_classification_id', '=',
-                           product.fiscal_classification_id.id),
-                          '|', ('date_start', '=', False),
-                          ('date_start', '<=', date),
-                          '|', ('date_end', '=', False),
-                          ('date_end', '>=', date),
-                          ('active', '=', True)])
-
-            if tax_estimate_ids:
-                tax_estimate = obj_tax_estimate.browse(
-                    cr, uid, tax_estimate_ids)[0]
-                tax_estimate_percent = 0.00
-                if product.origin in ('1', '2', '6', '7'):
-                    tax_estimate_percent += tax_estimate.federal_taxes_import
-                else:
-                    tax_estimate_percent += tax_estimate.federal_taxes_national
-
-                tax_estimate_percent += tax_estimate.state_taxes
-                tax_estimate_percent /= 100
-                total_taxes = ((result['total_included'] - totaldc) *
-                               tax_estimate_percent)
-                result['total_taxes'] = round(total_taxes, precision)
+        result_costs = self._compute_costs(
+            cr, uid,
+            insurance_value,
+            freight_value,
+            other_costs_value)
+        if result_costs:
+            calculed_taxes += result_costs[0]
+            result['total_included'] += result_costs[1]
 
         return {
             'total': result['total'],

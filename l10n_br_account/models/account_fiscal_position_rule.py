@@ -118,12 +118,13 @@ class AccountFiscalPositionRule(models.Model):
             return result
         product_tmpl_id = self.env['product.product'].browse(
             product_id).product_tmpl_id.id
-        fiscal_category = self.env[
-            'l10n_br_account.product.category'].search(
-                [('product_tmpl_id', '=', product_tmpl_id),
-                    ('fiscal_category_source_id', '=', fiscal_category_id),
-                    '|', ('to_state_id', '=', False),
-                    ('to_state_id', '=', to_state_id)])
+        fiscal_category = self.env['l10n_br_account.product.category'].search([
+            ('product_tmpl_id', '=', product_tmpl_id),
+            ('fiscal_category_source_id', '=', fiscal_category_id),
+            '|',
+            ('to_state_id', '=', False),
+            ('to_state_id', '=', to_state_id)
+        ])
         if fiscal_category:
             result = fiscal_category[0].fiscal_category_destination_id.id
         return result
