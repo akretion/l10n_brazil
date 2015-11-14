@@ -151,9 +151,9 @@ class AccountTax(models.Model):
                 total_included += costs[tax]
         return result, total_included
 
-    #TODO
-    #Refatorar este método, para ficar mais simples e não repetir
-    #o que esta sendo feito no método l10n_br_account_product
+    # TODO
+    # Refatorar este método, para ficar mais simples e não repetir
+    # o que esta sendo feito no método l10n_br_account_product
     @api.v7
     def compute_all(self, cr, uid, taxes, price_unit, quantity,
                     product=None, partner=None, force_excluded=False,
