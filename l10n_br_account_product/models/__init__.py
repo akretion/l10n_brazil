@@ -25,3 +25,4 @@ from . import account_product_fiscal_classification
 from . import account_invoice
 from . import account
 from . import product
+from . import res_country
