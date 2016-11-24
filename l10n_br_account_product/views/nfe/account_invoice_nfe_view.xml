@@ -228,7 +228,7 @@
                                           attrs="{'invisible':[('state','!=','draft')]}"
                                           groups="account.group_account_user"/>
                                     </div>
-                                    <field domain="[('company_id', '=', company_id),('type','=', 'receivable')]"
+                                    <field domain="[('company_id', '=', company_id), ('type','in',{'out_invoice': ['receivable'], 'out_refund': ['receivable'], 'in_refund': ['payable'], 'in_invoice': ['payable']}.get(type, []))]"
                                         name="account_id" groups="account.group_account_user"
                                         context="{'periods_special': False, 'all_fiscalyear': True}"/>
                                     <field name="period_id" domain="[('state', '=', 'draft'), ('company_id', '=', company_id)]"
@@ -376,7 +376,7 @@
                                     <field name="product_type" attrs="{'readonly': [('product_id','!=', False)]}"/>
                                     <field name="code" required="True" attrs="{'readonly': [('product_id','!=', False)]}"/>
                                     <field name="fiscal_classification_id" required="True" attrs="{'readonly': [('product_id','!=', False)]}"/>
-                                    <field name="cest"/>
+                                    <field name="cest_id" attrs="{'readonly': [('product_id','!=', False)]}"/>
                                     <field name="fci" attrs="{'readonly': [('product_id','!=', False)]}"/>
                                     <field name="fiscal_category_id" required="1" domain="[('journal_type', '=', 'sale')]"/>
                                     <field name="fiscal_position" required="1" domain="[('fiscal_category_id', '=', fiscal_category_id)]"/>
