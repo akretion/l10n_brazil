@@ -436,6 +436,11 @@ class NFe200(FiscalDocument):
                 "%.2f" % invoice_line.icms_st_percent)
             self.det.imposto.ICMS.vICMSST.valor = str(
                 "%.2f" % invoice_line.icms_st_value)
+            
+            self.det.imposto.ICMS.vBCSTRet.valor = str("%.2f" % 0.00)
+            self.det.imposto.ICMS.pST.valor = str("%.2f" % 0.00)
+            self.det.imposto.ICMS.vICMSSubstituto.valor = str("%.2f" % 0.00)
+            self.det.imposto.ICMS.vICMSSTRet.valor = str("%.2f" % 0.00)
 
             # Informação do ICMS Interestadual nas vendas para consumidor final
             self.det.imposto.ICMSUFDest.vBCUFDest.valor = str(
