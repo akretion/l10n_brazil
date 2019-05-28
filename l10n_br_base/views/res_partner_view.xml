@@ -52,9 +52,9 @@
                     </div>
                     <field colspan="4" name="cnpj_cpf" nolabel="1"/>
                     <div class="oe_edit_only">
-                        <label for="inscr_est" string="State Tax Number"
+                        <label name="inscr_est" for="inscr_est" string="State Tax Number"
                                attrs="{'invisible': [('is_company','!=', True)]}"/>
-                        <label for="inscr_est" string="RG"
+                        <label name="rg" for="inscr_est" string="RG"
                                attrs="{'invisible': [('is_company','=', True)]}"/>
                     </div>
                     <field colspan="4" name="inscr_est" nolabel="1"/>
@@ -62,7 +62,7 @@
             </xpath>
             <page position="after" name="sales_purchases">
                 <page string="Fiscal" name="fiscal">
-                    <group>
+                    <group name="fiscal_numbers">
                         <field name="inscr_mun" attrs="{'invisible': [('is_company','!=', True)]}"/>
                         <field name="suframa" attrs="{'invisible': [('is_company','!=', True)]}"/>
                     </group>
