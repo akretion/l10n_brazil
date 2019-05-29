@@ -192,7 +192,7 @@ class Partner(models.Model):
     def get_street_fields(self):
         """Returns the fields that can be used in a street format.
         Overwrite this function if you want to add your own fields."""
-        return super(Partner, self).get_street_fields() + ['street']
+        return super(Partner, self).get_street_fields() + ('street',)
 
     @api.multi
     def _set_street(self):
