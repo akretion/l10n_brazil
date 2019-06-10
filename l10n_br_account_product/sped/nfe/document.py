@@ -99,6 +99,8 @@ class NFe200(FiscalDocument):
             self._additional_information(invoice)
             self._total(invoice)
             self._export(invoice)
+            self._monta_responsavel_tecnico(
+                self.nfe.infNFe.infresptec, invoice)
 
             # Gera Chave da NFe
             self.nfe.gera_nova_chave()
@@ -955,3 +957,9 @@ class NFe400(NFe310):
             raise UserError(
                 _(u'Erro!'), _(u"Biblioteca PySPED não instalada!"))
         return AutXML_400()
+
+    def _monta_responsavel_tecnico(self, infresptec, invoice):
+        infresptec.CNPJ.valor = u"11034414000158"
+        infresptec.xContato.valor = u"Renato do Nascimento Lima"
+        infresptec.email.valor = u"contato@akretion.com.br"
+        infresptec.fone.valor = int(11986212039)
