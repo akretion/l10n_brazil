@@ -180,7 +180,10 @@ class AccountTax(models.Model):
         calculed_taxes += result_tax['taxes']
 
         # Adiciona frete seguro e outras despesas na base
-        total_base = (result['total'] + insurance_value + freight_value)
+        total_base = (result['total'] +
+                      insurance_value +
+                      freight_value +
+                      other_costs_value)
 
         # Calcula o II
         specific_ii = [tx for tx in result['taxes'] if tx['domain'] == 'ii']
@@ -216,13 +219,14 @@ class AccountTax(models.Model):
                          if tx['domain'] == 'icms']
 
         # Em caso de operação de ativo adiciona o IPI na base de ICMS
-        if fiscal_position and fiscal_position.asset_operation:
+        if fiscal_position and (fiscal_position.asset_operation
+                or fiscal_position.ind_final == '1'):
             total_base += ipi_value
 
         if id_dest == '3':
             base_icms = (total_base + ii_value + ipi_value)
 
-            # Calcupa o própio ICMS
+            # Calcula o própio ICMS
             if specific_icms:
                 base_icms = base_icms / (1 - specific_icms[0].get('percent'))
 
@@ -254,7 +258,7 @@ class AccountTax(models.Model):
             base_pis_cofins = total_base - icms_value
         else:
             base_pis_cofins = total_base
-    
+
         result_pis = self._compute_tax(cr, uid, specific_pis, base_pis_cofins,
                                        product, quantity, precision, base_tax)
 
@@ -270,7 +274,7 @@ class AccountTax(models.Model):
         calculed_taxes += result_cofins['taxes']
         cofins_value = sum(cofins['amount'] for
                            cofins in result_cofins['taxes'])
-        
+
 
         # Calcula ICMS Interestadual (DIFAL)
         specific_icms_inter = [tx for tx in result['taxes']
