@@ -45,6 +45,8 @@ class AccountInvoice(models.Model):
             line.icms_dest_value for line in self.invoice_line)
         self.icms_origin_value = sum(
             line.icms_origin_value for line in self.invoice_line)
+        self.icms_relief_value = sum(
+            line.icms_relief_value for line in self.invoice_line)
         self.amount_discount = sum(
             line.discount_value for line in self.invoice_line)
         self.amount_insurance = sum(
@@ -312,6 +314,12 @@ class AccountInvoice(models.Model):
     icms_value = fields.Float(
         string='Valor ICMS', digits=dp.get_precision('Account'),
         compute='_compute_amount', store=True)
+    icms_relief_value = fields.Float(
+        string='Valor Desoneração ICMS',
+        required=True,
+        digits=dp.get_precision('Account'),
+        default=0.00,
+        compute='_compute_amount')
     icms_st_base = fields.Float(
         string='Base ICMS ST',
         store=True,
@@ -921,6 +929,9 @@ class AccountInvoiceLine(models.Model):
     icms_relief_id = fields.Many2one(
         'l10n_br_account_product.icms_relief',
         string=u'Desoneração ICMS')
+    icms_relief_value = fields.Float(
+        string='Valor Desoneração ICMS', required=True,
+        digits=dp.get_precision('Account'), default=0.00)
     issqn_manual = fields.Boolean('ISSQN Manual?', default=False)
     issqn_type = fields.Selection(
         [('N', 'Normal'), ('R', 'Retida'),

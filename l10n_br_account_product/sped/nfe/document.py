@@ -424,6 +424,8 @@ class NFe200(FiscalDocument):
                 "%.2f" % invoice_line.icms_value)
             self.det.imposto.ICMS.motDesICMS.valor = (
                 invoice_line.icms_relief_id.code or '')
+            self.det.imposto.ICMS.vICMSDeson.valor = str(
+                "%.2f" % invoice_line.icms_relief_value)
 
             # ICMS ST
             self.det.imposto.ICMS.modBCST.valor = (
@@ -438,7 +440,7 @@ class NFe200(FiscalDocument):
                 "%.2f" % invoice_line.icms_st_percent)
             self.det.imposto.ICMS.vICMSST.valor = str(
                 "%.2f" % invoice_line.icms_st_value)
-            
+
             self.det.imposto.ICMS.vBCSTRet.valor = str("%.2f" % 0.00)
             self.det.imposto.ICMS.pST.valor = str("%.2f" % 0.00)
             self.det.imposto.ICMS.vICMSSubstituto.valor = str("%.2f" % 0.00)
@@ -634,6 +636,8 @@ class NFe200(FiscalDocument):
             "%.2f" % invoice.icms_base)
         self.nfe.infNFe.total.ICMSTot.vICMS.valor = str(
             "%.2f" % invoice.icms_value)
+        self.nfe.infNFe.total.ICMSTot.vICMSDeson.valor = str(
+            "%.2f" % invoice.icms_relief_value)
         self.nfe.infNFe.total.ICMSTot.vFCPUFDest.valor = str(
             "%.2f" % invoice.icms_fcp_value)
         self.nfe.infNFe.total.ICMSTot.vICMSUFDest.valor = str(
@@ -856,8 +860,8 @@ class NFe310(NFe200):
 class NFe400(NFe310):
     def __init__(self):
         super(NFe400, self).__init__()
-  
-    def _details(self, invoice, invoice_line, index):          
+
+    def _details(self, invoice, invoice_line, index):
         super(NFe400, self)._details(invoice, invoice_line, index)
         self.det.imposto.ICMSUFDest.vBCFCPUFDest.valor = str(
             "%.2f" % invoice_line.icms_dest_base)

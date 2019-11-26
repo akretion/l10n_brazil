@@ -420,6 +420,7 @@
                                         </group>
                                         <group>
                                             <field name="icms_relief_id"/>
+                                            <field name="icms_relief_value"/>
                                             <field name="icms_base_other"/>
                                             <field name="icms_percent"/>
                                             <field name="icms_value"/>
