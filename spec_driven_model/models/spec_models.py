@@ -7,9 +7,7 @@ import logging
 _logger = logging.getLogger(__name__)
 
 FIELD_PREFIX = "nfe40_"
-# TODO use schema name as default root key unless a key is provided in the
-#  class
-
+# TODO use schema name as default root key unless a key is provided in the class
 
 class SpecModel(models.AbstractModel):
     """When you inherit this Model, then your model becomes concrete just like
@@ -27,10 +25,10 @@ class SpecModel(models.AbstractModel):
     _abstract = False
     _transient = False
     _spec_module = 'override.with.your.python.module'
-    _field_prefix = 'nfe40_'  # TODO in inherit / autoload hook
+    _field_prefix = 'nfe40_' # TODO in inherit / autoload hook
     _schema_name = 'nfe'
     _tab_name = 'NFe'
-    _spec_module_classes = None  # a cache storing spec classes
+    _spec_module_classes = None # a cache storing spec classes
 
     # TODO generic onchange method that check spec field simple type formats
     # xsd_required, according to the considered object context
@@ -68,7 +66,7 @@ class SpecModel(models.AbstractModel):
         # mutate o2m and o2m related to m2o comodel to target proper
         # concrete implementation
         if len(cls._inherit) > 1:  # only debug non automatic models
-            # _logger.info("\n==== BUILDING SpecModel %s %s" % (cls._name, cls))
+            print("\n==== BUILDING SpecModel %s %s" % (cls._name, cls))
             env = api.Environment(cr, SUPERUSER_ID, {})
             env[cls._name]._prepare_setup()
             env[cls._name]._setup_base()
@@ -163,25 +161,25 @@ class SpecModel(models.AbstractModel):
     def _register_hook(self):
         res = super(SpecModel, self)._register_hook()
         if not hasattr(self.env.registry, '_spec_loaded'):  # TODO schema wise
-            # _logger.info("HHHHHHHHHHHHHHHOOK %s", self._module)
+            print("HHHHHHHHHHHHHHHOOK", self._module)
             from .. import hooks  # importing here avoids loop
             hooks.register_hook(
                 self.env, 'l10n_br_nfe',
-                'odoo.addons.l10n_br_spec_nfe.models.v4_00.leiauteNFe')
+                'odoo.addons.l10n_br_nfe_spec.models.v4_00.leiauteNFe')
             self.env.registry._spec_loaded = True
         return res
 
 
 class StackedModel(SpecModel):
-    """XML structures are typically deeply nested as this helps xsd
-    validation. However, deeply nested objects in Odoo suck because that would
-    mean crazy joins accross many tables and also an endless cascade of form
-    popups. By inheriting from StackModel instead, your models.Model can
-    instead inherit all the mixins that would correspond to the nested xsd
-    nodes starting from the _stacked node. _stack_skip allows you to avoid
-    stacking specific nodes. In Brazil it allows us to have mostly the fiscal
-    document objects and the fiscal document line object with many details
-    stacked in a denormalized way inside these two tables only.
+    """XML structures are typically deeply nested as this helps xsd validation.
+    However, deeply nested objects in Odoo suck because that would mean crazy
+    joins accross many tables and also an endless cascade of form popups.
+    By inheriting from StackModel instead, your models.Model can instead inherit
+    all the mixins that would correspond to the nested xsd nodes starting from
+    the _stacked node. _stack_skip allows you to avoid stacking specific nodes.
+    In Brazil it allows us to have mostly the fiscal document objects and the
+    fiscal document line object with many details stacked in a denormalized way
+    inside these two tables only.
     Because StackedModel has its _build_method overriden to do some magic
     during module loading it should be inherited the Python way
     with MyObject(spec_models.StackedModel).
@@ -202,11 +200,11 @@ class StackedModel(SpecModel):
         "inject all stacked m2o as inherited classes"
         # inject all stacked m2o as inherited classes
         if cls._stacked:
-            # _logger.info("\n\n====  BUILDING StackedModel %s %s\n" % (cls._name, cls))
+            print("\n\n====  BUILDING StackedModel %s %s\n" % (cls._name, cls))
             node = cls._odoo_name_to_class(cls._stacked, cls._spec_module)
             classes = set()
             cls._visit_stack(node, classes, cls._stacked.split('.')[-1], pool,
-                             cr)
+                            cr)
             for klass in [c for c in classes if c not in cls.__bases__]:
                 cls.__bases__ = (klass,) + cls.__bases__
         return super(StackedModel, cls)._build_model(pool, cr)
@@ -221,21 +219,21 @@ class StackedModel(SpecModel):
         """
         # TODO may be an option to print the stack (for debug)
         # after field mutation happened
-        # path_items = path.split('.')
-        # indent = '    '.join(['' for i in range(0, len(path_items) + 2)])
+        path_items = path.split('.')
+        indent = '    '.join(['' for i in range(0, len(path_items) + 2)])
 
         concrete_model = SpecModel._get_concrete(node._name)
         if concrete_model is not None and concrete_model != cls._name:
             # we won't stack the class but leave the field
             # as a many2one relation to the existing Odoo class
             # were the class is already mapped
-            # _logger.info("  %s<%s> %s" % (indent, path, concrete_model))
+            print("  %s<%s> %s" % (indent, path, concrete_model))
             return
         else:
             # ok we will stack the class
             SpecModel._map_concrete(node._name, cls._name, quiet=True)
-            # _logger.info("%s> <%s>  <<-- %s" % (
-            #     indent, path.split('.')[-1], node._name))
+            print("%s> <%s>  <<-- %s" % (indent, path.split('.')[-1],
+                                         node._name))
         classes.add(node)
         fields = collections.OrderedDict()
         env = api.Environment(cr, SUPERUSER_ID, {})
@@ -245,8 +243,8 @@ class StackedModel(SpecModel):
         # TODO move setup_base just before the _visit_stack next call
         if node._name != cls._name or\
                 len(registry[node._name]._fields.items() == 0):
-            # and not hasattr(env[node._name],
-            #                                           '_setup_done'):
+        #and not hasattr(env[node._name],
+        #                                           '_setup_done'):
             env[node._name]._prepare_setup()
             env[node._name]._setup_base()
 
@@ -267,32 +265,31 @@ class StackedModel(SpecModel):
                     or name in cls._stack_skip:
                 # TODO change for view or export
                 continue
-            child = cls._odoo_name_to_class(f['comodel_name'],
-                                            cls._spec_module)
+            child = cls._odoo_name_to_class(f['comodel_name'], cls._spec_module)
             if child is None:  # Not a spec field
                 continue
             child_concrete = SpecModel._get_concrete(child._name)
             field_path = name.replace(cls._field_prefix, '')
             if f['type'] == 'one2many':
-                # _logger.info("%s    \u2261 <%s> %s" % (
-                #     indent, field_path, child_concrete or child._name))
+                print("%s    \u2261 <%s> %s" % (indent, field_path,
+                                           child_concrete or child._name))
                 continue
             # TODO this elif and next elif should in fact be replaced by the
             # inicial if where we look if node has a concrete model or not.
             # many2one
             elif (child_concrete is None or child_concrete == cls._name)\
-                    and (f['xsd_required'] or f['choice']
-                         or f['stacked'] or path in cls._force_stack_paths):
+                    and (f['xsd_required']\
+                    or f['choice']\
+                    or f['stacked'] or path in cls._force_stack_paths):
                 # then we will STACK the child in the current class
                 # TODO if model not used in any other field!!
                 child._stack_path = path
 #                field.args['_stack_path'] = path  TODO
                 child_path = "%s.%s" % (path, field_path)
                 cls._visit_stack(child, classes, child_path, registry, cr)
-            # else:
-            #     if child_concrete:
-            #         _logger.info("%s    - <%s>  -->%s " % (
-            #             indent, field_path, child_concrete))
-            #     else:
-            #         _logger.info("%s    - <%s> %s" % (
-            #             indent, field_path, child._name))
+            else:
+                if child_concrete:
+                    print("%s    - <%s>  -->%s " % (indent, field_path,
+                                                    child_concrete))
+                else:
+                    print("%s    - <%s> %s" % (indent, field_path, child._name))

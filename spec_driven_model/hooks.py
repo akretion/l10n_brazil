@@ -1,13 +1,10 @@
 # Copyright (C) 2019 - Raphael Valyi Akretion
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
-import logging
 
 import sys
 import inspect
 from odoo import api, models, SUPERUSER_ID
 from .models.spec_models import SpecModel, StackedModel
-
-_logger = logging.getLogger(__name__)
 
 
 def post_init_hook(cr, registry, module_name, spec_module):
@@ -17,19 +14,18 @@ def post_init_hook(cr, registry, module_name, spec_module):
     remaining_models = get_remaining_spec_models(
         cr, registry, module_name, spec_module)
     fields = ['id', 'name', 'model_id/id', 'group_id/id',
-              'perm_read', 'perm_write', 'perm_create', 'perm_unlink']
+              'perm_read', 'perm_write' , 'perm_create', 'perm_unlink']
     access_data = []
     for model in remaining_models:
         underline_name = model.replace('.', '_')
         rec_id = "acl_%s_nfe_40_%s" % ('todo'.split('.')[-1],
-                                       underline_name)
+                                     underline_name)
         # TODO no nfe ref
-        model_id = "l10n_br_spec_nfe.model_%s" % (underline_name,)
-        access_data.append([rec_id, underline_name, model_id,
-                            'base.group_user', '1', '1', '1', '1'])
+        model_id = "l10n_br_nfe_spec.model_%s" % (underline_name,)
+        access_data.append([rec_id, underline_name, model_id, 'base.group_user',
+                            '1', '1', '1', '1'])
         # TODO make more secure!
     env['ir.model.access'].load(fields, access_data)
-
 
 def get_remaining_spec_models(cr, registry, module_name, spec_module):
     cr.execute("""select ir_model.model from ir_model_data
@@ -67,31 +63,30 @@ def get_remaining_spec_models(cr, registry, module_name, spec_module):
         # 2nd StackedModel classes, that we will visit
         if hasattr(base_class, '_stacked'):
             node = SpecModel._odoo_name_to_class(base_class._stacked,
-                                                 spec_module)
+                                                spec_module)
 
             # TODO with registry!!
             base_class._visit_stack(node, injected_classes,
-                                    base_class._stacked.split('.')[-1],
-                                    registry, cr)
+                                   base_class._stacked.split('.')[-1],
+                                   registry, cr)
             # for f in base_class._stack_skip:
             #    if base_class._fields[]
 
-    # used_models = [c._name for c in injected_classes]
-    # _logger.info(" **** injected spec models (%s): %s" % (
-    #     len(used_models), used_models))
+    used_models = [c._name for c in injected_classes]
+    print(" **** injected spec models (%s): %s" % (
+        len(used_models), used_models))
     # TODO replace by SELECT like for module_models ?
     all_spec_models = set([c._name for name, c
                            in inspect.getmembers(
                                sys.modules[spec_module], inspect.isclass)])
 
-    # _logger.info("number of all spec models: %s", len(all_spec_models))
+    print("number of all spec models:", len(all_spec_models))
     remaining_models = remaining_models.union(
         set([i for i in all_spec_models
              if i not in [c._name for c in injected_classes]]))
-    # _logger.info("\n **** REMAINING spec models to init (%s): %s \n\n" % (
-    #     len(remaining_models), remaining_models))
+    print("\n **** REMAINING spec models to init (%s): %s \n\n" % (
+        len(remaining_models), remaining_models))
     return remaining_models
-
 
 def register_hook(env, module_name, spec_module):
     remaining_models = get_remaining_spec_models(env.cr, env.registry,
