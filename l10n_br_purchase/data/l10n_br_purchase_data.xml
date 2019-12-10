@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- res.company -->
+    <record id="base.main_company" model="res.company">
+        <field name="purchase_fiscal_category_id" ref="l10n_br_account_product.fc_b7aafa9c3056c3f020ceae63d7312504"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,31 @@
+# Copyright (C) 2009  Renato Lima - Akretion
+# License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
+
+{
+    'name': 'Brazilian Localization Sale',
+    'category': 'Localisation',
+    'license': 'AGPL-3',
+    'author': 'Akretion, Odoo Community Association (OCA)',
+    'website': 'http://odoo-brasil.org',
+    'version': '12.0.1.0.0',
+    'depends': [
+        'sale',
+        'l10n_br_account',
+        'l10n_br_fiscal',
+    ],
+    'data': [
+        'views/sale_view.xml',
+        'views/res_config_settings.xml',
+        'security/ir.model.access.csv',
+        'security/l10n_br_sale_security.xml',
+        'report/sale_report_view.xml',
+        'views/res_company_view.xml',
+    ],
+    'demo': [
+        'demo/l10n_br_sale_demo.xml',
+    ],
+    'installable': True,
+    'auto_install': False,
+    'development_status': 'Production/Stable',
+    'maintainers': ['renatonlima']
+}
