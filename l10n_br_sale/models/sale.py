@@ -10,66 +10,38 @@ class SaleOrder(models.Model):
     _name = 'sale.order'
     _inherit = ['sale.order', 'l10n_br_fiscal.document.mixin']
 
-    @api.multi
     @api.depends('order_line.price_unit', 'order_line.tax_id',
                  'order_line.discount', 'order_line.product_uom_qty')
-    def _amount_all_wrapper(self):
-        """ Wrapper because of direct method passing
-        as parameter for function fields """
-        return self._amount_all()
-
-    @api.multi
     def _amount_all(self):
+        """
+        Compute the total amounts of the SO.
+        """
         for order in self:
-            order.amount_untaxed = 0.0
-            order.amount_tax = 0.0
-            order.amount_total = 0.0
-            order.amount_discount = 0.0
-            order.amount_gross = 0.0
-            amount_tax = amount_untaxed = \
-                amount_discount = amount_gross = 0.0
+            amount_untaxed = amount_tax = amount_discount = amount_gross = 0.0
             for line in order.order_line:
-                amount_tax += self._amount_line_tax(line)
                 amount_untaxed += line.price_subtotal
+                amount_tax += line.price_tax
                 amount_discount += line.discount_value
                 amount_gross += line.price_gross
-
-            order.amount_tax = order.pricelist_id.currency_id.round(
-                amount_tax)
-            order.amount_untaxed = order.pricelist_id.currency_id.round(
-                amount_untaxed)
-            order.amount_total = (order.amount_untaxed +
-                                  order.amount_tax)
-            order.amount_discount = order.pricelist_id.currency_id.round(
-                amount_discount)
-            order.amount_gross = order.pricelist_id.currency_id.round(
-                amount_gross)
-
-    @api.model
-    def _amount_line_tax(self, line):
-        value = 0.0
-        price = line._calc_line_base_price()
-        qty = line._calc_line_quantity()
-        for computed in line.tax_id.compute_all(
-                price, quantity=qty, product=line.product_id,
-                partner=line.order_id.partner_invoice_id)['taxes']:
-            tax = self.env['account.tax'].browse(computed['id'])
-            if not tax.tax_group_id.fiscal_tax_group_id.tax_include:
-                value += computed.get('amount', 0.0)
-        return value
+            order.update({
+                'amount_untaxed': amount_untaxed,
+                'amount_tax': amount_tax,
+                'amount_total': amount_untaxed + amount_tax,
+                'amount_gross': amount_gross
+            })
 
     copy_note = fields.Boolean(
         string='Copiar Observação no documentos fiscal')
 
     amount_discount = fields.Float(
-        compute='_amount_all_wrapper',
+        compute='_amount_all',
         string='Desconto (-)',
         digits=dp.get_precision('Account'),
         store=True,
         help="The discount amount.")
 
     amount_gross = fields.Float(
-        compute='_amount_all_wrapper',
+        compute='_amount_all',
         string='Vlr. Bruto',
         digits=dp.get_precision('Account'),
         store=True, help="The discount amount.")

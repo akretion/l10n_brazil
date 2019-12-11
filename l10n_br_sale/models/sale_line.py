@@ -19,24 +19,40 @@ class SaleOrderLine(models.Model):
     def _calc_price_gross(self, qty):
         return self.price_unit * qty
 
-    @api.multi
-    @api.depends('price_unit', 'tax_id', 'discount', 'product_uom_qty')
-    def _amount_line(self):
-        for record in self:
-            price = record._calc_line_base_price()
-            qty = record._calc_line_quantity()
-            taxes = record.tax_id.compute_all(
-                price, quantity=qty,
-                product=record.product_id,
-                partner=record.order_id.partner_invoice_id)
+    @api.depends('product_uom_qty', 'discount', 'price_unit', 'tax_id')
+    def _compute_amount(self):
+        """
+        Compute the amounts of the SO line.
+        """
+        for line in self:
+            price = line._calc_line_base_price()
+            qty = line._calc_line_quantity()
+            taxes = line.tax_id.compute_all(
+                price, line.order_id.currency_id, line.product_uom_qty,
+                product=line.product_id,
+                partner=line.order_id.partner_shipping_id)
 
-            record.price_subtotal = \
-                record.order_id.pricelist_id.currency_id.round(
-                    taxes['total_excluded'])
-            record.price_gross = record._calc_price_gross(qty)
-            record.discount_value = \
-                record.order_id.pricelist_id.currency_id.round(
-                    record.price_gross - (price * qty))
+            line.update({
+                'price_tax': sum(t.get('amount', 0.0)
+                    for t in taxes.get('taxes', [])
+                    if not t.get('tax_include', False)),
+                'price_total': taxes['total_included'],
+                'price_subtotal': taxes['total_excluded'],
+                'price_gross': line._calc_price_gross(qty),
+                'discount_value': line.order_id.pricelist_id.currency_id.round(
+                    line._calc_price_gross(qty) - (price * qty))
+            })
+
+            print({
+                'price_tax': sum(t.get('amount', 0.0)
+                    for t in taxes.get('taxes', [])
+                    if not t.get('tax_include', False)),
+                'price_total': taxes['total_included'],
+                'price_subtotal': taxes['total_excluded'],
+                'price_gross': line._calc_price_gross(qty),
+                'discount_value': line.order_id.pricelist_id.currency_id.round(
+                    line._calc_price_gross(qty) - (price * qty))
+            })
 
     partner_id = fields.Many2one(
         comodel_name="res.partner",
@@ -44,25 +60,24 @@ class SaleOrderLine(models.Model):
         string="Partner")
 
     discount_value = fields.Float(
-        compute='_amount_line',
+        compute='_compute_amount',
         string='Vlr. Desc. (-)',
         digits=dp.get_precision('Sale Price'))
 
     price_gross = fields.Float(
-        compute='_amount_line', string='Vlr. Bruto',
+        compute='_compute_amount', string='Vlr. Bruto',
         digits=dp.get_precision('Sale Price'))
 
     price_subtotal = fields.Float(
-        compute='_amount_line', string='Subtotal',
+        compute='_compute_amount', string='Subtotal',
         digits=dp.get_precision('Sale Price'))
 
     @api.multi
     def _prepare_invoice_line(self, qty):
         self.ensure_one()
         result = super(SaleOrderLine, self)._prepare_invoice_line(qty)
-        result['fiscal_category_id'] = \
-            self.fiscal_category_id.id or self.order_id.fiscal_category_id.id \
+        result['operation_id'] = \
+            self.operation_id.id or self.order_id.operation_id.id \
             or False
-        result['fiscal_position_id'] = self.fiscal_position_id.id or \
-            self.order_id.fiscal_position_id.id or False
+        result['operation_line_id'] = self.operation_line_id.id or False
         return result
