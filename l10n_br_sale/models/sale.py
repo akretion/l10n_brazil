@@ -10,6 +10,22 @@ class SaleOrder(models.Model):
     _name = 'sale.order'
     _inherit = ['sale.order', 'l10n_br_fiscal.document.mixin']
 
+    @api.model
+    def _default_operation(self):
+        return self.env.user.company_id.sale_fiscal_operation_id.id
+
+    @api.model
+    def _operation_domain(self):
+        domain = [('state', '=', 'approved')]
+        domain.append(('fiscal_type', 'in', ('sale', 'other')))
+        domain.append(('operation_type', 'in', ('out', 'all')))
+        return domain
+
+    operation_id = fields.Many2one(
+        default=_default_operation,
+        domain=lambda self: self._operation_domain()
+    )
+
     @api.depends('order_line.price_unit', 'order_line.tax_id',
                  'order_line.discount', 'order_line.product_uom_qty')
     def _amount_all(self):
