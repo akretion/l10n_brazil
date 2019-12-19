@@ -67,8 +67,11 @@ class AccountInvoice(models.Model):
         self.tax_amount_retention = sum(
             tax.amount for tax in self.tax_line
             if tax.tax_code_id.retention)
+
+        self.amount_discount += self.icms_relief_value
+        
         self.amount_total = (self.amount_tax + self.amount_untaxed -
-                             self.tax_amount_retention)
+                             self.tax_amount_retention - self.amount_discount)
 
         for line in self.invoice_line:
             if line.icms_cst_id.code not in (
