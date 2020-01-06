@@ -30,7 +30,7 @@
                 </group>
             </field>
             <xpath expr="//form/sheet/group" position="after">
-                <group id="l10n_br_fiscal">
+                <group name="l10n_br_fiscal">
                 </group>
             </xpath>
             <xpath expr="//field[@name='order_line']/form/group/group/field[@name='price_unit']" position="before">

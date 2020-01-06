@@ -10,6 +10,22 @@ class SaleOrderLine(models.Model):
     _name = 'sale.order.line'
     _inherit = ['sale.order.line', 'l10n_br_fiscal.document.line.mixin']
 
+    @api.model
+    def _default_operation(self):
+        return self.env.user.company_id.sale_fiscal_operation_id.id
+
+    @api.model
+    def _operation_domain(self):
+        domain = [('state', '=', 'approved')]
+        domain.append(('fiscal_type', 'in', ('sale', 'other')))
+        domain.append(('operation_type', 'in', ('out', 'all')))
+        return domain
+
+    operation_id = fields.Many2one(
+        default=_default_operation,
+        domain=lambda self: self._operation_domain()
+    )
+
     def _calc_line_base_price(self):
         return self.price_unit * (1 - (self.discount or 0.0) / 100.0)
 
@@ -71,6 +87,13 @@ class SaleOrderLine(models.Model):
     price_subtotal = fields.Float(
         compute='_compute_amount', string='Subtotal',
         digits=dp.get_precision('Sale Price'))
+
+    @api.onchange('operation_line_id')
+    def _onchange_operation_line_id(self):
+        if self.operation_line_id:
+            fiscal_taxes = self.operation_line_id.get_fiscal_taxes(
+                self.company_id, self.partner_id, self.product_id)
+            self.tax_id |= fiscal_taxes.get_account_tax(self.operation_type)
 
     @api.multi
     def _prepare_invoice_line(self, qty):
