@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  # SPED Main Menu
+  <menuitem id="sped_menu" name="SPED" groups="l10n_br_sped.group_user" web_icon="l10n_br_sped,static/description/icon.png" sequence="40"/>
+
+  # SPED Overview
+  <menuitem id="sped_overview_menu" name="Overview" groups="l10n_br_sped.group_user" parent="sped_menu" sequence="0"/>
+
+  # SPED Documents
+  <menuitem id="sped_documents_menu" name="Documents" groups="l10n_br_sped.group_user" parent="sped_menu" sequence="10"/>
+
+  # Configuration Menu
+  <menuitem id="configuration_menu" name="Configuration" groups="l10n_br_fiscal.group_manager" parent="sped_menu" sequence="999"/>
+
+  # Configuration Settings
+  <menuitem id="sped_config_menu" action="config_action" groups="l10n_br_sped.group_manager" parent="configuration_menu" sequence="0"/>
+
+</odoo>
