@@ -21,7 +21,7 @@
           <field name="priority">36</field>
           <field name="arch" type="xml">
               <xpath expr="//form/sheet/group" position="after">
-                  <group id="l10n_br_fiscal">
+                  <group name="l10n_br_fiscal">
                   </group>
               </xpath>
               <xpath expr="//field[@name='order_line']/tree" position="attributes">
@@ -44,7 +44,7 @@
           <field name="inherit_id" ref="purchase.purchase_order_line_form2"/>
           <field name="arch" type="xml">
             <xpath expr="//form/sheet/group" position="after">
-                <group id="l10n_br_fiscal">
+                <group name="l10n_br_fiscal">
                 </group>
             </xpath>
           </field>
