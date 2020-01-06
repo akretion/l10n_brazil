@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="sped_account_chart_template_search" model="ir.ui.view">
+        <field name="name">l10n_br_sped_account.chart.template.search</field>
+        <field name="model">l10n_br_sped_account.template</field>
+        <field name="arch" type="xml">
+            <search string="SPED Chart of Template">
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="sped_account_chart_template_tree" model="ir.ui.view">
+        <field name="name">l10n_br_sped_account.chart.template.tree</field>
+        <field name="model">l10n_br_sped_account.chart.template</field>
+        <field name="arch" type="xml">
+            <tree string="SPED Chart of Template">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="sped_account_chart_template_form" model="ir.ui.view">
+        <field name="name">l10n_br_sped_account.chart.template.form</field>
+        <field name="model">l10n_br_sped_account.chart.template</field>
+        <field name="arch" type="xml">
+            <form string="SPED Chart of Template">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="sped_account_ids"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

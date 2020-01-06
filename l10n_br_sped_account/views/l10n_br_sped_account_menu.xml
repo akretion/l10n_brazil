@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  # SPED Account Menu
+  <menuitem id="sped_account_menu" string="SPED Account" groups="l10n_br_sped_account.group_user" parent="l10n_br_sped.sped_menu" sequence="10"/>
+
+  # SPED Account Account
+  <menuitem id="sped_account_account_menu" action="sped_account_account_action" groups="l10n_br_sped_account.group_user" parent="sped_account_menu" sequence="10"/>
+
+  # SPED Account Settings Menu
+  <menuitem id="sped_account_settings_menu" name="SPED Account" groups="l10n_br_fiscal.group_manager" parent="l10n_br_sped.configuration_menu" sequence="10"/>
+
+  # SPED Chart Template
+  <menuitem id="sped_account_chart_template_menu" action="sped_account_chart_template_action" groups="l10n_br_sped_account.group_manager" parent="sped_account_settings_menu" sequence="10"/>
+
+  # Fiscal Account Template
+  <menuitem id="sped_account_template_menu" action="sped_account_template_action" groups="l10n_br_sped_account.group_manager" parent="sped_account_settings_menu" sequence="20"/>
+
+</odoo>

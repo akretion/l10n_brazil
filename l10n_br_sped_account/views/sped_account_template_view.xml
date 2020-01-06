@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="sped_account_template_search" model="ir.ui.view">
+        <field name="name">l10n_br_sped_account.template.search</field>
+        <field name="model">l10n_br_sped_account.template</field>
+        <field name="arch" type="xml">
+            <search string="SPED Account Template">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="account_type"/>
+                <field name="sped_chart_template_id"/>
+                <group expand='0' string='Group By...'>
+                    <filter string='Chart Template' name="sped_chart_template_id" domain="[]" context="{'group_by' : 'sped_chart_template_id'}"/>
+                    <filter string='SPED Table' name="sped_table" domain="[]" context="{'group_by' : 'sped_table'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="sped_account_template_tree" model="ir.ui.view">
+        <field name="name">l10n_br_sped_account.template.tree</field>
+        <field name="model">l10n_br_sped_account.template</field>
+        <field name="arch" type="xml">
+            <tree string="SPED Account Template">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="account_type"/>
+                <field name="sped_type"/>
+                <field name="level"/>
+                <field name="sped_table"/>
+                <field name="sped_chart_template_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="sped_account_template_form" model="ir.ui.view">
+        <field name="name">l10n_br_sped_account.template.form</field>
+        <field name="model">l10n_br_sped_account.template</field>
+        <field name="arch" type="xml">
+            <form string="SPED Account Template">
+                <sheet>
+                    <group>
+                        <field name="code"/>
+                        <field name="name"/>
+                        <field name="account_type"/>
+                        <field name="sped_type"/>
+                        <field name="level"/>
+                        <field name="sped_table"/>
+                        <field name="sped_chart_template_id"/>
+                        <field name="parent_id"/>
+                        <field name="note"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

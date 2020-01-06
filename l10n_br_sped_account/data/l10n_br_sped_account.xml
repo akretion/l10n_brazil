@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- SPED Account Chart Template -->
+  <record id="sped_chart_template_la" model="l10n_br_sped_account.chart.template">
+      <field name="name">Plano de Contas Referencial - PJ do Lucro Real - PJ em Geral</field>
+  </record>
+
+  <record id="sped_chart_template_lb" model="l10n_br_sped_account.chart.template">
+      <field name="name">Plano de Contas Referencial - PJ do Lucro Real - Financeiras</field>
+  </record>
+
+  <record id="sped_chart_template_lc" model="l10n_br_sped_account.chart.template">
+      <field name="name">Plano de Contas Referencial - PJ do Lucro Real - Seguradoras ou Entidades Abertas de Previdência Complementar</field>
+  </record>
+
+  <record id="sped_chart_template_pa" model="l10n_br_sped_account.chart.template">
+      <field name="name">Plano de Contas Referencial - PJ do Lucro Presumido - PJ em Geral</field>
+  </record>
+
+  <record id="sped_chart_template_pb" model="l10n_br_sped_account.chart.template">
+      <field name="name">Plano de Contas Referencial - PJ do Lucro Presumido - Financeiras</field>
+  </record>
+
+  <record id="sped_chart_template_ua" model="l10n_br_sped_account.chart.template">
+      <field name="name">Plano de Contas Referencial - Imunes e Isentas - PJ em Geral</field>
+  </record>
+
+  <record id="sped_chart_template_ub" model="l10n_br_sped_account.chart.template">
+      <field name="name">Plano de Contas Referencial - Imunes e Isentas - Associação de Poupança e Empréstimo</field>
+  </record>
+
+  <record id="sped_chart_template_uc" model="l10n_br_sped_account.chart.template">
+      <field name="name">Plano de Contas Referencial - Imunes e Isentas - Entidades Abertas de Previdência Complementar (Sem Fins Lucrativos)</field>
+  </record>
+
+  <record id="sped_chart_template_ud" model="l10n_br_sped_account.chart.template">
+      <field name="name">Plano de Contas Referencial - Imunes e Isentas - Entidades Fechadas de Previdência Complementar</field>
+  </record>
+
+  <record id="sped_chart_template_ue" model="l10n_br_sped_account.chart.template">
+      <field name="name">Plano de Contas Referencial - Imunes e Isentas - Partidos Políticos</field>
+  </record>
+
+</odoo>

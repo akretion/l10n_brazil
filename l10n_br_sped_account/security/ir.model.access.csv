@@ -1,0 +1,7 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+"chart_template_user","SPED Chart of Template for User","model_l10n_br_sped_account_chart_template","l10n_br_sped_account.group_user",1,0,0,0
+"chart_template_manager","SPED Chart of Template for Manager","model_l10n_br_sped_account_chart_template","l10n_br_sped_account.group_manager",1,1,1,1
+"account_template_user","SPED Account Template for User","model_l10n_br_sped_account_template","l10n_br_sped_account.group_user",1,0,0,0
+"account_template_manager","SPED Account Template for Manager","model_l10n_br_sped_account_template","l10n_br_sped_account.group_manager",1,1,1,1
+"account_user","SPED Account for User","model_l10n_br_sped_account_account","l10n_br_sped_account.group_user",1,0,0,0
+"account_manager","SPED Account for Manager","model_l10n_br_sped_account_account","l10n_br_sped_account.group_manager",1,1,1,1

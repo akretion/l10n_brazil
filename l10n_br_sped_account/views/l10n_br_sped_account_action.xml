@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  # SPED Account Account
+  <record id="sped_account_account_action" model="ir.actions.act_window">
+      <field name="name">SPED Account</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">l10n_br_sped_account.account</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_type">form</field>
+      <field name="view_id" ref="sped_account_account_tree"/>
+      <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+            Add a new SPED Account
+          </p><p>
+            A SPED Account is necessary to create the
+            SPED Account Records.
+          </p>
+      </field>
+  </record>
+
+  # SPED Chart Template
+  <record id="sped_account_chart_template_action" model="ir.actions.act_window">
+      <field name="name">SPED Chart Template</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">l10n_br_sped_account.chart.template</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_type">form</field>
+      <field name="view_id" ref="sped_account_chart_template_tree"/>
+      <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+            Add a new SPED Chart Template
+          </p><p>
+            A SPED Chart Template is necessary to create the
+            SPED Account Records.
+          </p>
+      </field>
+  </record>
+
+  # SPED Account Template
+  <record id="sped_account_template_action" model="ir.actions.act_window">
+      <field name="name">SPED Account Template</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">l10n_br_sped_account.template</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_type">form</field>
+      <field name="view_id" ref="sped_account_template_tree"/>
+      <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+            Add a new SPED Account Template
+          </p><p>
+            A SPED Account Template is necessary to create the
+            SPED Account Records.
+          </p>
+      </field>
+  </record>
+
+</odoo>
