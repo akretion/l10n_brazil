@@ -63,7 +63,7 @@
         ])]"/>
     </record>
 
-    <record id="tax_template_out_icmssn" model="account.tax.template">
+    <record id="l10n_br_simple.tax_template_out_icmssn" model="account.tax.template">
         <field name="fiscal_tax_ids" eval="[(6, False,[
             ref('l10n_br_fiscal.tax_icms_sn_com_credito'), ref('l10n_br_fiscal.tax_icms_sn_sem_credito'),
             ref('l10n_br_fiscal.tax_icms_sn_isento_faixa_bruta'), ref('l10n_br_fiscal.tax_icms_sn_com_credito_st'),
@@ -73,7 +73,7 @@
         ])]"/>
     </record>
 
-    <record id="tax_template_in_icmssn" model="account.tax.template">
+    <record id="l10n_br_simple.tax_template_in_icmssn" model="account.tax.template">
         <field name="fiscal_tax_ids" eval="[(6, False,[
             ref('l10n_br_fiscal.tax_icms_sn_com_credito'), ref('l10n_br_fiscal.tax_icms_sn_sem_credito'),
             ref('l10n_br_fiscal.tax_icms_sn_isento_faixa_bruta'), ref('l10n_br_fiscal.tax_icms_sn_com_credito_st'),
