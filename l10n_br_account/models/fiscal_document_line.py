@@ -54,3 +54,10 @@ class FiscalDocumentLine(models.Model):
         related="discount_value",
         string="Fiscal Doc  Discount Value",
         readonly=False)
+
+    move_template_id = fields.Many2one(
+        comodel_name='l10n_br_account.move.template',
+        string='Move Template',
+        related='operation_line_id.move_template_id',
+        readonly=True,
+    )
