@@ -14,15 +14,15 @@ class L10nBrAccountMoveTemplateLine(models.Model):
         string=u'Modelo',
         ondelete='cascade',
     )
-    model_ids = fields.Many2many(
+    model_id = fields.Many2one(
         comodel_name='ir.model',
-        related='template_id.model_ids',
+        related='template_id.model_id',
         readonly=True,
     )
     field_id = fields.Many2one(
         comodel_name='ir.model.fields',
         string=u'Campo',
-        required=True,
+        domain="[('model_id', '=', model_id),('ttype', 'in', ['monetary'])]"
     )
     account_debit_id = fields.Many2one(
         comodel_name='account.account',
@@ -37,15 +37,3 @@ class L10nBrAccountMoveTemplateLine(models.Model):
         string=u'Histórico',
         required=True,
     )
-
-
-    @api.onchange('model_ids')
-    def _onchange_model_ids(self):
-        return {
-            'domain': {
-                'field_id': [
-                    ('model_id', 'in', self.model_ids.ids),
-                    ('ttype', 'in', ['float', 'monetary'])
-                ]
-            }
-        }
