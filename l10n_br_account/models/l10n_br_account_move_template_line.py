@@ -37,3 +37,21 @@ class L10nBrAccountMoveTemplateLine(models.Model):
         string=u'Histórico',
         required=True,
     )
+
+    @api.multi
+    def move_line_template_create(self, obj, lines):
+        for template_line in self:
+            for obj_line in obj:
+
+                if not template_line.field_id:
+                    continue
+                value = getattr(obj_line, template_line.field_id.name, 0.0)
+
+                if value:
+                    obj_line.generate_double_entrie(lines, value, template_line)
+
+        move_template = self.mapped('template_id')
+        if move_template.parent_id:
+            return move_template.parent_id.item_ids.move_line_template_create(
+                    obj, lines)
+

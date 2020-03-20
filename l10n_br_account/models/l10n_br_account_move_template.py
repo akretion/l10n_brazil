@@ -29,3 +29,7 @@ class L10nBrAccountMoveTemplate(models.Model):
         inverse_name='template_id',
         string=u'Itens',
     )
+
+    def generate_move(self, obj, lines):
+        return self.item_ids.move_line_template_create(
+            obj, lines)

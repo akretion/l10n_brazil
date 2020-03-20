@@ -41,8 +41,61 @@ class FiscalDocument(models.Model):
         string="Fiscal Doc State",
         readonly=False)
 
+    account_id = fields.Many2one('account.account', string='Account',
+        readonly=True, states={'draft': [('readonly', False)]},
+        domain=[('deprecated', '=', False)],
+        help="The partner account used for this document"
+    )
+
     move_template_ids = fields.Many2many(
         comodel_name='l10n_br_account.move.template',
         compute='_compute_move_template_ids',
         readonly=True,
     )
+    journal_id = fields.Many2one('account.journal', string='Journal')
+
+    move_id = fields.Many2one('account.move', string='Journal Entry',
+        readonly=True, index=True, copy=False,
+        help="Link to the automatically generated Journal Items.")
+
+    @api.multi
+    def action_move_create(self):
+        for record in self:
+            if not record.move_template_ids:
+                continue
+
+            if record.move_id:
+                record.move_id.unlink()
+
+            ctx = dict(self._context, lang=record.partner_id.lang)
+
+            if not record.date:
+                raise NotImplementedError
+
+            lines = []
+
+            for line in record.line_ids:
+                line.move_template_id.generate_move(line, lines)
+
+            ctx['company_id'] = record.company_id.id
+            ctx['document'] = record
+            ctx_nolang = ctx.copy()
+            ctx_nolang.pop('lang', None)
+
+            vals = {
+                'ref': 'ref',
+                'line_ids': lines,
+                'journal_id': record.journal_id.id,
+                'date': record.date,
+                'narration': 'narration',
+            }
+
+            move = self.env['account.move'].with_context(
+                ctx_nolang).create(vals)
+            # move.post()
+            vals = {
+                'move_id': move.id,
+                # 'date': record.date or inv.date_invoice,
+                # 'move_name': move.name,
+            }
+            record.with_context(ctx).write(vals)
