@@ -438,6 +438,11 @@
                                             <field name="icms_st_mva"/>
                                             <field name="icms_st_value"/>
                                         </group>
+                                        <group>
+                                            <field name="icms_fcp_ret_base"/>
+                                            <field name="icms_fcp_ret_percent"/>
+                                            <field name="icms_fcp_ret_value"/>
+                                        </group>
                                     </group>
                                 </page>
                                 <page string="ISSQN" attrs="{'invisible': [('product_type','!=', 'service')]}">
