@@ -926,7 +926,7 @@ class AccountInvoiceLine(models.Model):
         digits=dp.get_precision('Discount'), default=0.00)
     icms_st_base_other = fields.Float(
         'Base ICMS ST Outras', required=True,
-        digits=dp.get_precision('Account'), default=0.00)
+        digits=dp.get_precision('Account'), default=0.00)    
     icms_cst_id = fields.Many2one(
         'account.tax.code', 'CST ICMS', domain=[('domain', '=', 'icms')])
     icms_relief_id = fields.Many2one(
@@ -1083,6 +1083,18 @@ class AccountInvoiceLine(models.Model):
         default=0.00)
     icms_origin_value = fields.Float(
         string=u'Valor do ICMS Interno para a UF do remetente',
+        digits=dp.get_precision('Account'),
+        default=0.00)
+    icms_fcp_ret_base = fields.Float(
+        string=u'Valor da BC do FCP Retido',
+        digits=dp.get_precision('Account'),
+        default=0.00)
+    icms_fcp_ret_percent = fields.Float(
+        string=u'Percentual do FCP Retido',
+        digits=dp.get_precision('Account'),
+        default=0.00)
+   icms_fcp_ret_value = fields.Float(
+        string=u'Valor do FCP Retido',
         digits=dp.get_precision('Account'),
         default=0.00)
     partner_order = fields.Char(
