@@ -1093,7 +1093,7 @@ class AccountInvoiceLine(models.Model):
         string=u'Percentual do FCP Retido',
         digits=dp.get_precision('Account'),
         default=0.00)
-   icms_fcp_ret_value = fields.Float(
+    icms_fcp_ret_value = fields.Float(
         string=u'Valor do FCP Retido',
         digits=dp.get_precision('Account'),
         default=0.00)
