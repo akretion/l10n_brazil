@@ -2,6 +2,8 @@ num2words==0.5.4
 pycep-correios
 workalendar==7.1.1
 xmldiff
+pillow==5.2.0
+lxml==4.2.1
 -e git://github.com/erpbrasil/erpbrasil.base.git#egg=erpbrasil.base
 -e git://github.com/erpbrasil/erpbrasil.assinatura.git#egg=erpbrasil.assinatura
 -e git://github.com/erpbrasil/erpbrasil.transmissao.git#egg=erpbrasil.transmissao
