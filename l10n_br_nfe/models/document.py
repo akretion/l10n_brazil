@@ -4,9 +4,9 @@
 import base64
 
 from erpbrasil.assinatura import certificado as cert
-from erpbrasil.edoc import NFe as edoc_nfe
+#from erpbrasil.edoc import NFe as edoc_nfe
 from erpbrasil.transmissao import TransmissaoSOAP
-from erpbrasil.edoc.pdf import base
+#from erpbrasil.edoc.pdf import base
 from nfelib.v4_00 import leiauteNFe
 from odoo import api, fields, _
 from odoo.addons.l10n_br_fiscal.constants.fiscal import (

@@ -1,10 +1,35 @@
 # Copyright 2020 KMEE INFORMATICA LTDA
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-from odoo import api, fields
+from odoo import api, fields, models
 from odoo.addons.spec_driven_model.models import spec_models
-from odoo.addons.l10n_br_fiscal.constants.icms import ICMS_ST_CST_CODES
+#from odoo.addons.l10n_br_fiscal.constants.icms import ICMS_ST_CST_CODES
 
 ICMS_ST_CST_CODES = ['60',]
+
+
+class ProductProduct(models.Model):
+    _inherit = "product.product"
+
+    @api.model
+    def create(self, vals):
+        print("CCCCC", vals, self._context)
+        parent_dict = self._context.get('parent_dict')
+        if parent_dict:
+            if parent_dict.get('nfe40_NCM'):
+                ncm_ids = self.env['l10n_br_fiscal.ncm'].search(
+                    [('code', '=', parent_dict['nfe40_NCM'])])
+                if ncm_ids:
+                    vals['ncm_id'] = ncm_ids[0]
+                else: # FIXME should not happen with prod data
+                    ncm = self.env['l10n_br_fiscal.ncm'].sudo().create(
+                        {'name': parent_dict['nfe40_NCM'],
+                         'code': parent_dict['nfe40_NCM']})
+                    vals['ncm_id'] = ncm.id
+
+#            vals['categ_id'] = 11 TODO
+            vals['fiscal_type'] = '04'
+            print("CC22", vals, ncm_ids)
+        return super().create(vals)
 
 
 class NFeLine(spec_models.StackedModel):
@@ -21,7 +46,11 @@ class NFeLine(spec_models.StackedModel):
     nfe40_xProd = fields.Char(related='product_id.name')
     nfe40_cEAN = fields.Char(related='product_id.barcode')
     nfe40_cEANTrib = fields.Char(related='product_id.barcode')
-    nfe40_uCom = fields.Char(related='product_id.uom_id.code')
+
+    # TODO such related mapping should import properly in the
+    # match_or_create_m2o create
+#    nfe40_uCom = fields.Char(related='product_id.uom_id.code', default=lambda self: self.env.ref('uom.product_uom_kgm'))
+    nfe40_uCom = fields.Char(inverse='_inverse_uCom')
     nfe40_uTrib = fields.Char(related='product_id.uom_id.code')
     nfe40_vUnCom = fields.Float(related='fiscal_price')  # TODO sure?
     nfe40_vUnTrib = fields.Float(related='fiscal_price')  # TODO sure?
@@ -102,6 +131,15 @@ class NFeLine(spec_models.StackedModel):
     nfe40_vIPI = fields.Monetary(
         related='ipi_value'
     )
+
+    def _inverse_uCom(self):
+        # TODO need fix in search in l10n_br_fiscal/models/uom_uom.py
+        for line in self:
+            if line.nfe40_uCom:
+                uom_ids = self.env['uom.uom'].search(
+                    [('code', 'ilike', line.nfe40_uCom)])
+                if uom_ids:
+                    line.uom_id = uom_ids[0]
 
     @api.depends('icms_cst_id')
     def _compute_choice11(self):
