@@ -23,8 +23,12 @@ class AbstractSpecMixin(models.AbstractModel):
         # TODO new or create choice
         # TODO ability to match existing record here
         model_name = SpecModel._get_concrete(self._name) or self._name
+        print("MMMMMMODEL NAME", model_name)
         model = self.env[model_name]
+        print(model)
         attrs = model.build_attrs(node, create_m2o=True, defaults=defaults)
+        del attrs['partner_country_id']
+        print(attrs)
         return model.create(attrs)
 
     @api.model
@@ -61,6 +65,8 @@ class AbstractSpecMixin(models.AbstractModel):
             return False
         key = "nfe40_%s" % (attr.get_name(),)  # TODO schema wise
         child_path = '%s.%s' % (path, key)
+        if attr.get_name() == 'hashCSRT': # FIXME
+            return False
 
         if attr.get_child_attrs().get('type') is None\
                 or attr.get_child_attrs().get('type') == 'xs:string':
@@ -221,6 +227,10 @@ class AbstractSpecMixin(models.AbstractModel):
                                                          rec_dict.get(key))]
                 else:
                     domain = [(key, '=', rec_dict.get(key))]
+
+#                print("MMMMMMMM", key, model._name, domain)
+                if key == 'nfe40_detPag':
+                    return False
                 match_ids = model.search(domain)
                 if match_ids:
                     if len(match_ids) > 1:
@@ -248,7 +258,8 @@ class AbstractSpecMixin(models.AbstractModel):
             rec_id = self.match_record(rec_dict, parent_dict, model)
         if not rec_id:
             if create_m2o:
-                r = model.create(rec_dict)
+                r = model.with_context(parent_dict=parent_dict).create(rec_dict)
+#                r = model.create(rec_dict)
                 # _logger.info('r %s', r)
                 rec_id = r.id
             else:  # do we use it?
