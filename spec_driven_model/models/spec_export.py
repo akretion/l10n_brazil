@@ -30,7 +30,11 @@ class AbstractSpecMixin(models.AbstractModel):
         ds_class_sepc = {i.name: i for i in ds_class.member_data_items_}
 
         for xsd_field in xsd_fields:
-            field_spec_name = xsd_field.replace(self._field_prefix, '')
+            if xsd_field:
+                field_spec_name = xsd_field.replace(self._field_prefix, '')
+            else:
+                continue
+#                field_spec_name = ""
             member_spec = ds_class_sepc[field_spec_name]
             field_data = self._export_field(xsd_field, class_obj, member_spec)
 

@@ -12,24 +12,31 @@ class ProductProduct(models.Model):
 
     @api.model
     def create(self, vals):
-        print("CCCCC", vals, self._context)
+        print("CREATE PRODUCT NFE", vals, self._context)
         parent_dict = self._context.get('parent_dict')
         if parent_dict:
+            vals['standard_price'] = parent_dict.get('nfe40_vUnCom')
+            vals['list_price'] = parent_dict.get('nfe40_vUnCom')
             if parent_dict.get('nfe40_NCM'):
+                raw_ncm = parent_dict['nfe40_NCM']
+                ncm = "%s.%s.%s" % (raw_ncm[0:4], raw_ncm[4:6], raw_ncm[6:8])
                 ncm_ids = self.env['l10n_br_fiscal.ncm'].search(
-                    [('code', '=', parent_dict['nfe40_NCM'])])
+                    [('code', '=', ncm)])
+                if not ncm_ids:
+                    ncm = "%s.%s." % (raw_ncm[0:4], raw_ncm[4:6])
+                    ncm_ids = self.env['l10n_br_fiscal.ncm'].search(
+                        [('code', '=', ncm)])
                 if ncm_ids:
-                    vals['ncm_id'] = ncm_ids[0]
+                    vals['ncm_id'] = ncm_ids[0].id
                 else: # FIXME should not happen with prod data
                     ncm = self.env['l10n_br_fiscal.ncm'].sudo().create(
                         {'name': parent_dict['nfe40_NCM'],
                          'code': parent_dict['nfe40_NCM']})
                     vals['ncm_id'] = ncm.id
-
-#            vals['categ_id'] = 11 TODO
-            vals['fiscal_type'] = '04'
-            print("CC22", vals, ncm_ids)
-        return super().create(vals)
+            print("VALS, NCM_IDS", vals, ncm_ids)
+        product = super().create(vals)
+        product.product_tmpl_id._onchange_ncm_id()
+        return product
 
 
 class NFeLine(spec_models.StackedModel):
@@ -257,7 +264,7 @@ class NFeLine(spec_models.StackedModel):
                 xsd_fields.remove('nfe40_vBC')
                 xsd_fields.remove('nfe40_pCOFINS')
 
-        self.nfe40_NCM = self.ncm_id.code.replace('.', '')
+        self.nfe40_NCM = self.ncm_id.code#.replace('.', '')
         self.nfe40_CEST = self.cest_id and \
             self.cest_id.code.replace('.', '') or False
         self.nfe40_qCom = self.quantity
