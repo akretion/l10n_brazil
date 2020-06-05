@@ -1,4 +1,4 @@
-# Copyright 2019 Akretion
+# Copyright 2019 Akretion (Raphaël Valyi <raphael.valyi@akretion.com>)
 # Copyright 2019 KMEE INFORMATICA LTDA
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 import base64
@@ -64,9 +64,15 @@ class NFe(spec_models.StackedModel):
         related='edoc_purpose',
     )
 
+    nfe40_emit = fields.Many2one(related='company_id',
+                                 comodel_name='res.company') # TODO in invoice
+
     nfe40_versao = fields.Char(related='document_version')
     nfe40_nNF = fields.Char(related='number')
     nfe40_Id = fields.Char(related='key')
+
+    nfe40_dest = fields.Many2one(related='partner_id',
+                                 comodel_name='res.partner') # TODO in invoice
 
     # TODO should be done by framework?
     nfe40_det = fields.One2many(related='line_ids',
@@ -705,10 +711,10 @@ class NFe(spec_models.StackedModel):
                 vals['company_country_id'] = \
                     self.env['res.country'].search([
                         ('ibge_code', '=', value)], limit=1)
-            if comodel_name == 'nfe.40.enderDest':
-                vals['partner_country_id'] = \
-                    self.env['res.country'].search([
-                        ('ibge_code', '=', value)], limit=1)
+#            if comodel_name == 'nfe.40.enderDest':
+#                vals['partner_country_id'] = \
+#                    self.env['res.country'].search([
+#                        ('ibge_code', '=', value)], limit=1)
         if key == 'nfe40_fone':
             if comodel_name == 'nfe.40.enderEmit':
                 vals['company_phone'] = value
