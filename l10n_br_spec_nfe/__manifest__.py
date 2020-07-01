@@ -1,5 +1,5 @@
 {
-    'name': 'l10n_br_nfe_spec',
+    'name': 'l10n_br_spec_nfe',
     'version': '12.0.1.0.0',
     'author': 'Akretion, Odoo Community Association (OCA)',
     'license': 'LGPL-3',

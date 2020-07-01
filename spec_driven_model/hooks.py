@@ -24,7 +24,7 @@ def post_init_hook(cr, registry, module_name, spec_module):
         rec_id = "acl_%s_nfe_40_%s" % ('todo'.split('.')[-1],
                                        underline_name)
         # TODO no nfe ref
-        model_id = "l10n_br_nfe_spec.model_%s" % (underline_name,)
+        model_id = "l10n_br_spec_nfe.model_%s" % (underline_name,)
         access_data.append([rec_id, underline_name, model_id,
                             'base.group_user', '1', '1', '1', '1'])
         # TODO make more secure!
