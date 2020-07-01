@@ -167,7 +167,7 @@ class SpecModel(models.AbstractModel):
             from .. import hooks  # importing here avoids loop
             hooks.register_hook(
                 self.env, 'l10n_br_nfe',
-                'odoo.addons.l10n_br_nfe_spec.models.v4_00.leiauteNFe')
+                'odoo.addons.l10n_br_spec_nfe.models.v4_00.leiauteNFe')
             self.env.registry._spec_loaded = True
         return res
 
