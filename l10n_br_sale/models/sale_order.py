@@ -298,5 +298,6 @@ class SaleOrder(models.Model):
                                 inv_line.invoice_id.company_id)
                         if fiscal_document_type.id == document_type.id:
                             inv_line.invoice_id = invoice.id
+                            inv_line.document_id = invoice.fiscal_document_id
 
         return inv_ids
