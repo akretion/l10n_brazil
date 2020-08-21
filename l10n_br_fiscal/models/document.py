@@ -680,6 +680,23 @@ class Document(models.Model):
                 record._document_comment_vals())
             record.line_ids.document_comment()
 
+    def _get_email_template(self, new_state):
+        email_template = \
+            self.document_type_id\
+                .document_email_ids.filtered(
+                    lambda e: e.state_edoc == new_state)\
+                .mapped('email_template')
+        return email_template
+
+    def send_email(self, new_state):
+        email_template = self._get_email_template(new_state)
+        if email_template:
+            email_template.send_mail(self.id)
+
+    def _after_change_state(self, old_state, new_state):
+        super()._after_change_state(old_state, new_state)
+        self.send_email(new_state)
+
     def _exec_after_SITUACAO_EDOC_A_ENVIAR(self, old_state, new_state):
         super(Document, self)._exec_after_SITUACAO_EDOC_A_ENVIAR(
             old_state, new_state
