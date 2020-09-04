@@ -132,6 +132,9 @@
                     </div>
                 </group>
             </xpath>
+            <xpath expr="//field[@name='order_line']/form/field[@name='name']" position="before">
+                <field name="fiscal_operation_line_id"/>
+            </xpath>
         </field>
     </record>
 
