@@ -2662,7 +2662,7 @@ msgstr ""
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_line__document_id
 #: model:ir.ui.menu,name:l10n_br_fiscal.document_menu
-msgid "Document"
+msgid "Documents"
 msgstr ""
 
 #. module: l10n_br_fiscal
