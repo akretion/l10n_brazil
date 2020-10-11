@@ -65,7 +65,7 @@ class SaleOrder(models.Model):
     )
 
     amount_gross = fields.Monetary(
-        compute='_amount_all',
+        compute='_amount_all',  # noqa: C8108
         string='Amount Gross',
         store=True,
         readonly=True,
@@ -73,7 +73,7 @@ class SaleOrder(models.Model):
     )
 
     amount_discount = fields.Monetary(
-        compute='_amount_all',
+        compute='_amount_all',  # noqa: C8108
         store=True,
         string='Discount (-)',
         readonly=True,
@@ -81,7 +81,7 @@ class SaleOrder(models.Model):
     )
 
     amount_freight = fields.Float(
-        compute='_amount_all',
+        compute='_amount_all',  # noqa: C8108
         store=True,
         string='Freight',
         readonly=True,
@@ -91,7 +91,7 @@ class SaleOrder(models.Model):
     )
 
     amount_insurance = fields.Float(
-        compute='_amount_all',
+        compute='_amount_all',  # noqa: C8108
         store=True,
         string='Insurance',
         readonly=True,
@@ -100,7 +100,7 @@ class SaleOrder(models.Model):
     )
 
     amount_costs = fields.Float(
-        compute='_amount_all',
+        compute='_amount_all',  # noqa: C8108
         store=True,
         string='Other Costs',
         readonly=True,
@@ -125,28 +125,18 @@ class SaleOrder(models.Model):
     @api.depends('order_line.price_total')
     def _amount_all(self):
         """Compute the total amounts of the SO."""
+        super()._amount_all()
         for order in self:
             order.amount_gross = sum(
                 line.price_gross for line in order.order_line)
-
             order.amount_discount = sum(
                 line.discount_value for line in order.order_line)
-
-            order.amount_untaxed = sum(
-                line.price_subtotal for line in order.order_line)
-
-            order.amount_tax = sum(
-                line.price_tax for line in order.order_line)
-
             order.amount_total = sum(
                 line.price_total for line in order.order_line)
-
             order.amount_freight = sum(
                 line.freight_value for line in order.order_line)
-
             order.amount_costs = sum(
                 line.other_costs_value for line in order.order_line)
-
             order.amount_insurance = sum(
                 line.insurance_value for line in order.order_line)
 
