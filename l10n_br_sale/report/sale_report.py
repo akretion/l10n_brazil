@@ -37,7 +37,8 @@ class SaleReport(models.Model):
         fields.update(
             {
                 "fiscal_operation_id": ", l.fiscal_operation_id as fiscal_operation_id",
-                "fiscal_operation_line_id": ", l.fiscal_operation_line_id as fiscal_operation_line_id",
+                "fiscal_operation_line_id":
+                    ", l.fiscal_operation_line_id as fiscal_operation_line_id",
                 "ind_pres": ", s.ind_pres",
             }
         )

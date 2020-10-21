@@ -54,7 +54,8 @@ class StockReturnPicking(models.TransientModel):
             picking.write(values)
             for move in picking.move_lines:
                 fiscal_operation = (
-                    move.origin_returned_move_id.fiscal_operation_id.return_fiscal_operation_id
+                    (move.origin_returned_move_id)
+                    .fiscal_operation_id.return_fiscal_operation_id
                 )
                 fiscal_line_operation = (
                     move.origin_returned_move_id.fiscal_operation_line_id.line_refund_id

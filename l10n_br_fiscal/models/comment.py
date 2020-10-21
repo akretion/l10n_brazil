@@ -159,7 +159,8 @@ class Comment(models.Model):
                 ),
                 # adding format amount
                 # now we can format values like currency on fiscal observation
-                "format_amount": lambda amount, context=self._context: self.format_amount(
+                "format_amount": lambda amount,
+                context=self._context: self.format_amount(
                     self.env, amount, self.env.ref("base.BRL")
                 ),
             }

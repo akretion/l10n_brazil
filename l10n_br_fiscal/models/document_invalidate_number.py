@@ -159,7 +159,8 @@ class DocumentInvalidateNumber(models.Model):
                     record.env["l10n_br_fiscal.document"].create(
                         {
                             "document_serie_id": record.document_serie_id.id,
-                            "document_type_id": record.document_serie_id.document_type_id.id,
+                            "document_type_id":
+                                record.document_serie_id.document_type_id.id,
                             "company_id": record.company_id.id,
                             "state_edoc": SITUACAO_EDOC_INUTILIZADA,
                             "issuer": "company",

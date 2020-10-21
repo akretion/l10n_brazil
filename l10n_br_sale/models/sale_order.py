@@ -343,8 +343,10 @@ class SaleOrder(models.Model):
 
                     # Update Invoice Line
                     for inv_line in invoice_created_by_super.invoice_line_ids:
-                        fiscal_document_type = inv_line.fiscal_operation_line_id.get_document_type(
-                            inv_line.invoice_id.company_id
+                        fiscal_document_type = (
+                            inv_line.fiscal_operation_line_id.get_document_type(
+                                inv_line.invoice_id.company_id
+                            )
                         )
                         if fiscal_document_type.id == document_type.id:
                             inv_line.invoice_id = invoice.id
