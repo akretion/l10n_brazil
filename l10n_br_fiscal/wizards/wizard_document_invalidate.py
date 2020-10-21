@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 
-from odoo import api, fields, models, _
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 
@@ -19,7 +19,10 @@ class WizardDocumentInvalidate(models.TransientModel):
         for record in self:
             if len(record.justificative) < 15:
                 raise UserError(
-                    _("Justificativa deve ter o tamanho mínimo de 15 " "caracteres.")
+                    _(
+                        "Justificativa deve ter o tamanho mínimo de 15 "
+                        "caracteres."
+                    )
                 )
 
     @api.multi
@@ -30,28 +33,33 @@ class WizardDocumentInvalidate(models.TransientModel):
             )
 
             inut = self.env[
-                'l10n_br_fiscal.document.invalidate.number'].create({
-                    'company_id': document_id.company_id.id,
-                    'document_id': document_id.id,
-                    'document_serie_id': document_id.document_serie_id.id,
-                    'number_start': document_id.number,
-                    'number_end': document_id.number,
-                    'state': 'draft',
-                    'justificative': wizard.justificative,
-                })
-            event_id = self.env['l10n_br_fiscal.document.event'].create({
-                'type': '3',
-                'response': 'Inutilização do número %s ao número %s' % (
-                    document_id.number, document_id.number),
-                'company_id': document_id.company_id.id,
-                'origin': 'NFe-%s' % document_id.number,
-                'create_date': fields.Datetime.now(),
-                'write_date': fields.Datetime.now(),
-                'end_date': fields.Datetime.now(),
-                'state': 'draft',
-                'invalid_number_document_event_id': inut.id,
-                'fiscal_document_id': document_id.id,
-            })
+                "l10n_br_fiscal.document.invalidate.number"
+            ].create(
+                {
+                    "company_id": document_id.company_id.id,
+                    "document_id": document_id.id,
+                    "document_serie_id": document_id.document_serie_id.id,
+                    "number_start": document_id.number,
+                    "number_end": document_id.number,
+                    "state": "draft",
+                    "justificative": wizard.justificative,
+                }
+            )
+            event_id = self.env["l10n_br_fiscal.document.event"].create(
+                {
+                    "type": "3",
+                    "response": "Inutilização do número %s ao número %s"
+                    % (document_id.number, document_id.number),
+                    "company_id": document_id.company_id.id,
+                    "origin": "NFe-%s" % document_id.number,
+                    "create_date": fields.Datetime.now(),
+                    "write_date": fields.Datetime.now(),
+                    "end_date": fields.Datetime.now(),
+                    "state": "draft",
+                    "invalid_number_document_event_id": inut.id,
+                    "fiscal_document_id": document_id.id,
+                }
+            )
 
             inut.invalidate(event_id)
         return {"type": "ir.actions.act_window_close"}

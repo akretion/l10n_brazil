@@ -11,12 +11,13 @@ class InvoicingPickingTest(TransactionCase):
     def setUp(self):
         super(InvoicingPickingTest, self).setUp()
         # self.env = self.env(user=self.env.ref('l10n_br_base.user_demo_presumido'))
-        self.stock_picking = self.env['stock.picking']
-        self.invoice_model = self.env['account.invoice']
-        self.stock_invoice_onshipping = self.env['stock.invoice.onshipping']
-        self.stock_return_picking = self.env['stock.return.picking']
+        self.stock_picking = self.env["stock.picking"]
+        self.invoice_model = self.env["account.invoice"]
+        self.stock_invoice_onshipping = self.env["stock.invoice.onshipping"]
+        self.stock_return_picking = self.env["stock.return.picking"]
         self.stock_picking_sp = self.env.ref(
-            'l10n_br_stock_account.demo_l10n_br_stock_account-picking-1')
+            "l10n_br_stock_account.demo_l10n_br_stock_account-picking-1"
+        )
 
     def _run_fiscal_onchanges(self, record):
         record._onchange_fiscal_operation_id()
@@ -45,36 +46,34 @@ class InvoicingPickingTest(TransactionCase):
         self.stock_picking_sp.button_validate()
 
         self.assertEquals(
-            self.stock_picking_sp.state, 'done',
-            'Change state fail.'
+            self.stock_picking_sp.state, "done", "Change state fail."
         )
 
         wizard_obj = self.stock_invoice_onshipping.with_context(
             active_ids=[self.stock_picking_sp.id],
             active_model=self.stock_picking_sp._name,
             active_id=self.stock_picking_sp.id,
-        ).create({
-            'group': 'picking',
-            'journal_type': 'sale'
-        })
+        ).create({"group": "picking", "journal_type": "sale"})
 
         fields_list = wizard_obj.fields_get().keys()
         wizard_values = wizard_obj.default_get(fields_list)
         wizard = wizard_obj.create(wizard_values)
         wizard.onchange_group()
         wizard.action_generate()
-        domain = [('picking_ids', '=', self.stock_picking_sp.id)]
+        domain = [("picking_ids", "=", self.stock_picking_sp.id)]
         invoice = self.invoice_model.search(domain)
 
-        self.assertTrue(invoice, 'Invoice is not created.')
+        self.assertTrue(invoice, "Invoice is not created.")
         for line in invoice.picking_ids:
             self.assertEquals(
-                line.id, self.stock_picking_sp.id,
-                'Relation between invoice and picking are missing.')
+                line.id,
+                self.stock_picking_sp.id,
+                "Relation between invoice and picking are missing.",
+            )
         for line in invoice.invoice_line_ids:
             self.assertTrue(
                 line.invoice_line_tax_ids,
-                'Taxes in invoice lines are missing.'
+                "Taxes in invoice lines are missing.",
             )
         # tax_line_ids is not created if all the taxes have value 0
         # self.assertTrue(
@@ -82,21 +81,21 @@ class InvoicingPickingTest(TransactionCase):
         # )
         self.assertTrue(
             invoice.fiscal_operation_id,
-            'Mapping fiscal operation on wizard to create invoice fail.'
+            "Mapping fiscal operation on wizard to create invoice fail.",
         )
         self.assertTrue(
             invoice.fiscal_document_id,
-            'Mapping Fiscal Documentation_id on wizard to create invoice fail.'
+            "Mapping Fiscal Documentation_id on wizard to create invoice fail.",
         )
 
         self.return_wizard = self.stock_return_picking.with_context(
-            dict(active_id=self.stock_picking_sp.id)).create(
-            dict(invoice_state='2binvoiced'))
+            dict(active_id=self.stock_picking_sp.id)
+        ).create(dict(invoice_state="2binvoiced"))
         for line in self.return_wizard.product_return_moves:
             line.quantity = line.move_id.product_uom_qty
 
         result = self.return_wizard.create_returns()
-        self.assertTrue(result, 'Create returns wizard fail.')
+        self.assertTrue(result, "Create returns wizard fail.")
 
     def test_invoicing_picking_overprocessed(self):
         """Test Invoicing Picking overprocessed EXTRA Fields"""
@@ -116,11 +115,10 @@ class InvoicingPickingTest(TransactionCase):
 
         res_overprocessed_transfer = self.stock_picking_sp.button_validate()
         stock_overprocessed_transfer = self.env[
-            'stock.overprocessed.transfer'].browse(
-            res_overprocessed_transfer.get('res_id'))
+            "stock.overprocessed.transfer"
+        ].browse(res_overprocessed_transfer.get("res_id"))
         stock_overprocessed_transfer.action_confirm()
 
         self.assertEquals(
-            self.stock_picking_sp.state, 'done',
-            'Change state fail.'
+            self.stock_picking_sp.state, "done", "Change state fail."
         )

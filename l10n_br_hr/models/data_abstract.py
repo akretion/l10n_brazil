@@ -27,6 +27,8 @@ class DataAbstract(models.AbstractModel):
         if name:
             domain = ["|", ("code", operator, name), ("name", operator, name)]
         recs = self._search(
-            expression.AND([domain, args]), limit=limit, access_rights_uid=name_get_uid
+            expression.AND([domain, args]),
+            limit=limit,
+            access_rights_uid=name_get_uid,
         )
         return self.browse(recs).name_get()

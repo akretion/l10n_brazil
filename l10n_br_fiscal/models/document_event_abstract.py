@@ -1,7 +1,7 @@
 # Copyright (C) 2020  KMEE - www.kmee.com.br
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
-from odoo import api, fields, models, _
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 
@@ -39,13 +39,18 @@ class EventAbstract(models.AbstractModel):
     @api.depends("document_id.number", "document_id.partner_id.name")
     def _compute_display_name(self):
         self.ensure_one()
-        names = ["Fatura", self.document_id.number, self.document_id.partner_id.name]
+        names = [
+            "Fatura",
+            self.document_id.number,
+            self.document_id.partner_id.name,
+        ]
         self.display_name = " / ".join(filter(None, names))
 
     @api.multi
-    @api.constrains('justificative')
+    @api.constrains("justificative")
     def _check_justificative(self):
         if len(self.justificative) < 15:
             raise UserError(
-                _('Justificativa deve ter tamanho minimo de 15 caracteres.'))
+                _("Justificativa deve ter tamanho minimo de 15 caracteres.")
+            )
         return True

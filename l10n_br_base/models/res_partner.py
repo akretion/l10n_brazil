@@ -79,7 +79,9 @@ class Partner(models.Model):
 
     crc_code = fields.Char(string="CRC Code", size=18)
 
-    crc_state_id = fields.Many2one(comodel_name="res.country.state", string="CRC State")
+    crc_state_id = fields.Many2one(
+        comodel_name="res.country.state", string="CRC State"
+    )
 
     rntrc_code = fields.Char(string="RNTRC Code", size=12)
 
@@ -107,8 +109,10 @@ class Partner(models.Model):
             if not record.cnpj_cpf:
                 return
 
-            allow_cnpj_multi_ie = record.env["ir.config_parameter"].sudo().get_param(
-                "l10n_br_base_allow_cnpj_multi_ie", default=True
+            allow_cnpj_multi_ie = (
+                record.env["ir.config_parameter"]
+                .sudo()
+                .get_param("l10n_br_base_allow_cnpj_multi_ie", default=True)
             )
 
             if record.parent_id:
@@ -117,7 +121,10 @@ class Partner(models.Model):
                     ("parent_id", "not in", record.parent_id.ids),
                 ]
 
-            domain += [("cnpj_cpf", "=", record.cnpj_cpf), ("id", "!=", record.id)]
+            domain += [
+                ("cnpj_cpf", "=", record.cnpj_cpf),
+                ("id", "!=", record.id),
+            ]
 
             # se encontrar CNPJ iguais
             if record.env["res.partner"].search(domain):
@@ -145,9 +152,12 @@ class Partner(models.Model):
         result = True
         for record in self:
 
-            disable_cnpj_ie_validation = record.env["ir.config_parameter"].sudo()\
+            disable_cnpj_ie_validation = (
+                record.env["ir.config_parameter"]
+                .sudo()
                 .get_param(
-                "l10n_br_base.disable_cpf_cnpj_validation", default=False
+                    "l10n_br_base.disable_cpf_cnpj_validation", default=False
+                )
             )
             if not disable_cnpj_ie_validation:
                 if record.country_id:
@@ -177,8 +187,10 @@ class Partner(models.Model):
         for record in self:
             result = True
 
-            disable_ie_validation = record.env["ir.config_parameter"].sudo().get_param(
-                "l10n_br_base.disable_ie_validation", default=False
+            disable_ie_validation = (
+                record.env["ir.config_parameter"]
+                .sudo()
+                .get_param("l10n_br_base.disable_ie_validation", default=False)
             )
             if not disable_ie_validation:
                 if record.inscr_est and record.is_company and record.state_id:
@@ -217,7 +229,10 @@ class Partner(models.Model):
                 )
                 if duplicate_ie:
                     raise ValidationError(
-                        _("State Tax Number already used" " %s" % duplicate_ie.name)
+                        _(
+                            "State Tax Number already used"
+                            " %s" % duplicate_ie.name
+                        )
                     )
 
     @api.model

@@ -24,6 +24,8 @@ class DocumentCancel(models.Model):
 
             record.document_id._document_cancel(record.justificative)
 
-            event_id.write({
-                'state': 'done',
-            })
+            event_id.write(
+                {
+                    "state": "done",
+                }
+            )

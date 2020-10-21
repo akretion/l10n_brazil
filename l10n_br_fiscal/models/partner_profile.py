@@ -5,8 +5,12 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
-from ..constants.fiscal import (NFE_IND_IE_DEST, NFE_IND_IE_DEST_DEFAULT,
-                                TAX_FRAMEWORK, TAX_FRAMEWORK_NORMAL)
+from ..constants.fiscal import (
+    NFE_IND_IE_DEST,
+    NFE_IND_IE_DEST_DEFAULT,
+    TAX_FRAMEWORK,
+    TAX_FRAMEWORK_NORMAL,
+)
 
 
 class PartnerProfile(models.Model):
@@ -29,11 +33,15 @@ class PartnerProfile(models.Model):
     )
 
     tax_framework = fields.Selection(
-        selection=TAX_FRAMEWORK, default=TAX_FRAMEWORK_NORMAL, string="Tax Framework"
+        selection=TAX_FRAMEWORK,
+        default=TAX_FRAMEWORK_NORMAL,
+        string="Tax Framework",
     )
 
     partner_ids = fields.One2many(
-        comodel_name="res.partner", string="Partner", compute="_compute_partner_info"
+        comodel_name="res.partner",
+        string="Partner",
+        compute="_compute_partner_info",
     )
 
     partner_qty = fields.Integer(
@@ -43,7 +51,8 @@ class PartnerProfile(models.Model):
     tax_definition_ids = fields.One2many(
         comodel_name="l10n_br_fiscal.tax.definition",
         inverse_name="fiscal_profile_id",
-        string="Tax Definition")
+        string="Tax Definition",
+    )
 
     _sql_constraints = [
         (
@@ -96,6 +105,6 @@ class PartnerProfile(models.Model):
     @api.multi
     def action_view_partners(self):
         self.ensure_one()
-        action = self.env.ref('base.action_partner_other_form').read()[0]
-        action['domain'] = [('fiscal_profile_id', '=', self.id)]
+        action = self.env.ref("base.action_partner_other_form").read()[0]
+        action["domain"] = [("fiscal_profile_id", "=", self.id)]
         return action

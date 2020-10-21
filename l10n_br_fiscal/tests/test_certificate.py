@@ -1,9 +1,10 @@
 # Copyright 2019 Akretion - Renato Lima <renato.lima@akretion.com.br>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from OpenSSL import crypto
 from base64 import b64encode
 from datetime import timedelta
+
+from OpenSSL import crypto
 
 from odoo import fields
 from odoo.exceptions import ValidationError
@@ -35,11 +36,19 @@ class TestCertificate(common.TransactionCase):
         )
 
         self.certificate_valid = self._create_certificate(
-            valid=True, passwd=self.cert_passwd, issuer=self.cert_issuer_a,
-            country=self.cert_country, subject=self.cert_subject_valid)
+            valid=True,
+            passwd=self.cert_passwd,
+            issuer=self.cert_issuer_a,
+            country=self.cert_country,
+            subject=self.cert_subject_valid,
+        )
         self.certificate_invalid = self._create_certificate(
-            valid=False, passwd=self.cert_passwd, issuer=self.cert_issuer_b,
-            country=self.cert_country, subject=self.cert_subject_invalid)
+            valid=False,
+            passwd=self.cert_passwd,
+            issuer=self.cert_issuer_b,
+            country=self.cert_country,
+            subject=self.cert_subject_invalid,
+        )
 
     def _create_compay(self):
         """Creating a company"""
@@ -62,8 +71,9 @@ class TestCertificate(common.TransactionCase):
             }
         )
 
-    def _create_certificate(self, valid=True, passwd=None, issuer=None,
-                            country=None, subject=None):
+    def _create_certificate(
+        self, valid=True, passwd=None, issuer=None, country=None, subject=None
+    ):
         """Creating a fake certificate"""
 
         key = crypto.PKey()
@@ -89,7 +99,7 @@ class TestCertificate(common.TransactionCase):
         cert.gmtime_adj_notBefore(time_before)
         cert.gmtime_adj_notAfter(time_after)
         cert.set_pubkey(key)
-        cert.sign(key, 'md5')
+        cert.sign(key, "md5")
 
         p12 = crypto.PKCS12()
         p12.set_privatekey(key)
@@ -101,10 +111,10 @@ class TestCertificate(common.TransactionCase):
         """Create and check a valid certificate"""
         cert = self.certificate_model.create(
             {
-                'type': 'nf-e',
-                'subtype': 'a1',
-                'password': self.cert_passwd,
-                'file': self.certificate_valid
+                "type": "nf-e",
+                "subtype": "a1",
+                "password": self.cert_passwd,
+                "file": self.certificate_valid,
             }
         )
 
@@ -119,19 +129,23 @@ class TestCertificate(common.TransactionCase):
     def test_certificate_wrong_password(self):
         """Write a valid certificate with wrong password"""
         with self.assertRaises(ValidationError):
-            self.certificate_model.create({
-                'type': 'nf-e',
-                'subtype': 'a1',
-                'password': 'INVALID',
-                'file': self.certificate_valid
-            })
+            self.certificate_model.create(
+                {
+                    "type": "nf-e",
+                    "subtype": "a1",
+                    "password": "INVALID",
+                    "file": self.certificate_valid,
+                }
+            )
 
     def test_invalid_certificate(self):
         """Create and check a invalid certificate"""
         with self.assertRaises(ValidationError):
-            self.certificate_model.create({
-                'type': 'nf-e',
-                'subtype': 'a1',
-                'password': self.cert_passwd,
-                'file': self.certificate_invalid
-            })
+            self.certificate_model.create(
+                {
+                    "type": "nf-e",
+                    "subtype": "a1",
+                    "password": self.cert_passwd,
+                    "file": self.certificate_invalid,
+                }
+            )

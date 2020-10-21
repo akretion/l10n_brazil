@@ -26,6 +26,8 @@ class DocumentCorrection(models.Model):
             if not record.document_id or not record.justificative:
                 continue
 
-            event_id.write({
-                'state': 'done',
-            })
+            event_id.write(
+                {
+                    "state": "done",
+                }
+            )

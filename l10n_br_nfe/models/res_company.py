@@ -3,15 +3,21 @@
 
 from odoo import fields, models
 
-from ..constants.nfe import (NFE_ENVIRONMENT_DEFAULT, NFE_ENVIRONMENTS,
-                             NFE_VERSION_DEFAULT, NFE_VERSIONS)
+from ..constants.nfe import (
+    NFE_ENVIRONMENT_DEFAULT,
+    NFE_ENVIRONMENTS,
+    NFE_VERSION_DEFAULT,
+    NFE_VERSIONS,
+)
 
 
 class ResCompany(models.Model):
     _inherit = "res.company"
 
     nfe_version = fields.Selection(
-        selection=NFE_VERSIONS, string="NFe Version", default=NFE_VERSION_DEFAULT
+        selection=NFE_VERSIONS,
+        string="NFe Version",
+        default=NFE_VERSION_DEFAULT,
     )
 
     nfe_environment = fields.Selection(
@@ -21,5 +27,6 @@ class ResCompany(models.Model):
     )
 
     nfe_default_serie_id = fields.Many2one(
-        comodel_name="l10n_br_fiscal.document.serie", string="NF-e Default Serie"
+        comodel_name="l10n_br_fiscal.document.serie",
+        string="NF-e Default Serie",
     )

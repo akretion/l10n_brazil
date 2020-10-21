@@ -12,7 +12,9 @@ class TestCustomerInvoice(TransactionCase):
             dict(
                 code="X1020",
                 name="Product Sales - (test)",
-                user_type_id=self.env.ref("account.data_account_type_revenue").id,
+                user_type_id=self.env.ref(
+                    "account.data_account_type_revenue"
+                ).id,
                 reconcile=True,
             )
         )
@@ -29,7 +31,9 @@ class TestCustomerInvoice(TransactionCase):
         self.invoice_1 = self.env["account.invoice"].create(
             dict(
                 name="Test Customer Invoice",
-                payment_term_id=self.env.ref("account.account_payment_term_advance").id,
+                payment_term_id=self.env.ref(
+                    "account.account_payment_term_advance"
+                ).id,
                 partner_id=self.env.ref("base.res_partner_3").id,
                 journal_id=self.sale_journal.id,
                 invoice_line_ids=[
@@ -37,7 +41,9 @@ class TestCustomerInvoice(TransactionCase):
                         0,
                         0,
                         {
-                            "product_id": self.env.ref("product.product_product_5").id,
+                            "product_id": self.env.ref(
+                                "product.product_product_5"
+                            ).id,
                             "quantity": 10.0,
                             "price_unit": 450.0,
                             "account_id": self.env["account.account"]
@@ -92,7 +98,9 @@ class TestCustomerInvoice(TransactionCase):
         self.invoice_2 = self.env["account.invoice"].create(
             dict(
                 name="Test Customer Invoice",
-                payment_term_id=self.env.ref("account.account_payment_term_advance").id,
+                payment_term_id=self.env.ref(
+                    "account.account_payment_term_advance"
+                ).id,
                 partner_id=self.env.ref("base.res_partner_3").id,
                 journal_id=self.sale_journal.id,
                 invoice_line_ids=[
@@ -100,7 +108,9 @@ class TestCustomerInvoice(TransactionCase):
                         0,
                         0,
                         {
-                            "product_id": self.env.ref("product.product_product_5").id,
+                            "product_id": self.env.ref(
+                                "product.product_product_5"
+                            ).id,
                             "quantity": 5.0,
                             "price_unit": 100.0,
                             "account_id": self.env["account.account"]
@@ -141,12 +151,14 @@ class TestCustomerInvoice(TransactionCase):
                 "name": "Tax 20.0% (Discount)",
                 "amount": 20.0,
                 "amount_type": "percent",
-                "include_base_amount": False
+                "include_base_amount": False,
             }
         )
         self.invoice_3 = self.env["account.invoice"].create(
             dict(
-                payment_term_id=self.env.ref("account.account_payment_term_advance").id,
+                payment_term_id=self.env.ref(
+                    "account.account_payment_term_advance"
+                ).id,
                 currency_id=self.env.ref("base.EUR").id,
                 partner_id=self.env.ref("base.res_partner_3").id,
                 journal_id=self.sale_journal.id,
@@ -155,7 +167,9 @@ class TestCustomerInvoice(TransactionCase):
                         0,
                         0,
                         {
-                            "product_id": self.env.ref("product.product_product_5").id,
+                            "product_id": self.env.ref(
+                                "product.product_product_5"
+                            ).id,
                             "quantity": 10.0,
                             "price_unit": 450.0,
                             "account_id": self.env["account.account"]
@@ -205,12 +219,16 @@ class TestCustomerInvoice(TransactionCase):
         self.assertEquals(
             self.invoice_2.state, "open", "Invoice should be in state Open"
         )
-        invoice_tax = self.invoice_2.tax_line_ids.sorted(key=lambda r: r.sequence)
+        invoice_tax = self.invoice_2.tax_line_ids.sorted(
+            key=lambda r: r.sequence
+        )
         self.assertEquals(invoice_tax.mapped("amount"), [50.0, 550.0, 220.0])
         self.assertEquals(invoice_tax.mapped("base"), [500.0, 550.0, 1100.0])
         assert self.invoice_2.move_id, "Move not created for open invoice"
         self.invoice_2.pay_and_reconcile(
-            self.env["account.journal"].search([("type", "=", "bank")], limit=1),
+            self.env["account.journal"].search(
+                [("type", "=", "bank")], limit=1
+            ),
             10050.0,
         )
         assert (
@@ -225,6 +243,9 @@ class TestCustomerInvoice(TransactionCase):
             self.invoice_3.state, "draft", "Invoice should be in state Draft"
         )
         self.invoice_3.action_invoice_open()
-        assert self.invoice_3.move_id, "Move Receivable not created for open invoice"
+        assert (
+            self.invoice_3.move_id
+        ), "Move Receivable not created for open invoice"
         self.assertEquals(
-            self.invoice_3.state, "open", "Invoice should be in state Open")
+            self.invoice_3.state, "open", "Invoice should be in state Open"
+        )

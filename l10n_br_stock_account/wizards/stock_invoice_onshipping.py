@@ -6,16 +6,15 @@ from odoo.exceptions import UserError
 
 
 class StockInvoiceOnshipping(models.TransientModel):
-    _inherit = 'stock.invoice.onshipping'
+    _inherit = "stock.invoice.onshipping"
 
     fiscal_operation_journal = fields.Boolean(
-        string='Account Jornal from Fiscal Operation',
+        string="Account Jornal from Fiscal Operation",
         default=True,
     )
 
     group = fields.Selection(
-        selection_add=[
-            ('fiscal_operation', 'Fiscal Operation')],
+        selection_add=[("fiscal_operation", "Fiscal Operation")],
     )
 
     @api.multi
@@ -25,17 +24,22 @@ class StockInvoiceOnshipping(models.TransientModel):
         :return: account.journal recordset
         """
         self.ensure_one()
-        journal = self.env['account.journal']
+        journal = self.env["account.journal"]
         if self.fiscal_operation_journal:
             pickings = self._load_pickings()
             picking = fields.first(pickings)
             journal = picking.fiscal_operation_id.journal_id
             if not journal:
                 raise UserError(
-                    _('Invalid Journal! There is not journal defined'
-                      ' for this company: %s in fiscal operation: %s !') %
-                    (picking.company_id.name,
-                     picking.fiscal_operation_id.name))
+                    _(
+                        "Invalid Journal! There is not journal defined"
+                        " for this company: %s in fiscal operation: %s !"
+                    )
+                    % (
+                        picking.company_id.name,
+                        picking.fiscal_operation_id.name,
+                    )
+                )
         else:
             journal = super()._get_journal()
         return journal
@@ -46,23 +50,25 @@ class StockInvoiceOnshipping(models.TransientModel):
         pick = fields.first(pickings)
         fiscal_vals = pick._prepare_br_fiscal_dict()
 
-        document_type_id = self._context.get('document_type_id')
+        document_type_id = self._context.get("document_type_id")
 
         if document_type_id:
-            document_type = self.env['l10n_br_fiscal.document.type'].browse(
-                document_type_id)
+            document_type = self.env["l10n_br_fiscal.document.type"].browse(
+                document_type_id
+            )
         else:
             document_type = pick.company_id.document_type_id
             document_type_id = pick.company_id.document_type_id.id
 
-        fiscal_vals['document_type_id'] = document_type_id
+        fiscal_vals["document_type_id"] = document_type_id
         document_serie = document_type.get_document_serie(
-            pick.company_id, pick.fiscal_operation_id)
+            pick.company_id, pick.fiscal_operation_id
+        )
         if document_serie:
-            fiscal_vals['document_serie_id'] = document_serie.id
+            fiscal_vals["document_serie_id"] = document_serie.id
 
         if pick.fiscal_operation_id and pick.fiscal_operation_id.journal_id:
-            fiscal_vals['journal_id'] = pick.fiscal_operation_id.journal_id.id
+            fiscal_vals["journal_id"] = pick.fiscal_operation_id.journal_id.id
 
         values.update(fiscal_vals)
         return invoice, values
@@ -78,11 +84,17 @@ class StockInvoiceOnshipping(models.TransientModel):
 
         move = fields.first(moves)
         values = move._prepare_br_fiscal_dict()
-        values.update(super()._get_invoice_line_values(
-            moves, invoice_values, invoice))
-        values['invoice_line_tax_ids'] = [
-            (6, 0, self.env['l10n_br_fiscal.tax'].browse(
-                values['fiscal_tax_ids'][0][2]
-            ).account_taxes().ids)
+        values.update(
+            super()._get_invoice_line_values(moves, invoice_values, invoice)
+        )
+        values["invoice_line_tax_ids"] = [
+            (
+                6,
+                0,
+                self.env["l10n_br_fiscal.tax"]
+                .browse(values["fiscal_tax_ids"][0][2])
+                .account_taxes()
+                .ids,
+            )
         ]
         return values

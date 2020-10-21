@@ -12,8 +12,11 @@ class TestSupplierInvoice(TransactionCase):
             dict(
                 code="X1020",
                 name="Product Purchase - (test)",
-                user_type_id=self.env.ref("account.data_account_type_revenue").id,
-            ))
+                user_type_id=self.env.ref(
+                    "account.data_account_type_revenue"
+                ).id,
+            )
+        )
 
         self.purchase_journal = self.env["account.journal"].create(
             dict(
@@ -28,7 +31,9 @@ class TestSupplierInvoice(TransactionCase):
         self.invoice_1 = self.env["account.invoice"].create(
             dict(
                 name="Test Supplier Invoice",
-                payment_term_id=self.env.ref("account.account_payment_term_advance").id,
+                payment_term_id=self.env.ref(
+                    "account.account_payment_term_advance"
+                ).id,
                 partner_id=self.env.ref("base.res_partner_3").id,
                 journal_id=self.purchase_journal.id,
                 invoice_line_ids=[
@@ -36,7 +41,9 @@ class TestSupplierInvoice(TransactionCase):
                         0,
                         0,
                         {
-                            "product_id": self.env.ref("product.product_product_5").id,
+                            "product_id": self.env.ref(
+                                "product.product_product_5"
+                            ).id,
                             "quantity": 10.0,
                             "price_unit": 450.0,
                             "account_id": self.env["account.account"]
@@ -66,7 +73,9 @@ class TestSupplierInvoice(TransactionCase):
             self.invoice_1.state, "draft", "Invoice should be in state Draft"
         )
         self.invoice_1.action_invoice_open()
-        assert self.invoice_1.move_id, "Move Receivable not created for open invoice"
+        assert (
+            self.invoice_1.move_id
+        ), "Move Receivable not created for open invoice"
         self.assertEquals(
             self.invoice_1.state, "open", "Invoice should be in state Open"
         )

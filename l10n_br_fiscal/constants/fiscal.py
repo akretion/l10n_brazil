@@ -21,10 +21,11 @@ OPERATION_FISCAL_TYPE = [
     ("sale", "Sale"),
     ("sale_refund", "Sale Return"),
     ("return_out", "Return Out"),
-    ("other", "Other")]
+    ("other", "Other"),
+]
 
 
-OPERATION_FISCAL_TYPE_DEFAULT = 'other'
+OPERATION_FISCAL_TYPE_DEFAULT = "other"
 
 
 COMMENT_TYPE = [("fiscal", "Fiscal"), ("commercial", "Commercial")]
@@ -82,7 +83,7 @@ TAX_DOMAIN_ISSQN = "issqn"
 TAX_DOMAIN_ISSQN_WH = "issqn_wh"
 TAX_DOMAIN_CSLL = "csll"
 TAX_DOMAIN_CSLL_WH = "csll_wh"
-TAX_DOMAIN_IR = 'ir'
+TAX_DOMAIN_IR = "ir"
 TAX_DOMAIN_IRPJ = "irpj"
 TAX_DOMAIN_IRPJ_WH = "irpj_wh"
 TAX_DOMAIN_INSS = "inss"
@@ -91,17 +92,13 @@ TAX_DOMAIN_SIMPLES = "simples"
 TAX_DOMAIN_OTHERS = "others"
 
 
-TAX_DOMAIN_PCC = (
-    TAX_DOMAIN_PIS,
-    TAX_DOMAIN_COFINS,
-    TAX_DOMAIN_CSLL
-)
+TAX_DOMAIN_PCC = (TAX_DOMAIN_PIS, TAX_DOMAIN_COFINS, TAX_DOMAIN_CSLL)
 
 
 TAX_DOMAIN_PCC_RET = (
     TAX_DOMAIN_PIS_WH,
     TAX_DOMAIN_COFINS_WH,
-    TAX_DOMAIN_CSLL_WH
+    TAX_DOMAIN_CSLL_WH,
 )
 
 
@@ -128,13 +125,13 @@ TAX_DOMAIN = (
     (TAX_DOMAIN_INSS, "INSS"),
     (TAX_DOMAIN_INSS_WH, "INSS WH"),
     (TAX_DOMAIN_SIMPLES, "Simples Nacional"),
-    (TAX_DOMAIN_OTHERS, "Outros")
+    (TAX_DOMAIN_OTHERS, "Outros"),
 )
 
 
 TAX_ICMS_OR_ISSQN = (
-    (TAX_DOMAIN_ICMS, 'ICMS'),
-    (TAX_DOMAIN_ISSQN, 'ISSQN'),
+    (TAX_DOMAIN_ICMS, "ICMS"),
+    (TAX_DOMAIN_ISSQN, "ISSQN"),
 )
 
 
@@ -170,7 +167,11 @@ INDUSTRY_TYPE = (
     ("05", "05 - Equiparado a industrial - Por opção"),
     ("06", "06 - Equiparado a industrial - Importação Direta"),
     ("07", "07 - Equiparado a industrial - Por lei específica"),
-    ("08", "08 - Equiparado a industrial - Não enquadrado nos" " códigos 05, 06 ou 07"),
+    (
+        "08",
+        "08 - Equiparado a industrial - Não enquadrado nos"
+        " códigos 05, 06 ou 07",
+    ),
     ("09", "09 - Outros"),
 )
 
@@ -241,8 +242,11 @@ CEST_SEGMENT = (
     ("10", "Materiais de construção e congêneres"),
     ("11", "Materiais de limpeza"),
     ("12", "Materiais elétricos"),
-    ("13", "Medicamentos de uso humano e outros produtos"
-           " farmacêuticos para uso humano ou veterinário"),
+    (
+        "13",
+        "Medicamentos de uso humano e outros produtos"
+        " farmacêuticos para uso humano ou veterinário",
+    ),
     ("14", "Papéis, plásticos, produtos cerâmicos e vidros"),
     ("15", "Pneumáticos, câmaras de ar e protetores de borracha"),
     ("16", "Produtos alimentícios"),
@@ -272,17 +276,17 @@ NFE_IND_IE_DEST_9 = "9"
 
 
 NFE_IND_PRES = [
-    ('0', 'Não se aplica'),
-    ('1', 'Operação presencial'),
-    ('2', 'Não presencial, internet'),
-    ('3', 'Não presencial, teleatendimento'),
-    ('4', 'NFC-e entrega em domicílio'),
-    ('5', 'Operação presencial, fora do estabelecimento'),
-    ('9', 'Não presencial, outros')
+    ("0", "Não se aplica"),
+    ("1", "Operação presencial"),
+    ("2", "Não presencial, internet"),
+    ("3", "Não presencial, teleatendimento"),
+    ("4", "NFC-e entrega em domicílio"),
+    ("5", "Operação presencial, fora do estabelecimento"),
+    ("9", "Não presencial, outros"),
 ]
 
 
-NFE_IND_PRES_DEFAULT = '0'
+NFE_IND_PRES_DEFAULT = "0"
 
 
 CFOP_TYPE_MOVE = [
@@ -337,7 +341,9 @@ CANCELAMENTO_HOMOLOGADO = ["101", "151"]
 CANCELADO_DENTRO_PRAZO = ["135"]
 CANCELADO_FORA_PRAZO = ["155"]
 
-CANCELADO = CANCELADO_DENTRO_PRAZO + CANCELADO_FORA_PRAZO + CANCELAMENTO_HOMOLOGADO
+CANCELADO = (
+    CANCELADO_DENTRO_PRAZO + CANCELADO_FORA_PRAZO + CANCELAMENTO_HOMOLOGADO
+)
 
 AUTORIZADO_OU_DENEGADO = AUTORIZADO + DENEGADO
 
@@ -440,17 +446,15 @@ WORKFLOW_EDOC = WORKFLOW_DOCUMENTO_NAO_ELETRONICO + [
     (SITUACAO_EDOC_REJEITADA, SITUACAO_EDOC_REJEITADA),
 ]
 
-PROCESSADOR_NENHUM = 'nenhum'
+PROCESSADOR_NENHUM = "nenhum"
 
-PROCESSADOR = [(
-    PROCESSADOR_NENHUM, 'Nenhum'
-)]
+PROCESSADOR = [(PROCESSADOR_NENHUM, "Nenhum")]
 
 FISCAL_COMMENT_OBJECTS = [
-    ('l10n_br_fiscal.document.mixin', 'Fiscal Document'),
-    ('l10n_br_fiscal.document.line.mixin', 'Fiscal Document Line')
+    ("l10n_br_fiscal.document.mixin", "Fiscal Document"),
+    ("l10n_br_fiscal.document.line.mixin", "Fiscal Document Line"),
 ]
 
-FISCAL_COMMENT_DOCUMENT = 'l10n_br_fiscal.document.mixin'
+FISCAL_COMMENT_DOCUMENT = "l10n_br_fiscal.document.mixin"
 
-FISCAL_COMMENT_LINE = 'l10n_br_fiscal.document.line.mixin'
+FISCAL_COMMENT_LINE = "l10n_br_fiscal.document.line.mixin"

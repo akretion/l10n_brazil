@@ -121,13 +121,13 @@ class ValidCreateIdTest(TransactionCase):
 
     def test_comp_invalid_cnpj(self):
         """Test if ValidationError raised during .create() with invalid CNPJ
-            and correct Inscricao Estadual"""
+        and correct Inscricao Estadual"""
         with self.assertRaises(ValidationError):
             self.env["res.company"].create(self.company_invalid_cnpj)
 
     def test_comp_invalid_inscr_est(self):
         """Test if ValidationError raised with correct CNPJ
-            and invalid Inscricao Estadual"""
+        and invalid Inscricao Estadual"""
         with self.assertRaises(ValidationError):
             self.env["res.company"].create(self.company_invalid_inscr_est)
 
@@ -145,7 +145,7 @@ class ValidCreateIdTest(TransactionCase):
 
     def test_part_invalid_cpf(self):
         """Test if ValidationError raised during .create() with invalid CPF
-            and correct Inscricao Estadual"""
+        and correct Inscricao Estadual"""
         with self.assertRaises(ValidationError):
             self.env["res.partner"].create(self.partner_invalid_cpf)
 

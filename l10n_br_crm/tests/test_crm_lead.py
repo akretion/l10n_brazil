@@ -80,10 +80,14 @@ class CrmLeadTest(TransactionCase):
         )
         # Check if the lead stage is "Open".
         self.assertEqual(
-            self.crm_lead_company.stage_id.sequence, 1, "Lead stage is not Open"
+            self.crm_lead_company.stage_id.sequence,
+            1,
+            "Lead stage is not Open",
         )
         # Convert lead into opportunity for exiting customer
-        self.crm_lead_company.convert_opportunity(self.env.ref("base.res_partner_2").id)
+        self.crm_lead_company.convert_opportunity(
+            self.env.ref("base.res_partner_2").id
+        )
 
         # Check details of converted opportunity
         self.assertEqual(
@@ -112,14 +116,19 @@ class CrmLeadTest(TransactionCase):
             self.obj_partner.name, "The creation of the partner have problems."
         )
         self.assertTrue(
-            self.obj_partner.legal_name, "The field Razão Social not was filled."
-        )
-        self.assertTrue(self.obj_partner.cnpj_cpf, "The field CNPJ not was filled.")
-        self.assertTrue(
-            self.obj_partner.inscr_est, "The field Inscrição Estadual not was filled"
+            self.obj_partner.legal_name,
+            "The field Razão Social not was filled.",
         )
         self.assertTrue(
-            self.obj_partner.inscr_mun, "The field Inscrição Municipal not was filled"
+            self.obj_partner.cnpj_cpf, "The field CNPJ not was filled."
+        )
+        self.assertTrue(
+            self.obj_partner.inscr_est,
+            "The field Inscrição Estadual not was filled",
+        )
+        self.assertTrue(
+            self.obj_partner.inscr_mun,
+            "The field Inscrição Municipal not was filled",
         )
 
     def test_lead_won(self):
@@ -140,10 +149,14 @@ class CrmLeadTest(TransactionCase):
         )
         # Check if the lead stage is "Open".
         self.assertEqual(
-            self.crm_lead_contact.stage_id.sequence, 1, "Lead stage is not Open"
+            self.crm_lead_contact.stage_id.sequence,
+            1,
+            "Lead stage is not Open",
         )
         # Convert lead into opportunity for exiting customer
-        self.crm_lead_contact.convert_opportunity(self.env.ref("base.res_partner_2").id)
+        self.crm_lead_contact.convert_opportunity(
+            self.env.ref("base.res_partner_2").id
+        )
 
         # Check details of converted opportunity
         self.assertEqual(
@@ -167,9 +180,15 @@ class CrmLeadTest(TransactionCase):
         self.partner_id = self.crm_lead_contact._create_lead_partner()
         self.obj_partner = self.env["res.partner"].browse(self.partner_id.id)
 
-        self.assertTrue(self.obj_partner.name, "The field Name was not filled.")
-        self.assertTrue(self.obj_partner.cnpj_cpf, "The field CNPJ was not filled.")
-        self.assertTrue(self.obj_partner.inscr_est, "The field RG was not filled")
+        self.assertTrue(
+            self.obj_partner.name, "The field Name was not filled."
+        )
+        self.assertTrue(
+            self.obj_partner.cnpj_cpf, "The field CNPJ was not filled."
+        )
+        self.assertTrue(
+            self.obj_partner.inscr_est, "The field RG was not filled"
+        )
 
     def test_lead_won_contact(self):
         """Test to mark the Lead as won"""
@@ -190,17 +209,26 @@ class CrmLeadTest(TransactionCase):
             self.obj_partner.name, "The creation of the partner have problems."
         )
         self.assertTrue(
-            self.obj_partner.legal_name, "The field Razão Social not was filled."
-        )
-        self.assertTrue(self.obj_partner.cnpj_cpf, "The field CNPJ not was filled.")
-        self.assertTrue(
-            self.obj_partner.inscr_est, "The field Inscrição Estadual not was filled"
+            self.obj_partner.legal_name,
+            "The field Razão Social not was filled.",
         )
         self.assertTrue(
-            self.obj_partner.inscr_mun, "The field Inscrição Municipal not was filled"
+            self.obj_partner.cnpj_cpf, "The field CNPJ not was filled."
         )
-        self.assertTrue(self.obj_partner.country_id, "The field Country not was filled")
-        self.assertTrue(self.obj_partner.state_id, "The field State not was filled")
+        self.assertTrue(
+            self.obj_partner.inscr_est,
+            "The field Inscrição Estadual not was filled",
+        )
+        self.assertTrue(
+            self.obj_partner.inscr_mun,
+            "The field Inscrição Municipal not was filled",
+        )
+        self.assertTrue(
+            self.obj_partner.country_id, "The field Country not was filled"
+        )
+        self.assertTrue(
+            self.obj_partner.state_id, "The field State not was filled"
+        )
 
     def test_change_lead_partner(self):
         """

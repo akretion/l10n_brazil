@@ -2422,39 +2422,138 @@ _xml_ids_cnae_renames = [
 
 _xml_ids_document_renames = [
     ("l10n_br_account.fiscal_document_service", "l10n_br_fiscal.document_SE"),
-    ("l10n_br_account_product.fiscal_document_01", "l10n_br_fiscal.document_01"),
-    ("l10n_br_account_product.fiscal_document_1B", "l10n_br_fiscal.document_1B"),
-    ("l10n_br_account_product.fiscal_document_02", "l10n_br_fiscal.document_02"),
-    ("l10n_br_account_product.fiscal_document_2D", "l10n_br_fiscal.document_2D"),
-    ("l10n_br_account_product.fiscal_document_2E", "l10n_br_fiscal.document_2E"),
-    ("l10n_br_account_product.fiscal_document_04", "l10n_br_fiscal.document_04"),
-    ("l10n_br_account_product.fiscal_document_06", "l10n_br_fiscal.document_06"),
-    ("l10n_br_account_product.fiscal_document_07", "l10n_br_fiscal.document_07"),
-    ("l10n_br_account_product.fiscal_document_08", "l10n_br_fiscal.document_08"),
-    ("l10n_br_account_product.fiscal_document_8B", "l10n_br_fiscal.document_8B"),
-    ("l10n_br_account_product.fiscal_document_09", "l10n_br_fiscal.document_09"),
-    ("l10n_br_account_product.fiscal_document_10", "l10n_br_fiscal.document_10"),
-    ("l10n_br_account_product.fiscal_document_11", "l10n_br_fiscal.document_11"),
-    ("l10n_br_account_product.fiscal_document_13", "l10n_br_fiscal.document_13"),
-    ("l10n_br_account_product.fiscal_document_14", "l10n_br_fiscal.document_14"),
-    ("l10n_br_account_product.fiscal_document_15", "l10n_br_fiscal.document_15"),
-    ("l10n_br_account_product.fiscal_document_17", "l10n_br_fiscal.document_17"),
-    ("l10n_br_account_product.fiscal_document_16", "l10n_br_fiscal.document_16"),
-    ("l10n_br_account_product.fiscal_document_18", "l10n_br_fiscal.document_18"),
-    ("l10n_br_account_product.fiscal_document_20", "l10n_br_fiscal.document_20"),
-    ("l10n_br_account_product.fiscal_document_21", "l10n_br_fiscal.document_21"),
-    ("l10n_br_account_product.fiscal_document_22", "l10n_br_fiscal.document_22"),
-    ("l10n_br_account_product.fiscal_document_23", "l10n_br_fiscal.document_23"),
-    ("l10n_br_account_product.fiscal_document_24", "l10n_br_fiscal.document_24"),
-    ("l10n_br_account_product.fiscal_document_25", "l10n_br_fiscal.document_25"),
-    ("l10n_br_account_product.fiscal_document_26", "l10n_br_fiscal.document_26"),
-    ("l10n_br_account_product.fiscal_document_27", "l10n_br_fiscal.document_27"),
-    ("l10n_br_account_product.fiscal_document_28", "l10n_br_fiscal.document_28"),
-    ("l10n_br_account_product.fiscal_document_29", "l10n_br_fiscal.document_29"),
-    ("l10n_br_account_product.fiscal_document_30", "l10n_br_fiscal.document_30"),
-    ("l10n_br_account_product.fiscal_document_55", "l10n_br_fiscal.document_55"),
-    ("l10n_br_account_product.fiscal_document_57", "l10n_br_fiscal.document_57"),
-    ("l10n_br_account_product.fiscal_document_59", "l10n_br_fiscal.document_59"),
+    (
+        "l10n_br_account_product.fiscal_document_01",
+        "l10n_br_fiscal.document_01",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_1B",
+        "l10n_br_fiscal.document_1B",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_02",
+        "l10n_br_fiscal.document_02",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_2D",
+        "l10n_br_fiscal.document_2D",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_2E",
+        "l10n_br_fiscal.document_2E",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_04",
+        "l10n_br_fiscal.document_04",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_06",
+        "l10n_br_fiscal.document_06",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_07",
+        "l10n_br_fiscal.document_07",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_08",
+        "l10n_br_fiscal.document_08",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_8B",
+        "l10n_br_fiscal.document_8B",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_09",
+        "l10n_br_fiscal.document_09",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_10",
+        "l10n_br_fiscal.document_10",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_11",
+        "l10n_br_fiscal.document_11",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_13",
+        "l10n_br_fiscal.document_13",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_14",
+        "l10n_br_fiscal.document_14",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_15",
+        "l10n_br_fiscal.document_15",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_17",
+        "l10n_br_fiscal.document_17",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_16",
+        "l10n_br_fiscal.document_16",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_18",
+        "l10n_br_fiscal.document_18",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_20",
+        "l10n_br_fiscal.document_20",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_21",
+        "l10n_br_fiscal.document_21",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_22",
+        "l10n_br_fiscal.document_22",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_23",
+        "l10n_br_fiscal.document_23",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_24",
+        "l10n_br_fiscal.document_24",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_25",
+        "l10n_br_fiscal.document_25",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_26",
+        "l10n_br_fiscal.document_26",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_27",
+        "l10n_br_fiscal.document_27",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_28",
+        "l10n_br_fiscal.document_28",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_29",
+        "l10n_br_fiscal.document_29",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_30",
+        "l10n_br_fiscal.document_30",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_55",
+        "l10n_br_fiscal.document_55",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_57",
+        "l10n_br_fiscal.document_57",
+    ),
+    (
+        "l10n_br_account_product.fiscal_document_59",
+        "l10n_br_fiscal.document_59",
+    ),
 ]
 
 

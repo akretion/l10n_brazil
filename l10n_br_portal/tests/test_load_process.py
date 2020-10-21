@@ -4,7 +4,7 @@
 import odoo.tests
 
 
-@odoo.tests.tagged('post_install', '-at_install')
+@odoo.tests.tagged("post_install", "-at_install")
 class TestUi(odoo.tests.HttpCase):
     def test_01_l10n_br_portal_load_tour(self):
         tour = (
@@ -16,10 +16,10 @@ class TestUi(odoo.tests.HttpCase):
             code="%s.run('%s')" % tour,
             ready="%s.tours['%s'].ready" % tour,
             login="admin",
-            timeout=180
+            timeout=180,
         )
         # check result
-        record = self.env.ref('base.partner_admin')
-        self.assertEqual(record.country_id.code, 'BR')
-        self.assertEqual(record.state_id.code, 'MG')
-        self.assertEqual(record.city_id.ibge_code, '32404')
+        record = self.env.ref("base.partner_admin")
+        self.assertEqual(record.country_id.code, "BR")
+        self.assertEqual(record.state_id.code, "MG")
+        self.assertEqual(record.city_id.ibge_code, "32404")

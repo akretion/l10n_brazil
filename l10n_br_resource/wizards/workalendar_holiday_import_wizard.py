@@ -5,6 +5,7 @@ import logging
 
 import pytz
 from dateutil.relativedelta import relativedelta
+
 from odoo import api, fields, models
 
 from ..tools.brazil_all_holidays_set import brazil_all_holidays_set
@@ -22,7 +23,7 @@ _INTERVALS = {
 class WorkalendarHolidayImport(models.TransientModel):
 
     _name = "wizard.workalendar.holiday.import"
-    _description = 'Wizard de import de feriados'
+    _description = "Wizard de import de feriados"
 
     @api.multi
     @api.depends("start_date", "interval_number", "interval_type")
@@ -32,7 +33,9 @@ class WorkalendarHolidayImport(models.TransientModel):
                 wiz.interval_type
             ](wiz.interval_number)
 
-    start_date = fields.Date(string="Start Date", default=fields.Date.today, readonly=1)
+    start_date = fields.Date(
+        string="Start Date", default=fields.Date.today, readonly=1
+    )
     end_date = fields.Date(string="End Date", compute="_compute_end_date")
     interval_number = fields.Integer(string="Interval", default=1)
     interval_type = fields.Selection(
@@ -96,9 +99,9 @@ class WorkalendarHolidayImport(models.TransientModel):
             )
             return calendar_id
         else:
-            return self.env["resource.calendar"].search([("state_id", "=", state.id)])[
-                0
-            ]
+            return self.env["resource.calendar"].search(
+                [("state_id", "=", state.id)]
+            )[0]
 
     @api.multi
     def get_calendar_for_city(self, holiday):
@@ -150,7 +153,9 @@ class WorkalendarHolidayImport(models.TransientModel):
             public_holidays = []
             date_reference = fields.Date.to_date(wiz.start_date)
 
-            while date_reference.year <= fields.Date.to_date(wiz.end_date).year:
+            while (
+                date_reference.year <= fields.Date.to_date(wiz.end_date).year
+            ):
                 all_holidays = brazil_all_holidays_set(date_reference.year)
                 for holiday in all_holidays:
 
@@ -164,7 +169,11 @@ class WorkalendarHolidayImport(models.TransientModel):
                             self.env["res.city"]
                             .search(
                                 [
-                                    ("ibge_code", "=", holiday.municipio_ibge[2:]),
+                                    (
+                                        "ibge_code",
+                                        "=",
+                                        holiday.municipio_ibge[2:],
+                                    ),
                                     ("state_id", "=", state_id),
                                 ]
                             )
@@ -190,7 +199,9 @@ class WorkalendarHolidayImport(models.TransientModel):
                         seconds=user_dt.utcoffset().total_seconds()
                     )
                     datetime_to = (
-                        datetime_from + relativedelta(days=1) - relativedelta(seconds=1)
+                        datetime_from
+                        + relativedelta(days=1)
+                        - relativedelta(seconds=1)
                     )
 
                     date_from = fields.Datetime.to_datetime(datetime_from)
@@ -213,7 +224,8 @@ class WorkalendarHolidayImport(models.TransientModel):
                         leaves.create(
                             {
                                 "resource_id": False,
-                                "name": "%s %d" % (holiday.nome, holiday.data.year),
+                                "name": "%s %d"
+                                % (holiday.nome, holiday.data.year),
                                 "calendar_id": work_time.id,
                                 "date_from": date_from,
                                 "date_to": date_to,

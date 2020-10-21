@@ -4,12 +4,11 @@
 from openupgradelib import openupgrade
 
 _column_renames = {
-    'l10n_br_fiscal_document': [
-        ('operation_type', 'fiscal_operation_type')],
-    'l10n_br_fiscal_operation': [
-        ('operation_type', 'fiscal_operation_type')],
-    'l10n_br_fiscal_operation_line': [
-        ('operation_type', 'fiscal_operation_type')],
+    "l10n_br_fiscal_document": [("operation_type", "fiscal_operation_type")],
+    "l10n_br_fiscal_operation": [("operation_type", "fiscal_operation_type")],
+    "l10n_br_fiscal_operation_line": [
+        ("operation_type", "fiscal_operation_type")
+    ],
 }
 
 

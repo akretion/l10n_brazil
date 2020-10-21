@@ -50,7 +50,10 @@ class TestCustomerInvoice(TransactionCase):
 
         # I totally pay the Invoice
         self.invoice_customer_original.pay_and_reconcile(
-            self.env["account.journal"].search([("type", "=", "bank")], limit=1), 1000.0
+            self.env["account.journal"].search(
+                [("type", "=", "bank")], limit=1
+            ),
+            1000.0,
         )
 
         # I verify that invoice is now in Paid state

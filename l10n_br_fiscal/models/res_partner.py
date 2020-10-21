@@ -13,7 +13,7 @@ from ..constants.fiscal import (
 
 
 class ResPartner(models.Model):
-    _inherit = 'res.partner'
+    _inherit = "res.partner"
 
     @api.model
     def _default_fiscal_profile_id(self, is_company=False):
@@ -21,32 +21,32 @@ class ResPartner(models.Model):
         o tipo fiscal para não contribuinte já que quando é criado um novo
         parceiro o valor do campo is_company é false"""
         return self.env["l10n_br_fiscal.partner.profile"].search(
-            [('default', '=', True), ('is_company', '=', is_company)],
-            limit=1)
+            [("default", "=", True), ("is_company", "=", is_company)], limit=1
+        )
 
     tax_framework = fields.Selection(
         selection=TAX_FRAMEWORK,
         default=TAX_FRAMEWORK_NORMAL,
-        string='Tax Framework',
+        string="Tax Framework",
     )
 
     cnae_main_id = fields.Many2one(
-        comodel_name='l10n_br_fiscal.cnae',
-        domain=[('internal_type', '=', 'normal')],
-        string='Main CNAE',
+        comodel_name="l10n_br_fiscal.cnae",
+        domain=[("internal_type", "=", "normal")],
+        string="Main CNAE",
     )
 
     ind_ie_dest = fields.Selection(
         selection=NFE_IND_IE_DEST,
-        string='Contribuinte do ICMS',
+        string="Contribuinte do ICMS",
         required=True,
         default=NFE_IND_IE_DEST_DEFAULT,
     )
 
     fiscal_profile_id = fields.Many2one(
-        comodel_name='l10n_br_fiscal.partner.profile',
-        string='Fiscal Partner Profile',
-        inverse='_inverse_fiscal_profile',
+        comodel_name="l10n_br_fiscal.partner.profile",
+        string="Fiscal Partner Profile",
+        inverse="_inverse_fiscal_profile",
         domain="[('is_company', '=', is_company)]",
         default=_default_fiscal_profile_id,
     )
@@ -55,19 +55,19 @@ class ResPartner(models.Model):
         for p in self:
             p._onchange_fiscal_profile_id()
 
-    @api.onchange('is_company')
+    @api.onchange("is_company")
     def _onchange_is_company(self):
         for p in self:
             p.fiscal_profile_id = p._default_fiscal_profile_id(p.is_company)
 
-    @api.onchange('fiscal_profile_id')
+    @api.onchange("fiscal_profile_id")
     def _onchange_fiscal_profile_id(self):
         for p in self:
             if p.fiscal_profile_id:
                 p.tax_framework = p.fiscal_profile_id.tax_framework
                 p.ind_ie_dest = p.fiscal_profile_id.ind_ie_dest
 
-    @api.onchange('ind_ie_dest')
+    @api.onchange("ind_ie_dest")
     def _onchange_ind_ie_dest(self):
         for p in self:
             if p.ind_ie_dest == NFE_IND_IE_DEST_9:

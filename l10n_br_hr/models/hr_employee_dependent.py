@@ -4,6 +4,7 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 from erpbrasil.base.fiscal import cnpj_cpf
+
 from odoo import api, fields, models
 
 
@@ -19,7 +20,9 @@ class HrEmployeeDependent(models.Model):
         return self.env.user.employee_ids[0]
 
     employee_id = fields.Many2one(
-        comodel_name="hr.employee", string="Employee ID", default=_get_default_employee
+        comodel_name="hr.employee",
+        string="Employee ID",
+        default=_get_default_employee,
     )
 
     dependent_dob = fields.Date(string="Date of birth", required=True)
@@ -71,7 +74,9 @@ class HrEmployeeDependent(models.Model):
         # O sudo foi utilizado para evitar a permissão de criação de contato
         # para o funcionário.
         #
-        return super(HrEmployeeDependent, self.sudo().with_context(ctx)).create(vals)
+        return super(
+            HrEmployeeDependent, self.sudo().with_context(ctx)
+        ).create(vals)
 
     @api.onchange("cnpj_cpf")
     def onchange_cpf(self):

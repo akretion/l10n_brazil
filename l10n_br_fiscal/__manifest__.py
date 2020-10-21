@@ -20,7 +20,6 @@
         # security
         "security/fiscal_security.xml",
         "security/ir.model.access.csv",
-
         # Data
         # Some data is being loaded via post_init_hook in hook file
         "data/l10n_br_fiscal_email_template.xml",
@@ -38,13 +37,11 @@
         "data/l10n_br_fiscal_server_action.xml",
         "data/ir_cron.xml",
         "data/l10n_br_fiscal_comment_data.xml",
-
         # Wizards
         "wizards/wizard_document_cancel_view.xml",
         "wizards/wizard_document_correction_view.xml",
         "wizards/wizard_document_invalidate_view.xml",
         "wizards/wizard_document_status_view.xml",
-
         # Views
         "views/cnae_view.xml",
         "views/cfop_view.xml",
@@ -54,7 +51,7 @@
         "views/tax_view.xml",
         "views/tax_definition_view.xml",
         "views/icms_regulation_view.xml",
-        'views/icms_relief_view.xml',
+        "views/icms_relief_view.xml",
         "views/tax_pis_cofins_view.xml",
         "views/tax_pis_cofins_base_view.xml",
         "views/tax_pis_cofins_credit_view.xml",
@@ -96,10 +93,8 @@
         "views/document_cancel.xml",
         "views/document_correction.xml",
         "views/city_taxation_code.xml",
-        'views/mdfe/mdfe_views.xml',
-        'views/dfe/dfe_views.xml',
-
-
+        "views/mdfe/mdfe_views.xml",
+        "views/dfe/dfe_views.xml",
         "views/l10n_br_fiscal_menu.xml",
         "views/operation_dashboard_view.xml",
         "views/document_event_view.xml",
@@ -111,8 +106,10 @@
     "installable": True,
     "application": True,
     "auto_install": False,
-    "external_dependencies": {"python": [
-        "erpbrasil.base",
-        "erpbrasil.assinatura",
-    ]},
+    "external_dependencies": {
+        "python": [
+            "erpbrasil.base",
+            "erpbrasil.assinatura",
+        ]
+    },
 }

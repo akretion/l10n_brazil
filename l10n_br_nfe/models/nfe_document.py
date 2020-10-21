@@ -9,25 +9,28 @@ from odoo.addons.l10n_br_fiscal.constants.fiscal import MODELO_FISCAL_NFE
 
 
 class NFe(models.Model):
-    _name = 'l10n_br_nfe.document'
+    _name = "l10n_br_nfe.document"
     _inherit = [
-        'l10n_br_fiscal.document',
-        'l10n_br_fiscal.document.electronic']
-    _table = 'l10n_br_fiscal_document'
-    _description = 'NFe'
+        "l10n_br_fiscal.document",
+        "l10n_br_fiscal.document.electronic",
+    ]
+    _table = "l10n_br_fiscal_document"
+    _description = "NFe"
 
     def _generate_key(self):
         key = super()._generate_key()
         if self.document_type_id.code == MODELO_FISCAL_NFE:
             # TODO Deveria estar no erpbrasil.base.fiscal
             company = self.company_id.partner_id
-            chave = str(company.state_id and
-                        company.state_id.ibge_code or "").zfill(2)
+            chave = str(
+                company.state_id and company.state_id.ibge_code or ""
+            ).zfill(2)
 
             chave += self.date.strftime("%y%m").zfill(4)
 
-            chave += str(misc.punctuation_rm(
-                self.company_id.partner_id.cnpj_cpf)).zfill(14)
+            chave += str(
+                misc.punctuation_rm(self.company_id.partner_id.cnpj_cpf)
+            ).zfill(14)
             chave += str(self.document_type_id.code or "").zfill(2)
             chave += str(self.document_serie or "").zfill(3)
             chave += str(self.number or "").zfill(9)
@@ -74,6 +77,6 @@ class NFe(models.Model):
 
             chave += str(digito)
             # FIXME: Fazer sufixo depender do modelo
-            key = 'NFe' + chave
+            key = "NFe" + chave
 
         return key

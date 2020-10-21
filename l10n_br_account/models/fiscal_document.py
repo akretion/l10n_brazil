@@ -10,18 +10,24 @@ from odoo.addons.l10n_br_fiscal.constants.fiscal import (
 
 
 class FiscalDocument(models.Model):
-    _inherit = 'l10n_br_fiscal.document'
+    _inherit = "l10n_br_fiscal.document"
 
     @api.multi
     def unlink(self):
         draft_documents = self.filtered(
-            lambda d: d.state == SITUACAO_EDOC_EM_DIGITACAO)
+            lambda d: d.state == SITUACAO_EDOC_EM_DIGITACAO
+        )
 
         if draft_documents:
-            UserError(_("You cannot delete a fiscal document "
-                        "which is not draft state."))
+            UserError(
+                _(
+                    "You cannot delete a fiscal document "
+                    "which is not draft state."
+                )
+            )
 
-        invoices = self.env['account.invoice'].search(
-            [('fiscal_document_id', 'in', self.ids)])
+        invoices = self.env["account.invoice"].search(
+            [("fiscal_document_id", "in", self.ids)]
+        )
         invoices.unlink()
         return super().unlink()

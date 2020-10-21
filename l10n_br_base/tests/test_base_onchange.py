@@ -93,5 +93,6 @@ class L10nBrBaseOnchangeTest(TransactionCase):
         self.assertEquals(
             display_address,
             "Rua Paulo Dias, 586 \nCentro" "\n18125-000 - Alumínio-SP\nBrazil",
-            "The function _display_address with parameter" " without_company failed.",
+            "The function _display_address with parameter"
+            " without_company failed.",
         )

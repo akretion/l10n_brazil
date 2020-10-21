@@ -2,8 +2,9 @@
 # Copyright (C) 2014  KMEE - www.kmee.com.br
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
-import os
 import base64
+import os
+
 from erpbrasil.base import misc
 
 from odoo import _, api, fields, models
@@ -57,64 +58,52 @@ class DocumentEvent(models.Model):
             ("13", "Manifestação"),
             ("14", "Carta de Correção"),
         ],
-        string="Service")
+        string="Service",
+    )
 
-    response = fields.Char(
-        string="Description",
-        size=64,
-        readonly=True)
+    response = fields.Char(string="Description", size=64, readonly=True)
 
     company_id = fields.Many2one(
         comodel_name="res.company",
         string="Company",
         readonly=True,
-        states={"draft": [("readonly", False)]})
+        states={"draft": [("readonly", False)]},
+    )
 
     origin = fields.Char(
         string="Source Document",
         size=64,
         readonly=True,
         states={"draft": [("readonly", False)]},
-        help="Referência ao documento que gerou o evento.")
+        help="Referência ao documento que gerou o evento.",
+    )
 
-    file_sent = fields.Char(
-        string="Dispatch File",
-        readonly=True)
+    file_sent = fields.Char(string="Dispatch File", readonly=True)
 
-    file_returned = fields.Char(
-        string="Return file",
-        readonly=True)
+    file_returned = fields.Char(string="Return file", readonly=True)
 
-    status = fields.Char(
-        string="Status Code",
-        readonly=True)
+    status = fields.Char(string="Status Code", readonly=True)
 
-    message = fields.Char(
-        string="Mensagem",
-        readonly=True)
+    message = fields.Char(string="Mensagem", readonly=True)
 
-    create_date = fields.Datetime(
-        string="Create Date",
-        readonly=True)
+    create_date = fields.Datetime(string="Create Date", readonly=True)
 
-    write_date = fields.Datetime(
-        string="Write Date",
-        readonly=True)
+    write_date = fields.Datetime(string="Write Date", readonly=True)
 
-    end_date = fields.Datetime(
-        string="Completion Date",
-        readonly=True)
+    end_date = fields.Datetime(string="Completion Date", readonly=True)
 
     state = fields.Selection(
         selection=[
             ("draft", "Rascunho"),
             ("send", "Enviado"),
             ("wait", "Aguardando Retorno"),
-            ("done", "Recebido Retorno")],
+            ("done", "Recebido Retorno"),
+        ],
         string="Status",
         index=True,
         readonly=True,
-        default="draft")
+        default="draft",
+    )
 
     fiscal_document_id = fields.Many2one(
         comodel_name="l10n_br_fiscal.document",
@@ -122,39 +111,36 @@ class DocumentEvent(models.Model):
     )
 
     cancel_document_event_id = fields.Many2one(
-        comodel_name="l10n_br_fiscal.document.cancel",
-        string="Cancelamento"
+        comodel_name="l10n_br_fiscal.document.cancel", string="Cancelamento"
     )
 
     correction_document_event_id = fields.Many2one(
         comodel_name="l10n_br_fiscal.document.correction",
-        string="Carta de correção"
+        string="Carta de correção",
     )
 
     invalid_number_document_event_id = fields.Many2one(
         comodel_name="l10n_br_fiscal.document.invalidate.number",
-        string=u"Inutilização"
+        string=u"Inutilização",
     )
 
     document_invalidate_number_id = fields.Many2one(
         comodel_name="l10n_br_fiscal.document.invalidate.number",
-        string="Invalidate Document"
+        string="Invalidate Document",
     )
 
-    display_name = fields.Char(
-        string="Nome",
-        compute="_compute_display_name")
+    display_name = fields.Char(string="Nome", compute="_compute_display_name")
 
     xml_sent_id = fields.Many2one(
-        comodel_name="ir.attachment",
-        string="XML", copy=False,
-        readony=True)
+        comodel_name="ir.attachment", string="XML", copy=False, readony=True
+    )
 
     xml_returned_id = fields.Many2one(
         comodel_name="ir.attachment",
         string="XML de autorização",
         copy=False,
-        readony=True)
+        readony=True,
+    )
 
     @api.multi
     @api.depends("company_id.name", "origin")
@@ -190,8 +176,7 @@ class DocumentEvent(models.Model):
             ambiente=False,
             company_id=self.company_id,
             chave=(
-                self.fiscal_document_id.key
-                or self.fiscal_document_id.number
+                self.fiscal_document_id.key or self.fiscal_document_id.number
             ),  # FIXME:
         )
         file_path = os.path.join(save_dir, file_name)
@@ -227,8 +212,7 @@ class DocumentEvent(models.Model):
             file_name += "proc-"
         if sequencia:
             file_name += str(sequencia) + "-"
-        file_name += CODIGO_NOME[
-            self.fiscal_document_id.document_type_id.code]
+        file_name += CODIGO_NOME[self.fiscal_document_id.document_type_id.code]
         file_name += "." + extensao_sem_ponto
 
         file_path = self._grava_arquivo_disco(arquivo, file_name)
@@ -255,7 +239,10 @@ class DocumentEvent(models.Model):
         )
 
         if autorizacao:
-            vals = {"file_returned": file_path, "xml_returned_id": attachment_id.id}
+            vals = {
+                "file_returned": file_path,
+                "xml_returned_id": attachment_id.id,
+            }
         else:
             vals = {"file_sent": file_path, "xml_sent_id": attachment_id.id}
         self.write(vals)

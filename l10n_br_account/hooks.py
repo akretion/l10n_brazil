@@ -25,9 +25,15 @@ def pre_init_hook(cr):
                where fiscal_document_id IS NULL;""",
         (fiscal_doc_id,),
     )
-    fiscal_doc_line_id = env.ref("l10n_br_fiscal.fiscal_document_line_dummy").id
-    if not column_exists(cr, "account_invoice_line", "fiscal_document_line_id"):
-        create_column(cr, "account_invoice_line", "fiscal_document_line_id", "INTEGER")
+    fiscal_doc_line_id = env.ref(
+        "l10n_br_fiscal.fiscal_document_line_dummy"
+    ).id
+    if not column_exists(
+        cr, "account_invoice_line", "fiscal_document_line_id"
+    ):
+        create_column(
+            cr, "account_invoice_line", "fiscal_document_line_id", "INTEGER"
+        )
     cr.execute(
         """update account_invoice_line set fiscal_document_line_id=%s
                where fiscal_document_line_id IS NULL;""",
@@ -52,17 +58,25 @@ def load_fiscal_taxes(env, l10n_br_coa_chart):
                 template_source = env.ref(template_source_ref)
                 tax_source_ref = ".".join([ref_module, ref_name])
                 tax_template = env.ref(tax_source_ref)
-                tax.fiscal_tax_ids = tax_template.fiscal_tax_ids = \
-                    template_source.fiscal_tax_ids
+                tax.fiscal_tax_ids = (
+                    tax_template.fiscal_tax_ids
+                ) = template_source.fiscal_tax_ids
 
 
 def post_init_hook(cr, registry):
     """Relate fiscal taxes to account taxes."""
     env = api.Environment(cr, SUPERUSER_ID, {})
-    l10n_br_coa_charts = env["account.chart.template"].search([]).filtered(
-        lambda chart: chart.get_external_id().get(
-            chart.id).split('.')[0].startswith("l10n_br_coa_")
-        if chart.get_external_id().get(chart.id) else False
+    l10n_br_coa_charts = (
+        env["account.chart.template"]
+        .search([])
+        .filtered(
+            lambda chart: chart.get_external_id()
+            .get(chart.id)
+            .split(".")[0]
+            .startswith("l10n_br_coa_")
+            if chart.get_external_id().get(chart.id)
+            else False
+        )
     )
     for l10n_br_coa_chart in l10n_br_coa_charts:
         load_fiscal_taxes(env, l10n_br_coa_chart)

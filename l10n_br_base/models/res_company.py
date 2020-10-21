@@ -61,7 +61,10 @@ class Company(models.Model):
         """ Write the l10n_br specific functional fields. """
         for company in self:
             company.partner_id.write(
-                {"state_id": company.state_id.id, "inscr_est": company.inscr_est}
+                {
+                    "state_id": company.state_id.id,
+                    "inscr_est": company.inscr_est,
+                }
             )
 
     def _inverse_state_tax_number_ids(self):
@@ -170,7 +173,7 @@ class Company(models.Model):
 
     @api.onchange("city_id")
     def _onchange_city_id(self):
-        """ Ao alterar o campo l10n_br_city_id que é um campo relacional
+        """Ao alterar o campo l10n_br_city_id que é um campo relacional
         com o l10n_br_base.city que são os municípios do IBGE, copia o nome
         do município para o campo city que é o campo nativo do módulo base
         para manter a compatibilidade entre os demais módulos que usam o

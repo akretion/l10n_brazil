@@ -6,19 +6,19 @@ from odoo import fields, models
 
 
 class Operation(models.Model):
-    _inherit = 'l10n_br_fiscal.operation'
+    _inherit = "l10n_br_fiscal.operation"
 
     journal_id = fields.Many2one(
-        comodel_name='account.journal',
-        string='Account Journal',
+        comodel_name="account.journal",
+        string="Account Journal",
         company_dependent=True,
         domain="[('type', 'in', {'out': ['sale', 'general'], 'in': "
-               "['purchase', 'general'], 'all': ['sale', 'purchase', "
-               "'general']}.get(fiscal_operation_type, []))]",
+        "['purchase', 'general'], 'all': ['sale', 'purchase', "
+        "'general']}.get(fiscal_operation_type, []))]",
     )
 
     fiscal_position_id = fields.Many2one(
-        comodel_name='account.fiscal.position',
-        string='Fiscal Position',
+        comodel_name="account.fiscal.position",
+        string="Fiscal Position",
         company_dependent=True,
     )

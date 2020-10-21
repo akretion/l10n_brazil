@@ -15,7 +15,9 @@ class TestCustomerNFe(TransactionCase):
         self.invoice_other_costs = self.env.ref(
             "l10n_br_account_product.demo_nfe_other_costs"
         )
-        self.invoice_difal = self.env.ref("l10n_br_account_product.demo_nfe_difal")
+        self.invoice_difal = self.env.ref(
+            "l10n_br_account_product.demo_nfe_difal"
+        )
 
     def test_customer_nfe_same_state(self):
         """Test customer NFe same state 'Contribuinte' """
@@ -30,7 +32,9 @@ class TestCustomerNFe(TransactionCase):
             "fiscal_position_id is not mapped."
         )
         self.assertEquals(
-            self.invoice_same_state.state, "draft", "Invoice is not in Draft state."
+            self.invoice_same_state.state,
+            "draft",
+            "Invoice is not in Draft state.",
         )
 
         for line in self.invoice_same_state.invoice_line_ids:
@@ -51,22 +55,40 @@ class TestCustomerNFe(TransactionCase):
                 " is not mapped."
             )
             # Check ICMS
-            self.assertEquals(line.icms_cst_id.code, "00", "ICMS CST is not 00")
-            self.assertEquals(line.icms_base, 1000.0, "ICMS Base is not 1000.0 ")
-            self.assertEquals(line.icms_base_other, 0.0, "Other ICMS Base is not 0.0 ")
-            self.assertEquals(line.icms_value, 180.0, "ICMS Value is not 180.0 ")
-            self.assertEquals(line.icms_percent, 18.0, "ICMS Percent is not 18")
             self.assertEquals(
-                line.icms_percent_reduction, 0.0, "ICMS Percent Reduction is not 0.0 "
+                line.icms_cst_id.code, "00", "ICMS CST is not 00"
+            )
+            self.assertEquals(
+                line.icms_base, 1000.0, "ICMS Base is not 1000.0 "
+            )
+            self.assertEquals(
+                line.icms_base_other, 0.0, "Other ICMS Base is not 0.0 "
+            )
+            self.assertEquals(
+                line.icms_value, 180.0, "ICMS Value is not 180.0 "
+            )
+            self.assertEquals(
+                line.icms_percent, 18.0, "ICMS Percent is not 18"
+            )
+            self.assertEquals(
+                line.icms_percent_reduction,
+                0.0,
+                "ICMS Percent Reduction is not 0.0 ",
             )
 
             # Check ICMS ST
-            self.assertEquals(line.icms_st_base, 0.0, "ICMS ST BASE is not 0.0")
+            self.assertEquals(
+                line.icms_st_base, 0.0, "ICMS ST BASE is not 0.0"
+            )
             self.assertEquals(
                 line.icms_st_base_other, 0.0, "Other ICMS ST BASE is not 0.0"
             )
-            self.assertEquals(line.icms_st_value, 0.0, "ICMS ST Value is not 0.0")
-            self.assertEquals(line.icms_st_percent, 0.0, "ICMS ST Percent is not 0.0")
+            self.assertEquals(
+                line.icms_st_value, 0.0, "ICMS ST Value is not 0.0"
+            )
+            self.assertEquals(
+                line.icms_st_percent, 0.0, "ICMS ST Percent is not 0.0"
+            )
             self.assertEquals(
                 line.icms_st_percent_reduction,
                 0.0,
@@ -75,22 +97,40 @@ class TestCustomerNFe(TransactionCase):
 
             # Check IPI
             self.assertEquals(line.ipi_cst_id.code, "50", "IPI CODE is not 50")
-            self.assertEquals(line.ipi_base, 1000.0, "ICMS ST Value is not 1000.0")
-            self.assertEquals(line.ipi_base_other, 0.0, "Other IPI Base is not 0.0 ")
-            self.assertEquals(line.ipi_value, 150.0, "ICMS Value is not 150.0 ")
-            self.assertEquals(line.ipi_percent, 15.0, "ICMS Percent is not 15 .")
+            self.assertEquals(
+                line.ipi_base, 1000.0, "ICMS ST Value is not 1000.0"
+            )
+            self.assertEquals(
+                line.ipi_base_other, 0.0, "Other IPI Base is not 0.0 "
+            )
+            self.assertEquals(
+                line.ipi_value, 150.0, "ICMS Value is not 150.0 "
+            )
+            self.assertEquals(
+                line.ipi_percent, 15.0, "ICMS Percent is not 15 ."
+            )
 
             # Check PIS
             self.assertEquals(line.pis_cst_id.code, "01", "PIS CODE is not 01")
             self.assertEquals(line.pis_base, 1000.0, "PIS BASE is not 1000.0")
             self.assertEquals(line.pis_value, 6.50, "PIS Value is not 6.50 ")
-            self.assertEquals(line.pis_percent, 0.65, "ICMS Percent is not 0.65 .")
+            self.assertEquals(
+                line.pis_percent, 0.65, "ICMS Percent is not 0.65 ."
+            )
 
             # Check COFINS
-            self.assertEquals(line.cofins_cst_id.code, "01", "COFINS CODE is not 01")
-            self.assertEquals(line.cofins_base, 1000.0, "COFINS BASE is not 1000.0")
-            self.assertEquals(line.cofins_value, 30.0, "COFINS Value is not 30.0 ")
-            self.assertEquals(line.cofins_percent, 3.0, "ICMS Percent is not 3.0 .")
+            self.assertEquals(
+                line.cofins_cst_id.code, "01", "COFINS CODE is not 01"
+            )
+            self.assertEquals(
+                line.cofins_base, 1000.0, "COFINS BASE is not 1000.0"
+            )
+            self.assertEquals(
+                line.cofins_value, 30.0, "COFINS Value is not 30.0 "
+            )
+            self.assertEquals(
+                line.cofins_percent, 3.0, "ICMS Percent is not 3.0 ."
+            )
 
         self.invoice_same_state.with_context(
             {"fiscal_document_code": "55"}
@@ -102,10 +142,14 @@ class TestCustomerNFe(TransactionCase):
         )
 
         self.assertEquals(
-            self.invoice_same_state.amount_gross, 2000.0, "Amount Gross is not 2000.0"
+            self.invoice_same_state.amount_gross,
+            2000.0,
+            "Amount Gross is not 2000.0",
         )
         self.assertEquals(
-            self.invoice_same_state.amount_discount, 0.0, "Amount Discount is not 0.0"
+            self.invoice_same_state.amount_discount,
+            0.0,
+            "Amount Discount is not 0.0",
         )
         self.assertEquals(
             self.invoice_same_state.amount_untaxed,
@@ -113,13 +157,19 @@ class TestCustomerNFe(TransactionCase):
             "Amount Untaxed is not 2000.0",
         )
         self.assertEquals(
-            self.invoice_same_state.amount_tax, 0.0, "Amount Untaxed is not 0.0"
+            self.invoice_same_state.amount_tax,
+            0.0,
+            "Amount Untaxed is not 0.0",
         )
         self.assertEquals(
-            self.invoice_same_state.amount_total, 2000.0, "Amount Total is not 2000.0"
+            self.invoice_same_state.amount_total,
+            2000.0,
+            "Amount Total is not 2000.0",
         )
         self.assertEquals(
-            self.invoice_same_state.residual, 2000.0, "Amount Residual is not 2000.0"
+            self.invoice_same_state.residual,
+            2000.0,
+            "Amount Residual is not 2000.0",
         )
 
         # Deveria existir algo ?
@@ -129,26 +179,38 @@ class TestCustomerNFe(TransactionCase):
 
         # TOTAL IPI
         self.assertEquals(
-            self.invoice_same_state.ipi_base, 2000.0, "IPI Total Base is not 1000.0"
+            self.invoice_same_state.ipi_base,
+            2000.0,
+            "IPI Total Base is not 1000.0",
         )
         self.assertEquals(
-            self.invoice_same_state.ipi_value, 300.0, "ICMS Total Value is not 300.0 "
+            self.invoice_same_state.ipi_value,
+            300.0,
+            "ICMS Total Value is not 300.0 ",
         )
 
         # TOTAL ICMS
         self.assertEquals(
-            self.invoice_same_state.icms_base, 2000.0, "ICMS Total Base is not 1000.0 "
+            self.invoice_same_state.icms_base,
+            2000.0,
+            "ICMS Total Base is not 1000.0 ",
         )
         self.assertEquals(
-            self.invoice_same_state.icms_value, 360.0, "ICMS Total Value is not 360.0 "
+            self.invoice_same_state.icms_value,
+            360.0,
+            "ICMS Total Value is not 360.0 ",
         )
 
         # Total PIS
         self.assertEquals(
-            self.invoice_same_state.pis_base, 2000.0, "PIS Total BASE is not 1000.0"
+            self.invoice_same_state.pis_base,
+            2000.0,
+            "PIS Total BASE is not 1000.0",
         )
         self.assertEquals(
-            self.invoice_same_state.pis_value, 13.0, "PIS Total Value is not 13.0 "
+            self.invoice_same_state.pis_value,
+            13.0,
+            "PIS Total Value is not 13.0 ",
         )
 
         # Total COFINS
@@ -169,8 +231,12 @@ class TestCustomerNFe(TransactionCase):
         self.invoice_other_costs._onchange_fiscal()
         for line in self.invoice_other_costs.invoice_line_ids:
             line._onchange_fiscal()
-            self.assertEquals(line.freight_value, 100.0, "Freight value is not 100.0")
-            self.assertEquals(line.insurance_value, 10.0, "Insurance value is not 10.0")
+            self.assertEquals(
+                line.freight_value, 100.0, "Freight value is not 100.0"
+            )
+            self.assertEquals(
+                line.insurance_value, 10.0, "Insurance value is not 10.0"
+            )
             self.assertEquals(
                 line.other_costs_value, 10.0, "Other Costs value is not 10.0"
             )
@@ -188,7 +254,9 @@ class TestCustomerNFe(TransactionCase):
             "Amount Insurance is not 10.0",
         )
         self.assertEquals(
-            self.invoice_other_costs.amount_costs, 10.0, "Amount Costs is not 10.0"
+            self.invoice_other_costs.amount_costs,
+            10.0,
+            "Amount Costs is not 10.0",
         )
 
     def test_customer_invoice_difal(self):
@@ -225,13 +293,25 @@ class TestCustomerNFe(TransactionCase):
             )
 
             # Check ICMS
-            self.assertEquals(line.icms_cst_id.code, "00", "ICMS CST is not 00")
-            self.assertEquals(line.icms_base, 1120.0, "ICMS Base is not 1120.0 ")
-            self.assertEquals(line.icms_base_other, 0.0, "Other ICMS Base is not 0.0 ")
-            self.assertEquals(line.icms_value, 134.4, "ICMS Value is not 134.4 ")
-            self.assertEquals(line.icms_percent, 12.0, "ICMS Percent is not 12")
             self.assertEquals(
-                line.icms_percent_reduction, 0.0, "ICMS Percent Reduction is not 0.0 "
+                line.icms_cst_id.code, "00", "ICMS CST is not 00"
+            )
+            self.assertEquals(
+                line.icms_base, 1120.0, "ICMS Base is not 1120.0 "
+            )
+            self.assertEquals(
+                line.icms_base_other, 0.0, "Other ICMS Base is not 0.0 "
+            )
+            self.assertEquals(
+                line.icms_value, 134.4, "ICMS Value is not 134.4 "
+            )
+            self.assertEquals(
+                line.icms_percent, 12.0, "ICMS Percent is not 12"
+            )
+            self.assertEquals(
+                line.icms_percent_reduction,
+                0.0,
+                "ICMS Percent Reduction is not 0.0 ",
             )
 
             # Check ICMS DIFAL
@@ -245,12 +325,16 @@ class TestCustomerNFe(TransactionCase):
                 line.icms_dest_percent, 0.18, "ICMS Dest Percent is not 0.18 "
             )
             self.assertEquals(
-                line.icms_origin_percent, 12.0, "ICMS Origin Percent is not 12.0% "
+                line.icms_origin_percent,
+                12.0,
+                "ICMS Origin Percent is not 12.0% ",
             )
             self.assertEquals(
                 line.icms_part_percent, 1, "ICMS Origin Percent is not 1.0% "
             )
-            self.assertEquals(line.icms_fcp_value, 22.4, "ICMS FCP Value is not 22.4 ")
+            self.assertEquals(
+                line.icms_fcp_value, 22.4, "ICMS FCP Value is not 22.4 "
+            )
             self.assertEquals(
                 line.icms_dest_value, 132.38, "ICMS Dest Value is not 132.38 "
             )
@@ -259,12 +343,18 @@ class TestCustomerNFe(TransactionCase):
             )
 
             # Check ICMS ST
-            self.assertEquals(line.icms_st_base, 0.0, "ICMS ST BASE is not 0.0")
+            self.assertEquals(
+                line.icms_st_base, 0.0, "ICMS ST BASE is not 0.0"
+            )
             self.assertEquals(
                 line.icms_st_base_other, 0.0, "Other ICMS ST BASE is not 0.0"
             )
-            self.assertEquals(line.icms_st_value, 0.0, "ICMS ST Value is not 0.0")
-            self.assertEquals(line.icms_st_percent, 0.0, "ICMS ST Percent is not 0.0")
+            self.assertEquals(
+                line.icms_st_value, 0.0, "ICMS ST Value is not 0.0"
+            )
+            self.assertEquals(
+                line.icms_st_percent, 0.0, "ICMS ST Percent is not 0.0"
+            )
             self.assertEquals(
                 line.icms_st_percent_reduction,
                 0.0,
@@ -273,13 +363,29 @@ class TestCustomerNFe(TransactionCase):
 
             # Check IPI
             self.assertEquals(line.ipi_cst_id.code, "50", "IPI CODE is not 50")
-            self.assertEquals(line.ipi_base, 1000.0, "ICMS ST Value is not 1000.0")
-            self.assertEquals(line.ipi_base_other, 0.0, "Other IPI Base is not 0.0 ")
-            self.assertEquals(line.ipi_value, 150.0, "ICMS Value is not 150.0 ")
-            self.assertEquals(line.ipi_percent, 15.0, "ICMS Percent is not 15 .")
+            self.assertEquals(
+                line.ipi_base, 1000.0, "ICMS ST Value is not 1000.0"
+            )
+            self.assertEquals(
+                line.ipi_base_other, 0.0, "Other IPI Base is not 0.0 "
+            )
+            self.assertEquals(
+                line.ipi_value, 150.0, "ICMS Value is not 150.0 "
+            )
+            self.assertEquals(
+                line.ipi_percent, 15.0, "ICMS Percent is not 15 ."
+            )
 
             # Check COFINS
-            self.assertEquals(line.cofins_cst_id.code, "01", "COFINS CODE is not 01")
-            self.assertEquals(line.cofins_base, 1000.0, "COFINS BASE is not 1000.0")
-            self.assertEquals(line.cofins_value, 30.0, "COFINS Value is not 30.0 ")
-            self.assertEquals(line.cofins_percent, 3.0, "ICMS Percent is not 3.0 .")
+            self.assertEquals(
+                line.cofins_cst_id.code, "01", "COFINS CODE is not 01"
+            )
+            self.assertEquals(
+                line.cofins_base, 1000.0, "COFINS BASE is not 1000.0"
+            )
+            self.assertEquals(
+                line.cofins_value, 30.0, "COFINS Value is not 30.0 "
+            )
+            self.assertEquals(
+                line.cofins_percent, 3.0, "ICMS Percent is not 3.0 ."
+            )

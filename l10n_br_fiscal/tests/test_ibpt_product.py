@@ -30,10 +30,12 @@ class TestIbptProduct(common.TransactionCase):
 
     def _switch_user_company(self, user, company):
         """ Add a company to the user's allowed & set to current. """
-        user.write({
-            'company_ids': [(6, 0, (company + user.company_ids).ids)],
-            'company_id': company.id,
-        })
+        user.write(
+            {
+                "company_ids": [(6, 0, (company + user.company_ids).ids)],
+                "company_id": company.id,
+            }
+        )
 
     def _create_compay(self):
         # Creating a company
@@ -64,7 +66,9 @@ class TestIbptProduct(common.TransactionCase):
 
     def _create_product_tmpl(self, name, ncm):
         # Creating a product
-        product = self.product_tmpl_model.create({"name": name, "ncm_id": ncm.id})
+        product = self.product_tmpl_model.create(
+            {"name": name, "ncm_id": ncm.id}
+        )
         return product
 
     def test_update_ibpt_product(self):

@@ -27,7 +27,8 @@ def post_init_hook(cr, registry):
     ]
 
     _logger.info(
-        _("Loading l10n_br_fiscal fiscal files. It may take a minute..."))
+        _("Loading l10n_br_fiscal fiscal files. It may take a minute...")
+    )
 
     for file in files:
         tools.convert_file(
@@ -103,9 +104,11 @@ def post_init_hook(cr, registry):
         if not tools.config.get("skip_cest"):
             prodfiles.append("data/l10n_br_fiscal.cest.csv")
 
-        _logger.info(_(
-            "Loading l10n_br_fiscal production files. It may take at least"
-            " 3 minutes...")
+        _logger.info(
+            _(
+                "Loading l10n_br_fiscal production files. It may take at least"
+                " 3 minutes..."
+            )
         )
 
         for f in prodfiles:

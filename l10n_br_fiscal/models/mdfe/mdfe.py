@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright 2020 KMEE INFORMATICA LTDA
 # License AGPL-3 or later (http://www.gnu.org/licenses/agpl)
@@ -13,7 +12,7 @@ from odoo import _, api, fields, models
 from ...constants.mdfe import (
     OPERATION_TYPE,
     SITUACAO_MANIFESTACAO,
-    SITUACAO_NFE
+    SITUACAO_NFE,
 )
 
 _logger = logging.getLogger(__name__)
@@ -21,14 +20,19 @@ _logger = logging.getLogger(__name__)
 
 class MDFe(models.Model):
     _name = "l10n_br_fiscal.mdfe"
-    _description = 'Recipient Manifestation'
+    _description = "Recipient Manifestation"
 
     @api.multi
     def name_get(self):
-        return [(rec.id,
-                 u"NFº: {0} ({1}): {2}".format(
-                     rec.number, rec.cnpj_cpf, rec.company_id.legal_name)
-                 ) for rec in self]
+        return [
+            (
+                rec.id,
+                "NFº: {} ({}): {}".format(
+                    rec.number, rec.cnpj_cpf, rec.company_id.legal_name
+                ),
+            )
+            for rec in self
+        ]
 
     company_id = fields.Many2one(
         comodel_name="res.company",
@@ -163,13 +167,13 @@ class MDFe(models.Model):
     def download_attachment(self, attachment_id=None):
 
         action = {
-            'name': _('Download Attachment'),
-            'view_mode': 'form',
-            'res_model': 'ir.attachment',
-            'type': 'ir.actions.act_window',
-            'target': 'new',
-            'flags': {'mode': 'readonly'},  # default is 'edit'
-            'res_id': attachment_id.id,
+            "name": _("Download Attachment"),
+            "view_mode": "form",
+            "res_model": "ir.attachment",
+            "type": "ir.actions.act_window",
+            "target": "new",
+            "flags": {"mode": "readonly"},  # default is 'edit'
+            "res_id": attachment_id.id,
         }
 
         return action

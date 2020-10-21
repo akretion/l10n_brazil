@@ -5,11 +5,13 @@ from workalendar.america.brazil import IBGE_REGISTER
 
 
 class BrazilianHoliday:
-    def __init__(self, nome, data, estado_ibge, municipio_ibge, abrangencia, tipo):
+    def __init__(
+        self, nome, data, estado_ibge, municipio_ibge, abrangencia, tipo
+    ):
 
         self.estado_ibge = estado_ibge
         self.municipio_ibge = municipio_ibge
-        self.municipio_nome = ''
+        self.municipio_nome = ""
         self.abrangencia = abrangencia
         self.tipo = tipo
         self.nome = nome
@@ -18,13 +20,13 @@ class BrazilianHoliday:
 
 # Commemorative holidays list
 COMMEMORATIVE_HOLIDAYS = [
-    'Consciência Negra',
+    "Consciência Negra",
 ]
 
 
 def brazil_all_holidays_set(year):
     """Returns all holidays in brazil
-     with their respective type and coverage"""
+    with their respective type and coverage"""
 
     holidays_set = []
 
@@ -35,11 +37,12 @@ def brazil_all_holidays_set(year):
         holiday_date = national_holidays[0]
 
         if national_holidays[1] in COMMEMORATIVE_HOLIDAYS:
-            tipo_feriado = 'C'
+            tipo_feriado = "C"
         else:
-            tipo_feriado = 'F'
-        holiday_obj = BrazilianHoliday(holiday_name, holiday_date, None, None,
-                                       'N', tipo_feriado)
+            tipo_feriado = "F"
+        holiday_obj = BrazilianHoliday(
+            holiday_name, holiday_date, None, None, "N", tipo_feriado
+        )
         if not any(x.nome == holiday_obj.nome for x in holidays_set):
             holidays_set.append(holiday_obj)
 
@@ -49,8 +52,9 @@ def brazil_all_holidays_set(year):
         holiday_name = bank_holidays[1]
         holiday_date = bank_holidays[0]
 
-        holiday_obj = BrazilianHoliday(holiday_name, holiday_date, None, None,
-                                       'N', 'B')
+        holiday_obj = BrazilianHoliday(
+            holiday_name, holiday_date, None, None, "N", "B"
+        )
         if not any(x.nome == holiday_obj.nome for x in holidays_set):
             holidays_set.append(holiday_obj)
 
@@ -64,12 +68,15 @@ def brazil_all_holidays_set(year):
                 holiday_name = state_holidays[1]
                 holiday_date = state_holidays[0]
 
-                holiday_obj = BrazilianHoliday(holiday_name, holiday_date,
-                                               estado_ibge, None, 'E', 'F')
+                holiday_obj = BrazilianHoliday(
+                    holiday_name, holiday_date, estado_ibge, None, "E", "F"
+                )
 
                 # Check if is just a state holiday
-                if not any((x.nome == holiday_obj.nome and
-                            not x.estado_ibge) for x in holidays_set):
+                if not any(
+                    (x.nome == holiday_obj.nome and not x.estado_ibge)
+                    for x in holidays_set
+                ):
                     holidays_set.append(holiday_obj)
 
     # Get brazilian municipal holidays
@@ -84,13 +91,19 @@ def brazil_all_holidays_set(year):
                 holiday_name = city_holiday[1]
                 holiday_date = city_holiday[0]
 
-                holiday_obj = BrazilianHoliday(holiday_name, holiday_date,
-                                               estado_ibge,
-                                               municipio_ibge,
-                                               'M', 'F')
+                holiday_obj = BrazilianHoliday(
+                    holiday_name,
+                    holiday_date,
+                    estado_ibge,
+                    municipio_ibge,
+                    "M",
+                    "F",
+                )
 
                 # Check if is just a municipal holiday
-                if not any((x.nome == holiday_obj.nome and
-                            not x.municipio_ibge) for x in holidays_set):
+                if not any(
+                    (x.nome == holiday_obj.nome and not x.municipio_ibge)
+                    for x in holidays_set
+                ):
                     holidays_set.append(holiday_obj)
     return holidays_set

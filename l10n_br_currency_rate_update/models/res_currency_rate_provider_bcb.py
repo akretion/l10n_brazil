@@ -2,6 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
 import requests
+
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
@@ -10,7 +11,9 @@ from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
 class ResCurrencyRateProviderBCB(models.Model):
     _inherit = "res.currency.rate.provider"
 
-    service = fields.Selection(selection_add=[("BCB", "Brazilian Central Bank")])
+    service = fields.Selection(
+        selection_add=[("BCB", "Brazilian Central Bank")]
+    )
 
     @api.model
     def _get_supported_currencies(self):
@@ -81,4 +84,6 @@ class ResCurrencyRateProviderBCB(models.Model):
 
             return data
 
-        return super()._obtain_rates(base_currency, currencies, date_from, date_to)
+        return super()._obtain_rates(
+            base_currency, currencies, date_from, date_to
+        )

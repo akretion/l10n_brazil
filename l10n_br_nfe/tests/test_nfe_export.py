@@ -8,7 +8,9 @@ from odoo.tests.common import TransactionCase
 class TestNFeExport(TransactionCase):
     def setUp(self):
         super(TestNFeExport, self).setUp()
-        self.wizard_export = self.env["l10n_br_account_product.nfe_export_invoice"]
+        self.wizard_export = self.env[
+            "l10n_br_account_product.nfe_export_invoice"
+        ]
         self.invoice_same_state = self.env.ref(
             "l10n_br_account_product.demo_nfe_same_state"
         )

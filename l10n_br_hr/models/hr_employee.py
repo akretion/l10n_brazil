@@ -4,6 +4,7 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 from erpbrasil.base.fiscal import cnpj_cpf, pis
+
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
@@ -14,7 +15,9 @@ class HrEmployee(models.Model):
     def _default_country(self):
         return self.env["res.country"].search([("code", "=", "BR")])
 
-    naturalidade = fields.Many2one(string="Naturalidade", comodel_name="res.city")
+    naturalidade = fields.Many2one(
+        string="Naturalidade", comodel_name="res.city"
+    )
 
     pis_pasep = fields.Char(string="PIS/PASEP", size=15)
 
@@ -64,7 +67,10 @@ class HrEmployee(models.Model):
     )
 
     cpf = fields.Char(
-        string="CPF", store=True, related="address_home_id.cnpj_cpf", readonly=False
+        string="CPF",
+        store=True,
+        related="address_home_id.cnpj_cpf",
+        readonly=False,
     )
 
     organ_exp = fields.Char(string="Dispatcher organ")
@@ -87,7 +93,9 @@ class HrEmployee(models.Model):
 
     expiration_date = fields.Date(string="Expiration date")
 
-    ethnicity = fields.Many2one(string="Ethnicity", comodel_name="hr.ethnicity")
+    ethnicity = fields.Many2one(
+        string="Ethnicity", comodel_name="hr.ethnicity"
+    )
 
     blood_type = fields.Selection(
         string="Blood type",
@@ -104,7 +112,9 @@ class HrEmployee(models.Model):
     )
 
     deficiency_id = fields.Many2one(
-        string="Deficiency", comodel_name="hr.deficiency", track_visibility="onchange"
+        string="Deficiency",
+        comodel_name="hr.deficiency",
+        track_visibility="onchange",
     )
 
     deficiency_description = fields.Char(string="Deficiency description")
@@ -126,7 +136,8 @@ class HrEmployee(models.Model):
     )
 
     civil_certificate_type_id = fields.Many2one(
-        string="Civil certificate type", comodel_name="hr.civil.certificate.type"
+        string="Civil certificate type",
+        comodel_name="hr.civil.certificate.type",
     )
 
     alternate_phone = fields.Char(string="Alternate phone")
@@ -146,7 +157,9 @@ class HrEmployee(models.Model):
 
     registration = fields.Char(string="Registration number")
 
-    country_id = fields.Many2one(comodel_name="res.country", default=_default_country)
+    country_id = fields.Many2one(
+        comodel_name="res.country", default=_default_country
+    )
 
     tipo = fields.Selection(
         string="Tipo de Colaborador",

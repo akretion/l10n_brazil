@@ -16,7 +16,9 @@ class L10nBrAccountNfeExport(models.TransientModel):
         default=lambda self: self.user.company_id,
     )
 
-    import_status_draft = fields.Boolean(string="Importar NFs com status em rascunho")
+    import_status_draft = fields.Boolean(
+        string="Importar NFs com status em rascunho"
+    )
 
     nfe_export_result = fields.One2many(
         comodel_name="l10n_br_account_product.nfe_export_result",

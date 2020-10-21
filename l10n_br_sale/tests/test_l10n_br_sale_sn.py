@@ -7,10 +7,9 @@ from .test_l10n_br_sale import L10nBrSaleBaseTest
 
 
 class TestL10nBrSaleSN(L10nBrSaleBaseTest):
-
     def setUp(self):
         super().setUp()
-        self.company = self.env.ref('l10n_br_base.empresa_simples_nacional')
-        self.so_products = self.env.ref('l10n_br_sale.sn_so_only_products')
-        self.so_services = self.env.ref('l10n_br_sale.sn_so_only_services')
-        self.so_prod_srv = self.env.ref('l10n_br_sale.sn_so_product_service')
+        self.company = self.env.ref("l10n_br_base.empresa_simples_nacional")
+        self.so_products = self.env.ref("l10n_br_sale.sn_so_only_products")
+        self.so_services = self.env.ref("l10n_br_sale.sn_so_only_services")
+        self.so_prod_srv = self.env.ref("l10n_br_sale.sn_so_product_service")

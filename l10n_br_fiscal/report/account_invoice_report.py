@@ -17,7 +17,9 @@ class AccountInvoiceReport(models.Model):
         readonly=True,
     )
 
-    fiscal_type = fields.Selection(selection=PRODUCT_FISCAL_TYPE, string="Tipo Fiscal")
+    fiscal_type = fields.Selection(
+        selection=PRODUCT_FISCAL_TYPE, string="Tipo Fiscal"
+    )
 
     cfop_id = fields.Many2one(
         comodel_name="l10n_br_account_product.cfop",
@@ -31,7 +33,9 @@ class AccountInvoiceReport(models.Model):
     )
 
     icms_st_value = fields.Float(
-        string=u"Valor ICMS ST", required=True, digits=dp.get_precision("Account")
+        string=u"Valor ICMS ST",
+        required=True,
+        digits=dp.get_precision("Account"),
     )
 
     ipi_value = fields.Float(
@@ -43,7 +47,9 @@ class AccountInvoiceReport(models.Model):
     )
 
     cofins_value = fields.Float(
-        string=u"Valor COFINS", required=True, digits=dp.get_precision("Account")
+        string=u"Valor COFINS",
+        required=True,
+        digits=dp.get_precision("Account"),
     )
 
     ii_value = fields.Float(
@@ -51,7 +57,9 @@ class AccountInvoiceReport(models.Model):
     )
 
     total_with_taxes = fields.Float(
-        string=u"Total com Impostos", required=True, digits=dp.get_precision("Account")
+        string=u"Total com Impostos",
+        required=True,
+        digits=dp.get_precision("Account"),
     )
 
     def _select(self):

@@ -6,19 +6,21 @@ from odoo import api, fields, models
 
 class WizardDocumentStatus(models.TransientModel):
 
-    _inherit = 'l10n_br_fiscal.document.status.wizard'
+    _inherit = "l10n_br_fiscal.document.status.wizard"
 
     rps_number = fields.Char(
-        string='RPS Number',
-        default=lambda self: self.env['l10n_br_fiscal.document'].browse(
-            self._context.get('active_ids', [])).rps_number
+        string="RPS Number",
+        default=lambda self: self.env["l10n_br_fiscal.document"]
+        .browse(self._context.get("active_ids", []))
+        .rps_number,
     )
 
     @api.multi
     def get_document_status(self):
         for data in self:
-            document_id = self.env['l10n_br_fiscal.document'].browse(
-                self._context.get('active_ids', []))[0]
+            document_id = self.env["l10n_br_fiscal.document"].browse(
+                self._context.get("active_ids", [])
+            )[0]
             call_result = {
                 "document_status": document_id.action_consultar_nfse_rps(),
                 "rps_number": data.rps_number,

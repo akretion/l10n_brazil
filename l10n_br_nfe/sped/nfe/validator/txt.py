@@ -74,7 +74,9 @@ def validate(invoices, context=None):
             if not company.partner_id.l10n_br_city_id.name:
                 strErro += u"Emitente / Endereço - Nome do município\n"
             if not company.partner_id.l10n_br_city_id.ibge_code:
-                strErro += u"Emitente / Endereço - " u"Código do IBGE do município\n"
+                strErro += (
+                    u"Emitente / Endereço - " u"Código do IBGE do município\n"
+                )
 
         if not company.partner_id.country_id:
             strErro += u"Emitente / Endereço - país\n"
@@ -108,7 +110,8 @@ def validate(invoices, context=None):
             else:
                 if not partner.state_id.ibge_code:
                     strErro += (
-                        u"Destinatário / Endereço - " u"Código do IBGE do estado\n"
+                        u"Destinatário / Endereço - "
+                        u"Código do IBGE do estado\n"
                     )
                 if not partner.state_id.name:
                     strErro += u"Destinatário / Endereço - Nome do estado\n"
@@ -121,7 +124,8 @@ def validate(invoices, context=None):
                     strErro += u"Destinatário / Endereço - Nome do município\n"
                 if not partner.l10n_br_city_id.ibge_code:
                     strErro += (
-                        u"Destinatário / Endereço - " u"Código do IBGE do município\n"
+                        u"Destinatário / Endereço - "
+                        u"Código do IBGE do município\n"
                     )
 
         if not partner.country_id:
@@ -138,7 +142,10 @@ def validate(invoices, context=None):
             if partner.id != inv.partner_shipping_id.id:
 
                 if not inv.partner_shipping_id.street:
-                    strErro += u"Destinatário / Endereço de Entrega" u" - Logradouro\n"
+                    strErro += (
+                        u"Destinatário / Endereço de Entrega"
+                        u" - Logradouro\n"
+                    )
 
                 if not inv.partner_shipping_id.number:
                     strErro += u"Destinatário / Endereço de Entrega - Número\n"
@@ -156,7 +163,8 @@ def validate(invoices, context=None):
                         )
                     if not inv.partner_shipping_id.state_id.name:
                         strErro += (
-                            u"Destinatário / Endereço de Entrega - " u"Nome do estado\n"
+                            u"Destinatário / Endereço de Entrega - "
+                            u"Nome do estado\n"
                         )
 
                 if not inv.partner_shipping_id.l10n_br_city_id:
@@ -178,7 +186,8 @@ def validate(invoices, context=None):
                 else:
                     if not inv.partner_shipping_id.country_id.name:
                         strErro += (
-                            u"Destinatário / Endereço de Entrega - " u"Nome do país\n"
+                            u"Destinatário / Endereço de Entrega - "
+                            u"Nome do país\n"
                         )
                     if not inv.partner_shipping_id.country_id.bc_code:
                         strErro += (
@@ -236,7 +245,8 @@ def validate(invoices, context=None):
 
                 if not inv_line.quantity:
                     strErro += (
-                        u"Produtos e Serviços: %s " u"- %s, Qtde: %s - Quantidade\n"
+                        u"Produtos e Serviços: %s "
+                        u"- %s, Qtde: %s - Quantidade\n"
                     ) % (
                         inv_line.product_id.default_code,
                         inv_line.product_id.name,
@@ -280,7 +290,8 @@ def validate(invoices, context=None):
 
                     if not inv_line.ipi_cst_id:
                         strErro += (
-                            u"Produtos e Serviços: %s - %s," u" Qtde: %s - CST do IPI\n"
+                            u"Produtos e Serviços: %s - %s,"
+                            u" Qtde: %s - CST do IPI\n"
                         ) % (
                             inv_line.product_id.default_code,
                             inv_line.product_id.name,
@@ -310,7 +321,8 @@ def validate(invoices, context=None):
 
                 if not inv_line.pis_cst_id:
                     strErro += (
-                        u"Produtos e Serviços: %s - %s," u" Qtde: %s - CST do PIS\n"
+                        u"Produtos e Serviços: %s - %s,"
+                        u" Qtde: %s - CST do PIS\n"
                     ) % (
                         inv_line.product_id.default_code,
                         inv_line.product_id.name,
@@ -319,7 +331,8 @@ def validate(invoices, context=None):
 
                 if not inv_line.cofins_cst_id:
                     strErro += (
-                        u"Produtos e Serviços: %s - %s," u" Qtde: %s - CST do COFINS\n"
+                        u"Produtos e Serviços: %s - %s,"
+                        u" Qtde: %s - CST do COFINS\n"
                     ) % (
                         inv_line.product_id.default_code,
                         inv_line.product_id.name,

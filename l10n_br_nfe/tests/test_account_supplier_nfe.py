@@ -26,7 +26,9 @@ class TestSupplierNFe(TransactionCase):
             "fiscal_position_id is not mapped."
         )
         self.assertEquals(
-            self.invoice_same_state.state, "draft", "Invoice is not in Draft state."
+            self.invoice_same_state.state,
+            "draft",
+            "Invoice is not in Draft state.",
         )
 
         for line in self.invoice_same_state.invoice_line_ids:
@@ -51,5 +53,7 @@ class TestSupplierNFe(TransactionCase):
             {"fiscal_document_code": "55"}
         ).action_invoice_open()
         self.assertEquals(
-            self.invoice_same_state.state, "open", "Invoice should be in state Open"
+            self.invoice_same_state.state,
+            "open",
+            "Invoice should be in state Open",
         )

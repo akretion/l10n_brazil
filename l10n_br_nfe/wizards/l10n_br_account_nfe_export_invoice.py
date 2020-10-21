@@ -33,7 +33,9 @@ class L10nBrAccountNfeExportInvoice(models.TransientModel):
     file = fields.Binary("Arquivo", readonly=True)
 
     file_type = fields.Selection(
-        selection=[("xml", "XML")], string="Tipo do Arquivo", default=_default_file_type
+        selection=[("xml", "XML")],
+        string="Tipo do Arquivo",
+        default=_default_file_type,
     )
 
     state = fields.Selection(
@@ -67,7 +69,10 @@ class L10nBrAccountNfeExportInvoice(models.TransientModel):
             active_ids = self._context.get("active_ids", [])
 
             if not active_ids:
-                err_msg = u"Não existe nenhum documento fiscal para ser" u" exportado!"
+                err_msg = (
+                    u"Não existe nenhum documento fiscal para ser"
+                    u" exportado!"
+                )
             invoices = []
             export_inv_numbers = []
             company_ids = []
@@ -123,7 +128,10 @@ class L10nBrAccountNfeExportInvoice(models.TransientModel):
                 name = "nfe{}.{}".format(export_inv_numbers[0], data.file_type)
 
             mod_serializer = __import__(
-                ("openerp.addons.l10n_br_account_product" ".sped.nfe.serializer.")
+                (
+                    "openerp.addons.l10n_br_account_product"
+                    ".sped.nfe.serializer."
+                )
                 + data.file_type,
                 globals(),
                 locals(),
@@ -141,14 +149,19 @@ class L10nBrAccountNfeExportInvoice(models.TransientModel):
                 nfe_file = nfe["nfe"].encode("utf8")
 
             data.write(
-                {"file": base64.b64encode(nfe_file), "state": "done", "name": name}
+                {
+                    "file": base64.b64encode(nfe_file),
+                    "state": "done",
+                    "name": name,
+                }
             )
 
         if err_msg:
             raise UserError(_(err_msg))
 
         view_rec = self.env.ref(
-            "l10n_br_account_product." "l10n_br_account_product_nfe_export_invoice_form"
+            "l10n_br_account_product."
+            "l10n_br_account_product_nfe_export_invoice_form"
         )
 
         view_id = view_rec and view_rec.id or False

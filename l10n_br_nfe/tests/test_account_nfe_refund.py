@@ -9,7 +9,9 @@ from odoo.tests.common import TransactionCase
 class TestCustomerNFeRefund(TransactionCase):
     def setUp(self):
         super(TestCustomerNFeRefund, self).setUp()
-        self.wizard_export = self.env["l10n_br_account_product.nfe_export_invoice"]
+        self.wizard_export = self.env[
+            "l10n_br_account_product.nfe_export_invoice"
+        ]
         self.wizard_refund = self.env["account.invoice.refund"]
         self.invoice_same_state = self.env.ref(
             "l10n_br_account_product.demo_nfe_same_state"
@@ -38,12 +40,16 @@ class TestCustomerNFeRefund(TransactionCase):
         self.invoice_same_state.action_sefaz_open()
         # I totally pay the Invoice
         self.invoice_same_state.pay_and_reconcile(
-            self.env["account.journal"].search([("type", "=", "bank")], limit=1),
-            2000.0
+            self.env["account.journal"].search(
+                [("type", "=", "bank")], limit=1
+            ),
+            2000.0,
         )
 
         # I verify that invoice is now in Paid state
-        assert self.invoice_same_state.state == "paid", "Invoice is not in Paid state"
+        assert (
+            self.invoice_same_state.state == "paid"
+        ), "Invoice is not in Paid state"
         self.wizard = self.wizard_refund.create(
             {"description": "Test refund sale invoice"}
         )
@@ -60,11 +66,12 @@ class TestCustomerNFeRefund(TransactionCase):
         if domain_ids:
             invoice_refund_id = domain_ids[2][0]
             assert invoice_refund_id, "Invoice refund not created!"
-            invoice_refund = self.env["account.invoice"].browse(invoice_refund_id)
+            invoice_refund = self.env["account.invoice"].browse(
+                invoice_refund_id
+            )
             assert (
                 invoice_refund.fiscal_category_id.id
-                == self.invoice_same_state.fiscal_category_id.
-                refund_fiscal_category_id.id
+                == self.invoice_same_state.fiscal_category_id.refund_fiscal_category_id.id
             ), "Wrong refund fiscal category!"
             for line in invoice_refund.invoice_line_ids:
                 assert line.cfop_id.code == "1201", "Wrong CFOP Code"

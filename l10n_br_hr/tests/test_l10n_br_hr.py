@@ -9,10 +9,16 @@ class TestL10nBr(TransactionCase):
         self.employee = self.env["hr.employee"]
         self.employee = self.employee.create(
             {
-                "address_id": self.env["res.partner"].search([])[0].company_id.id,
-                "company_id": self.env["res.partner"].search([])[0].company_id.id,
+                "address_id": self.env["res.partner"]
+                .search([])[0]
+                .company_id.id,
+                "company_id": self.env["res.partner"]
+                .search([])[0]
+                .company_id.id,
                 "department_id": self.env["hr.department"],
-                "civil_certificate_type_id": self.env["hr.civil.certificate.type"],
+                "civil_certificate_type_id": self.env[
+                    "hr.civil.certificate.type"
+                ],
                 "deficiency_id": 1,
                 "deficiency_description": "Deficiency in index finger",
                 "name": "l10n brazil demo employee",
@@ -47,7 +53,8 @@ class TestL10nBr(TransactionCase):
     def test_l10n_br_hr_cbo(self):
         cbo = self.env.ref("l10n_br_hr.1")
         self.assertTrue(
-            cbo.name_get()[0][1] == "010105 - Oficial general da " "aeronáutica",
+            cbo.name_get()[0][1] == "010105 - Oficial general da "
+            "aeronáutica",
             "The CBO name by name_get is not valid, expected " "'code - name'",
         )
 
@@ -60,7 +67,9 @@ class TestL10nBr(TransactionCase):
         )
 
     def test_dependent_type(self):
-        dependent_type = self.env["hr.dependent.type"].search([])[0].name_get()[0][1]
+        dependent_type = (
+            self.env["hr.dependent.type"].search([])[0].name_get()[0][1]
+        )
         self.assertEqual(
             dependent_type,
             "1 - Cônjuge",
@@ -77,7 +86,9 @@ class TestL10nBr(TransactionCase):
 
     def test_hr_educational_attainment(self):
         educational_attainment = self.env["hr.educational.attainment"]
-        educational_attainment = educational_attainment.search([])[0].name_get()[0][1]
+        educational_attainment = educational_attainment.search([])[
+            0
+        ].name_get()[0][1]
         expected_result = (
             "01 - Analfabeto, inclusive o que, embora tenha "
             "recebido instrução, não se alfabetizou"

@@ -56,7 +56,9 @@ class OtherIETest(TransactionCase):
             result = False
             if line.inscr_est == "41902653":
                 result = True
-            self.assertTrue(result, "Error in method to update other IE(s) on partner.")
+            self.assertTrue(
+                result, "Error in method to update other IE(s) on partner."
+            )
 
         try:
             result = self.company.write(
@@ -77,7 +79,8 @@ class OtherIETest(TransactionCase):
             result = False
 
         self.assertFalse(
-            result, "Error to check included other" " IE to State already informed."
+            result,
+            "Error to check included other" " IE to State already informed.",
         )
 
     def test_included_invalid_ie(self):
@@ -120,7 +123,8 @@ class OtherIETest(TransactionCase):
             result = False
         self.assertFalse(
             result,
-            "Error to check included other valid IE " " in to same state of Company.",
+            "Error to check included other valid IE "
+            " in to same state of Company.",
         )
 
     def test_included_valid_ie_on_partner(self):
@@ -143,4 +147,6 @@ class OtherIETest(TransactionCase):
             result = False
             if line.inscr_est == "41902653":
                 result = True
-            self.assertTrue(result, "Error in method to update other IE(s) on Company.")
+            self.assertTrue(
+                result, "Error in method to update other IE(s) on Company."
+            )

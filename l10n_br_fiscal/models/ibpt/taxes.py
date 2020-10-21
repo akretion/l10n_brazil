@@ -5,6 +5,7 @@
 from collections import namedtuple
 
 import requests
+
 from odoo import _
 from odoo.exceptions import UserError
 
@@ -33,7 +34,9 @@ def _request(ws_url, params):
                 _(
                     "IBPT Forbidden - token={!r}, "
                     "cnpj={!r}, UF={!r}".format(
-                        params.get("token"), params.get("cnpj"), params.get("uf")
+                        params.get("token"),
+                        params.get("cnpj"),
+                        params.get("uf"),
                     )
                 )
             )
@@ -43,7 +46,9 @@ def _request(ws_url, params):
                 _(
                     "IBPT Forbidden - token={!r}, "
                     "cnpj={!r}, UF={!r}".format(
-                        params.get("token"), params.get("cnpj"), params.get("uf")
+                        params.get("token"),
+                        params.get("cnpj"),
+                        params.get("uf"),
                     )
                 )
             )
@@ -52,7 +57,14 @@ def _request(ws_url, params):
 
 
 def get_ibpt_product(
-    config, ncm, ex="0", reference="", description="", uom="", amount="0", gtin=""
+    config,
+    ncm,
+    ex="0",
+    reference="",
+    description="",
+    uom="",
+    amount="0",
+    gtin="",
 ):
 
     data = {

@@ -10,17 +10,14 @@ class DocumentStatusWizard(models.TransientModel):
     _description = "Fiscal Document Status"
 
     state = fields.Selection(
-        selection=[
-            ("init", "Init"),
-            ("error", "Error"),
-            ("done", "Done")],
+        selection=[("init", "Init"), ("error", "Error"), ("done", "Done")],
         string="State",
         index=True,
         readonly=True,
-        default="init")
+        default="init",
+    )
 
-    document_status = fields.Text(
-        string="Status", readonly=True)
+    document_status = fields.Text(string="Status", readonly=True)
 
     @api.multi
     def get_document_status(self):

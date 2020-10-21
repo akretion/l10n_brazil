@@ -2,22 +2,20 @@
 # Copyright (C) 2019  KMEE INFORMATICA LTDA
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
+import logging
+
 from odoo import api, fields, models
 
-
-from ..constants.fiscal import (
-    SITUACAO_EDOC_AUTORIZADA,
-    PROCESSADOR_NENHUM
-)
-
-import logging
+from ..constants.fiscal import PROCESSADOR_NENHUM, SITUACAO_EDOC_AUTORIZADA
 
 _logger = logging.getLogger(__name__)
 
 
 def filter_processador(record):
-    if record.document_electronic and \
-            record.processador_edoc == PROCESSADOR_NENHUM:
+    if (
+        record.document_electronic
+        and record.processador_edoc == PROCESSADOR_NENHUM
+    ):
         return True
     return False
 
@@ -28,44 +26,45 @@ class DocumentEletronic(models.AbstractModel):
 
     _inherit = "l10n_br_fiscal.document.workflow"
 
-    @api.depends('codigo_situacao', 'motivo_situacao')
+    @api.depends("codigo_situacao", "motivo_situacao")
     def _compute_codigo_motivo_situacao(self):
         for record in self:
             if record.motivo_situacao and record.codigo_situacao:
-                record.codigo_motivo_situacao = '{} - {}'.format(
-                    record.codigo_situacao,
-                    record.motivo_situacao
+                record.codigo_motivo_situacao = "{} - {}".format(
+                    record.codigo_situacao, record.motivo_situacao
                 )
 
     codigo_situacao = fields.Char(
-        string='Código situação',
-        copy=False,)
+        string="Código situação",
+        copy=False,
+    )
 
     motivo_situacao = fields.Char(
-        string='Motivo situação',
-        copy=False,)
+        string="Motivo situação",
+        copy=False,
+    )
 
     codigo_motivo_situacao = fields.Char(
-        compute='_compute_codigo_motivo_situacao',
-        string='Situação',
-        copy=False,)
+        compute="_compute_codigo_motivo_situacao",
+        string="Situação",
+        copy=False,
+    )
 
     # Eventos de envio
     data_hora_autorizacao = fields.Datetime(
-        string="Data Hora",
-        readonly=True,
-        copy=False)
+        string="Data Hora", readonly=True, copy=False
+    )
 
     protocolo_autorizacao = fields.Char(
-        string="Protocolo",
-        readonly=True,
-        copy=False)
+        string="Protocolo", readonly=True, copy=False
+    )
 
     autorizacao_event_id = fields.Many2one(
         comodel_name="l10n_br_fiscal.document.event",
         string="Autorização",
         readonly=True,
-        copy=False)
+        copy=False,
+    )
 
     file_xml_id = fields.Many2one(
         comodel_name="ir.attachment",
@@ -73,7 +72,8 @@ class DocumentEletronic(models.AbstractModel):
         string="XML envio",
         ondelete="restrict",
         copy=False,
-        readonly=True)
+        readonly=True,
+    )
 
     file_xml_autorizacao_id = fields.Many2one(
         comodel_name="ir.attachment",
@@ -81,22 +81,24 @@ class DocumentEletronic(models.AbstractModel):
         string="XML de autorização",
         ondelete="restrict",
         copy=False,
-        readonly=True)
+        readonly=True,
+    )
 
     file_pdf_id = fields.Many2one(
         comodel_name="ir.attachment",
         string="PDF",
         ondelete="restrict",
-        copy=False)
+        copy=False,
+    )
 
     # Eventos de cancelamento
     data_hora_cancelamento = fields.Datetime(
-        string="Data Hora Autorização",
-        readonly=True)
+        string="Data Hora Autorização", readonly=True
+    )
 
     protocolo_cancelamento = fields.Char(
-        string="Protocolo Autorização",
-        readonly=True)
+        string="Protocolo Autorização", readonly=True
+    )
 
     cancel_document_event_id = fields.Many2one(
         comodel_name="l10n_br_fiscal.document.cancel", string="Cancelamento"
@@ -106,25 +108,24 @@ class DocumentEletronic(models.AbstractModel):
         comodel_name="ir.attachment",
         string="XML de cancelamento",
         ondelete="restrict",
-        copy=False)
+        copy=False,
+    )
 
     file_xml_autorizacao_cancelamento_id = fields.Many2one(
         comodel_name="ir.attachment",
         string="XML de autorização de cancelamento",
         ondelete="restrict",
-        copy=False)
+        copy=False,
+    )
 
     document_version = fields.Char(
-        string='Versão',
-        default='4.00',
-        readonly=True)
+        string="Versão", default="4.00", readonly=True
+    )
 
-    is_edoc_printed = fields.Boolean(
-        string="Impresso",
-        readonly=True)
+    is_edoc_printed = fields.Boolean(string="Impresso", readonly=True)
 
     def _eletronic_document_send(self):
-        """ Implement this method in your transmission module,
+        """Implement this method in your transmission module,
         to send the electronic document and use the method _change_state
         to update the state of the transmited document,
 
@@ -176,12 +177,12 @@ class DocumentEletronic(models.AbstractModel):
     def _target_new_tab(self, attachment_id):
         if attachment_id:
             return {
-                'type' : 'ir.actions.act_url',
-                'url': '/web/content/{id}/{nome}'.format(
-                    id=attachment_id.id,
-                    nome=attachment_id.name),
-                'target': 'new',
-                }
+                "type": "ir.actions.act_url",
+                "url": "/web/content/{id}/{nome}".format(
+                    id=attachment_id.id, nome=attachment_id.name
+                ),
+                "target": "new",
+            }
 
     def view_xml(self):
         xml_file = self.file_xml_autorizacao_id or self.file_xml_id

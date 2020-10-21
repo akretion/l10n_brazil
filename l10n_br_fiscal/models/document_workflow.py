@@ -5,6 +5,9 @@ from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 from ..constants.fiscal import (
+    DOCUMENT_ISSUER_COMPANY,
+    PROCESSADOR,
+    PROCESSADOR_NENHUM,
     SITUACAO_EDOC,
     SITUACAO_EDOC_A_ENVIAR,
     SITUACAO_EDOC_AUTORIZADA,
@@ -13,48 +16,46 @@ from ..constants.fiscal import (
     SITUACAO_EDOC_EM_DIGITACAO,
     SITUACAO_EDOC_ENVIADA,
     SITUACAO_EDOC_INUTILIZADA,
-    SITUACAO_EDOC_REJEITADA, SITUACAO_FISCAL,
+    SITUACAO_EDOC_REJEITADA,
+    SITUACAO_FISCAL,
     SITUACAO_FISCAL_SPED_CONSIDERA_CANCELADO,
     WORKFLOW_DOCUMENTO_NAO_ELETRONICO,
     WORKFLOW_EDOC,
-    PROCESSADOR_NENHUM,
-    PROCESSADOR,
-    DOCUMENT_ISSUER_COMPANY,
 )
 
 
 class DocumentWorkflow(models.AbstractModel):
-    _name = 'l10n_br_fiscal.document.workflow'
-    _description = 'Fiscal Document Workflow'
+    _name = "l10n_br_fiscal.document.workflow"
+    _description = "Fiscal Document Workflow"
 
     state_edoc = fields.Selection(
         selection=SITUACAO_EDOC,
-        string='Situação e-doc',
+        string="Situação e-doc",
         default=SITUACAO_EDOC_EM_DIGITACAO,
         copy=False,
         required=True,
-        track_visibility='onchange',
+        track_visibility="onchange",
         index=True,
     )
 
     state_fiscal = fields.Selection(
         selection=SITUACAO_FISCAL,
-        string='Situação Fiscal',
+        string="Situação Fiscal",
         copy=False,
-        track_visibility='onchange',
+        track_visibility="onchange",
         index=True,
     )
 
     cancel_reason = fields.Char(
-        string='Cancel Reason',
+        string="Cancel Reason",
     )
 
     correction_reason = fields.Char(
-        string='Correction Reason',
+        string="Correction Reason",
     )
 
     processador_edoc = fields.Selection(
-        string='Processador',
+        string="Processador",
         selection=PROCESSADOR,
         default=PROCESSADOR_NENHUM,
     )
@@ -64,7 +65,7 @@ class DocumentWorkflow(models.AbstractModel):
 
     @api.model
     def _avaliable_transition(self, old_state, new_state):
-        """ Verifica as transições disponiveis, para não permitir alterações
+        """Verifica as transições disponiveis, para não permitir alterações
          de estado desconhecidas. Para mais detalhes verificar a variável
           WORKFLOW_EDOC
 
@@ -107,7 +108,7 @@ class DocumentWorkflow(models.AbstractModel):
         pass
 
     def _before_change_state(self, old_state, new_state):
-        """ Hook para realizar alterações depois da alteração do estado do doc.
+        """Hook para realizar alterações depois da alteração do estado do doc.
 
         A variável self.state_edoc já estará com o novo estado neste momento.
 
@@ -166,7 +167,7 @@ class DocumentWorkflow(models.AbstractModel):
         pass
 
     def _after_change_state(self, old_state, new_state):
-        """ Hook para realizar alterações depois da alteração do estado do doc.
+        """Hook para realizar alterações depois da alteração do estado do doc.
 
         A variável self.state_edoc já estará com o novo estado neste momento.
 
@@ -194,7 +195,7 @@ class DocumentWorkflow(models.AbstractModel):
 
     @api.multi
     def _change_state(self, new_state):
-        """ Método para alterar o estado do documento fiscal, mantendo a
+        """Método para alterar o estado do documento fiscal, mantendo a
         integridade do workflow da invoice.
 
         Tenha muito cuidado ao alterar o workflow da invoice manualmente,
@@ -239,9 +240,12 @@ class DocumentWorkflow(models.AbstractModel):
                 self.number = self.document_serie_id.next_seq_number()
 
             if not self.operation_name:
-                self.operation_name = ', '.join(
-                    [l.name for l in self.line_ids.mapped(
-                        'fiscal_operation_id')])
+                self.operation_name = ", ".join(
+                    [
+                        l.name
+                        for l in self.line_ids.mapped("fiscal_operation_id")
+                    ]
+                )
 
             if self.document_electronic and not self.key:
                 self.document_serie = self.document_serie_id.code
@@ -264,11 +268,14 @@ class DocumentWorkflow(models.AbstractModel):
         pass
 
     def action_document_send(self):
-        to_send = self.filtered(lambda d: d.state_edoc in (
-            SITUACAO_EDOC_A_ENVIAR,
-            SITUACAO_EDOC_ENVIADA,
-            SITUACAO_EDOC_REJEITADA,
-        ))
+        to_send = self.filtered(
+            lambda d: d.state_edoc
+            in (
+                SITUACAO_EDOC_A_ENVIAR,
+                SITUACAO_EDOC_ENVIADA,
+                SITUACAO_EDOC_REJEITADA,
+            )
+        )
         if to_send:
             to_send._document_send()
 
