@@ -14,7 +14,6 @@ class HrContractResignationCause(models.Model):
 
     fgts_withdraw_code = fields.Char(string="FGTS withdrawal code")
 
-    @api.multi
     def name_get(self):
         result = []
         for record in self:

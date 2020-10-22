@@ -113,7 +113,6 @@ class SaleOrderLine(models.Model):
                 }
             )
 
-    @api.multi
     def _prepare_invoice_line(self, qty):
         self.ensure_one()
         result = super()._prepare_invoice_line(qty)

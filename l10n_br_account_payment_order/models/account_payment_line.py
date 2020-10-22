@@ -45,7 +45,6 @@ class PaymentLine(models.Model):
             + cntry
         )
 
-    @api.multi
     @api.depends("percent_interest", "amount_currency")
     def _compute_interest(self):
         for record in self:

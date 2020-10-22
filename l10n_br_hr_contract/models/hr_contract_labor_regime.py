@@ -14,7 +14,6 @@ class HrContractLaborRegime(models.Model):
 
     code = fields.Char(string="Code", size=1, required=True)
 
-    @api.multi
     def name_get(self):
         result = []
         for record in self:

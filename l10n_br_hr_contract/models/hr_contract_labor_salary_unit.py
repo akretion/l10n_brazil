@@ -21,7 +21,6 @@ class HrContractSalaryUnit(models.Model):
         required=True,
     )
 
-    @api.multi
     def name_get(self):
         return [
             (record.id, "{} - {} ".format(record.code, record.name))

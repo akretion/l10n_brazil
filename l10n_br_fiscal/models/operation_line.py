@@ -269,11 +269,9 @@ class OperationLine(models.Model):
 
         return mapping_result
 
-    @api.multi
     def action_review(self):
         self.write({"state": "review"})
 
-    @api.multi
     def unlink(self):
         lines = self.filtered(lambda l: l.state == "approved")
         if lines:
@@ -282,7 +280,6 @@ class OperationLine(models.Model):
             )
         return super(OperationLine, self).unlink()
 
-    @api.multi
     @api.onchange("fiscal_operation_id")
     def _onchange_fiscal_operation_id(self):
         if not self.fiscal_operation_id.fiscal_operation_type:

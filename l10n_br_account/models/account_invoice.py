@@ -76,7 +76,6 @@ class AccountInvoice(models.Model):
         from the parent."""
         return SHADOWED_FIELDS
 
-    @api.multi
     def _prepare_shadowed_fields_dict(self, default=False):
         self.ensure_one()
         vals = self._convert_to_write(self.read(self._shadowed_fields())[0])
@@ -93,7 +92,6 @@ class AccountInvoice(models.Model):
             invoice.fiscal_document_id.write(shadowed_fiscal_vals)
         return invoice
 
-    @api.multi
     def write(self, values):
         dummy_doc = self.env.ref("l10n_br_fiscal.fiscal_document_dummy")
         result = super().write(values)
@@ -177,7 +175,6 @@ class AccountInvoice(models.Model):
         #     new_tax_lines_dict.append(new_tax)
         return tax_lines_dict
 
-    @api.multi
     def get_taxes_values(self):
         # uncomment these lines
         # dummy_doc = self.env.ref('l10n_br_fiscal.fiscal_document_dummy')

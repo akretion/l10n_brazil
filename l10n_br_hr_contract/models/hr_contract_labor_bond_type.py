@@ -12,7 +12,6 @@ class HrContractLaborBondType(models.Model):
 
     code = fields.Char(string="Code", required=True)
 
-    @api.multi
     def name_get(self):
         result = []
         for record in self:

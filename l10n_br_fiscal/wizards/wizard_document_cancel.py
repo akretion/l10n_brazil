@@ -14,7 +14,6 @@ class DocumentCancelWizard(models.TransientModel):
         string="Justificativa", size=255, required=True
     )
 
-    @api.multi
     @api.constrains("justificative")
     def _check_justificative(self):
         for record in self:
@@ -26,7 +25,6 @@ class DocumentCancelWizard(models.TransientModel):
                     )
                 )
 
-    @api.multi
     def doit(self):
         for wizard in self:
             document_id = self.env[self.env.context["active_model"]].browse(

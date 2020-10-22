@@ -71,11 +71,9 @@ class DocumentSerie(models.Model):
             )
         return super(DocumentSerie, self).create(values)
 
-    @api.multi
     def name_get(self):
         return [(r.id, "{}".format(r.name)) for r in self]
 
-    @api.multi
     def _is_invalid_number(self, number):
         self.ensure_one()
         is_invalid_number = True
@@ -92,7 +90,6 @@ class DocumentSerie(models.Model):
             is_invalid_number = False
         return is_invalid_number
 
-    @api.multi
     def next_seq_number(self):
         self.ensure_one()
         number = self.internal_sequence_id._next()

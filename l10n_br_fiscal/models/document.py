@@ -735,7 +735,6 @@ class Document(models.Model):
             )
             record.line_ids.document_comment()
 
-    @api.multi
     @api.constrains("number")
     def _check_number(self):
         for record in self:
@@ -764,7 +763,6 @@ class Document(models.Model):
                     )
                 )
 
-    @api.multi
     def name_get(self):
         return [
             (
@@ -787,7 +785,6 @@ class Document(models.Model):
         if self.company_id:
             self.currency_id = self.company_id.currency_id
 
-    @api.multi
     @api.onchange("document_section")
     def _onchange_document_section(self):
         if self.document_section:
@@ -847,7 +844,6 @@ class Document(models.Model):
             return_docs |= new_doc
         return return_docs
 
-    @api.multi
     def action_create_return(self):
         action = self.env.ref("l10n_br_fiscal.document_action").read()[0]
         return_docs = self._create_return()
@@ -1001,7 +997,6 @@ class Document(models.Model):
             )
             raise UserWarning(message)
 
-    @api.multi
     def action_send_email(self):
         """Open a window to compose an email, with the fiscal document_type
         template message loaded by default

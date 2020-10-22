@@ -63,7 +63,6 @@ class L10nBrAccountNfeExportInvoice(models.TransientModel):
         string=u"Salvar na Pasta de Exportação", default=_default_export_folder
     )
 
-    @api.multi
     def nfe_export(self):
         for data in self:
             active_ids = self._context.get("active_ids", [])

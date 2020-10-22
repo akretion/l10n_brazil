@@ -15,7 +15,6 @@ class WizardDocumentStatus(models.TransientModel):
         .rps_number,
     )
 
-    @api.multi
     def get_document_status(self):
         for data in self:
             document_id = self.env["l10n_br_fiscal.document"].browse(

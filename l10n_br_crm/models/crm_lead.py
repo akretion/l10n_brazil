@@ -56,7 +56,6 @@ class Lead(models.Model):
 
     rg = fields.Char(string="RG", size=16)
 
-    @api.multi
     @api.constrains("cnpj")
     def _check_cnpj(self):
         for record in self:
@@ -67,7 +66,6 @@ class Lead(models.Model):
                     raise ValidationError(_("CNPJ inválido!"))
             return True
 
-    @api.multi
     @api.constrains("cpf")
     def _check_cpf(self):
         for record in self:
@@ -78,7 +76,6 @@ class Lead(models.Model):
                     raise ValidationError(_("CPF inválido!"))
             return True
 
-    @api.multi
     @api.constrains("inscr_est")
     def _check_ie(self):
         """Checks if company register number in field insc_est is valid,
@@ -140,7 +137,6 @@ class Lead(models.Model):
                 result["name_surname"] = self.partner_id.legal_name
         self.update(result)
 
-    @api.multi
     def _create_lead_partner_data(self, name, is_company, parent_id=False):
         """extract data from lead to create a partner
         :param name : furtur name of the partner

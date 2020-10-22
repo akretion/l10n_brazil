@@ -136,22 +136,18 @@ class Operation(models.Model):
         )
     ]
 
-    @api.multi
     def action_review(self):
         self.write({"state": "review"})
         self.line_ids.write({"state": "review"})
 
-    @api.multi
     def action_approve(self):
         self.write({"state": "approved"})
         self.line_ids.write({"state": "approved"})
 
-    @api.multi
     def action_draft(self):
         self.write({"state": "draft"})
         self.line_ids.write({"state": "draft"})
 
-    @api.multi
     def unlink(self):
         operations = self.filtered(lambda l: l.state == "approved")
         if operations:
@@ -160,7 +156,6 @@ class Operation(models.Model):
             )
         return super(Operation, self).unlink()
 
-    @api.multi
     def get_document_serie(self, company, document_type):
         self.ensure_one()
         serie = self.env["l10n_br_fiscal.document.serie"]
@@ -223,7 +218,6 @@ class Operation(models.Model):
 
         return domain
 
-    @api.multi
     def line_definition(self, company, partner, product):
         self.ensure_one()
         if not company:

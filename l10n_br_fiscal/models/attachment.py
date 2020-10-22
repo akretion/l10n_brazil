@@ -32,7 +32,6 @@ class Attachment(models.TransientModel):
         string="Attachments",
     )
 
-    @api.multi
     def build_compressed_attachment(self, record_ids=None):
         """
 

@@ -18,7 +18,6 @@ class AccountInvoiceRefund(models.TransientModel):
         string="Force Fiscal Operation",
     )
 
-    @api.multi
     def compute_refund(self, mode="refund"):
         inv_obj = self.env["account.invoice"]
         context = dict(self.env.context)

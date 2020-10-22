@@ -12,7 +12,6 @@ from odoo.addons.l10n_br_fiscal.constants.fiscal import (
 class FiscalDocument(models.Model):
     _inherit = "l10n_br_fiscal.document"
 
-    @api.multi
     def unlink(self):
         draft_documents = self.filtered(
             lambda d: d.state == SITUACAO_EDOC_EM_DIGITACAO

@@ -28,7 +28,6 @@ class AccountMoveLine(models.Model):
         store=True,
     )
 
-    @api.multi
     def get_balance(self):
         """
         Return the balance of any set of move lines.

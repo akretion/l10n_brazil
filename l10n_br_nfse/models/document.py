@@ -128,7 +128,6 @@ class Document(models.Model):
             ),
         )
 
-    @api.multi
     def _document_export(self, pretty_print=True):
         super(Document, self)._document_export()
         for record in self.filtered(fiter_processador_edoc_nfse):

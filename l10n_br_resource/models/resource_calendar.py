@@ -21,7 +21,6 @@ class ResourceCalendar(models.Model):
             res |= self._compute_recursive_leaves(calendar.parent_id)
         return res
 
-    @api.multi
     @api.depends("parent_id")
     def _compute_leave_ids(self):
         for calendar in self:
@@ -59,7 +58,6 @@ class ResourceCalendar(models.Model):
                 _("Error! You cannot create recursive calendars.")
             )
 
-    @api.multi
     def get_leave_intervals(
         self, resource_id=None, start_datetime=None, end_datetime=None
     ):
@@ -97,7 +95,6 @@ class ResourceCalendar(models.Model):
             leaves.append(leave)
         return leaves
 
-    @api.multi
     def data_eh_feriado(self, data_referencia=datetime.now()):
         """Verificar se uma data é feriado.
         :param datetime data_referencia: Se nenhuma data referencia for passada
@@ -119,7 +116,6 @@ class ResourceCalendar(models.Model):
                         return True
         return False
 
-    @api.multi
     def data_eh_feriado_bancario(self, data_referencia=datetime.now()):
         """Verificar se uma data é feriado bancário.
         :param datetime data_referencia: Se nenhuma data referencia for
@@ -142,7 +138,6 @@ class ResourceCalendar(models.Model):
         )
         return leaves_count
 
-    @api.multi
     def data_eh_feriado_emendado(self, data_referencia=datetime.now()):
         """Verificar se uma data é feriado emendado.
         :param datetime data_referencia: Se nenhuma data referencia for passada
@@ -170,7 +165,6 @@ class ResourceCalendar(models.Model):
 
         return eh_feriado and (dia_antes_eh_segunda or dia_depois_eh_sexta)
 
-    @api.multi
     def data_eh_dia_util(self, data=datetime.now()):
         """Verificar se data é dia util.
         :param datetime data: Se nenhuma data referencia for passada
@@ -180,7 +174,6 @@ class ResourceCalendar(models.Model):
         """
         return not self.data_eh_feriado(data) and data.weekday() <= 4 or False
 
-    @api.multi
     def quantidade_dias_uteis(
         self, data_inicio=datetime.now(), data_fim=datetime.now()
     ):
@@ -199,7 +192,6 @@ class ResourceCalendar(models.Model):
 
         return dias_uteis
 
-    @api.multi
     def proximo_dia_util(self, data_referencia=datetime.now()):
         """Retornar o próximo dia util.
         :param datetime data_referencia: Se nenhuma data referencia for passada
@@ -212,7 +204,6 @@ class ResourceCalendar(models.Model):
                 return data_referencia
             data_referencia += timedelta(days=1)
 
-    @api.multi
     def get_dias_base(
         self,
         data_from=datetime.now(),
@@ -235,7 +226,6 @@ class ResourceCalendar(models.Model):
         else:
             return quantidade_dias
 
-    @api.multi
     def data_eh_dia_util_bancario(self, data=datetime.now()):
         """Verificar se data é dia util.
         :param datetime data: Se nenhuma data referencia for passada
@@ -249,7 +239,6 @@ class ResourceCalendar(models.Model):
             return False
         return True
 
-    @api.multi
     def proximo_dia_util_bancario(self, data_referencia=datetime.now()):
         """Retornar o próximo dia util.
         :param datetime data_referencia: Se nenhuma data referencia for passada

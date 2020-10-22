@@ -1268,7 +1268,6 @@ class ICMSRegulation(models.Model):
 
         return view_super
 
-    @api.multi
     def map_tax_icms(
         self,
         company,
@@ -1335,7 +1334,6 @@ class ICMSRegulation(models.Model):
         icms_taxes |= tax_definitions.mapped("tax_id")
         return icms_taxes
 
-    @api.multi
     def map_tax_icmsst(
         self,
         company,
@@ -1385,7 +1383,6 @@ class ICMSRegulation(models.Model):
         icms_taxes |= tax_definitions.mapped("tax_id")
         return icms_taxes
 
-    @api.multi
     def map_tax_icmsfcp(
         self,
         company,
@@ -1454,7 +1451,6 @@ class ICMSRegulation(models.Model):
         icms_taxes |= tax_definitions.mapped("tax_id")
         return icms_taxes
 
-    @api.multi
     def map_tax_icms_difal(
         self,
         company,
@@ -1512,7 +1508,6 @@ class ICMSRegulation(models.Model):
         icms_taxes |= tax_definitions.mapped("tax_id")
         return icms_taxes
 
-    @api.multi
     def map_tax(
         self,
         company,

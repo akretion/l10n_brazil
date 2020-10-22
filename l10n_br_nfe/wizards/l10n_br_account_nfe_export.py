@@ -26,7 +26,6 @@ class L10nBrAccountNfeExport(models.TransientModel):
         string="NFe Export Result",
     )
 
-    @api.multi
     def _get_invoice_ids(self):
         return self.env["account.invoice"].search(
             [

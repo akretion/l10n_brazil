@@ -9,7 +9,6 @@ from odoo.exceptions import Warning as UserError
 class ResPartnerBank(models.Model):
     _inherit = "res.partner.bank"
 
-    @api.multi
     @api.constrains("bra_number")
     def check_bra_number(self):
         for record in self:
