@@ -176,6 +176,7 @@ class Document(models.Model):
 
     operation_name = fields.Char(
         string='Operation Name',
+        copy=False,
     )
 
     document_electronic = fields.Boolean(
@@ -661,6 +662,11 @@ class Document(models.Model):
         stored=True,
     )
 
+    dfe_id = fields.Many2one(
+        comodel_name='l10n_br_fiscal.dfe',
+        string='DF-e Consult',
+    )
+
     # Você não vai poder fazer isso em modelos que já tem state
     # TODO Porque não usar o campo state do fiscal.document???
     state = fields.Selection(
@@ -710,7 +716,7 @@ class Document(models.Model):
                 ('document_serie', '=', record.document_serie),
                 ('number', '=', record.number)]
 
-            if not record.issuer == DOCUMENT_ISSUER_PARTNER:
+            if record.issuer == DOCUMENT_ISSUER_PARTNER:
                 domain.append(('partner_id', '=', record.partner_id.id))
 
             if record.env["l10n_br_fiscal.document"].search(domain):
@@ -770,48 +776,89 @@ class Document(models.Model):
             return {'domain': domain}
 
     def _create_return(self):
-        return_ids = self.env[self._name]
+        return_docs = self.env[self._name]
         for record in self:
-            if record.fiscal_operation_id.return_fiscal_operation_id:
-                new = record.copy()
-                new.fiscal_operation_id = (
-                    record.fiscal_operation_id.return_fiscal_operation_id)
-                if record.fiscal_operation_type == 'out':
-                    new.fiscal_operation_type = 'in'
-                else:
-                    new.fiscal_operation_type = 'out'
-                new._onchange_fiscal_operation_id()
-                new.line_ids.write({'fiscal_operation_id': new.fiscal_operation_id.id})
+            fsc_op = record.fiscal_operation_id.return_fiscal_operation_id
+            if not fsc_op:
+                raise ValidationError(_(
+                    "The fiscal operation {} has no return Fiscal "
+                    "Operation defined".format(record.fiscal_operation_id)))
 
-                for item in new.line_ids:
-                    item._onchange_fiscal_operation_id()
+            new_doc = record.copy()
+            new_doc.fiscal_operation_id = fsc_op
+            new_doc._onchange_fiscal_operation_id()
 
-                return_ids |= new
-        return return_ids
+            for l in new_doc.line_ids:
+                fsc_op_line = l.fiscal_operation_id.return_fiscal_operation_id
+                if not fsc_op_line:
+                    raise ValidationError(_(
+                        "The fiscal operation {} has no return Fiscal "
+                        "Operation defined".format(l.fiscal_operation_id)))
+                l.fiscal_operation_id = fsc_op_line
+                l._onchange_fiscal_operation_id()
+                l._onchange_fiscal_operation_line_id()
 
+            return_docs |= new_doc
+        return return_docs
+
+    @api.multi
     def action_create_return(self):
-        self.ensure_one()
-        return_id = self._create_return()
-        if return_id.fiscal_operation_type == 'out':
-            return_id.fiscal_operation_type = 'in'
-            action = self.env.ref('l10n_br_fiscal.document_in_action').read()[0]
-        else:
-            return_id.fiscal_operation_type = 'out'
-            action = self.env.ref('l10n_br_fiscal.document_out_action').read()[0]
+        action = self.env.ref('l10n_br_fiscal.document_action').read()[0]
+        return_docs = self._create_return()
 
-        action['domain'] = literal_eval(action['domain'])
-        action['domain'].append(('id', '=', return_id.id))
+        if return_docs:
+            action['domain'] = literal_eval(action['domain'] or '[]')
+            action['domain'].append(('id', 'in', return_docs.ids))
+
         return action
 
+    def _document_comment_vals(self):
+        return {
+            'user': self.env.user,
+            'ctx': self._context,
+            'doc': self,
+        }
+
+    def document_comment(self):
+        for record in self:
+            record.additional_data = \
+                record.additional_data and record.additional_data + ' - ' or ''
+            record.additional_data += record.comment_ids.compute_message(
+                record._document_comment_vals())
+            record.line_ids.document_comment()
+
+    def _get_email_template(self, state):
+        self.ensure_one()
+        return self.document_type_id.document_email_ids.search(
+            ['|',
+             ('state_edoc', '=', False),
+             ('state_edoc', '=', state),
+             ('issuer', '=', self.issuer),
+             '|',
+             ('document_type_id', '=', False),
+             ('document_type_id', '=', self.document_type_id.id)],
+            limit=1, order='state_edoc, document_type_id').mapped('email_template_id')
+
+    def send_email(self, state):
+        email_template = self._get_email_template(state)
+        if email_template:
+            email_template.send_mail(self.id)
+
+    def _after_change_state(self, old_state, new_state):
+        super()._after_change_state(old_state, new_state)
+        self.send_email(new_state)
+
     def _exec_after_SITUACAO_EDOC_A_ENVIAR(self, old_state, new_state):
-        super(Document, self)._exec_after_SITUACAO_EDOC_A_ENVIAR(
-            old_state, new_state
-        )
+        super()._exec_after_SITUACAO_EDOC_A_ENVIAR(old_state, new_state)
         self.document_comment()
 
     @api.onchange('fiscal_operation_id')
     def _onchange_fiscal_operation_id(self):
         super()._onchange_fiscal_operation_id()
+        if self.fiscal_operation_id:
+            self.fiscal_operation_type = (
+                self.fiscal_operation_id.fiscal_operation_type)
+
         if self.issuer == DOCUMENT_ISSUER_COMPANY:
             self.document_type_id = self.company_id.document_type_id
 
@@ -886,3 +933,38 @@ class Document(models.Model):
             message = _("Canceling the document is not allowed: one or more "
                         "associated documents have already been authorized.")
             raise UserWarning(message)
+
+    @api.multi
+    def action_send_email(self):
+        """ Open a window to compose an email, with the fiscal document_type
+        template message loaded by default
+        """
+        self.ensure_one()
+        template = self._get_email_template(self.state)
+        compose_form = self.env.ref(
+            'mail.email_compose_message_wizard_form', False)
+        lang = self.env.context.get('lang')
+        if template and template.lang:
+            lang = template._render_template(
+                template.lang, self._name, self.id)
+        self = self.with_context(lang=lang)
+        ctx = dict(
+            default_model='l10n_br_fiscal.document',
+            default_res_id=self.id,
+            default_use_template=bool(template),
+            default_template_id=template and template.id or False,
+            default_composition_mode='comment',
+            model_description=self.document_type_id.name or self._name,
+            force_email=True
+        )
+        return {
+            'name': _('Send Fiscal Document Email Notification'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'mail.compose.message',
+            'views': [(compose_form.id, 'form')],
+            'view_id': compose_form.id,
+            'target': 'new',
+            'context': ctx,
+        }

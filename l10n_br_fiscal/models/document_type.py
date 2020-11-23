@@ -24,10 +24,24 @@ class DocumentType(models.Model):
         string='Is Electronic?',
     )
 
+    prefix = fields.Char(
+        string='Prefix',
+    )
+
+    sufix = fields.Char(
+        string='Sufix',
+    )
+
     type = fields.Selection(
         selection=DOCUMENT_TYPE,
         string='Document Type',
-        required=True
+        required=True,
+    )
+
+    document_email_ids = fields.One2many(
+        comodel_name='l10n_br_fiscal.document.email',
+        inverse_name='document_type_id',
+        string='Email Template Definition',
     )
 
     document_serie_ids = fields.One2many(

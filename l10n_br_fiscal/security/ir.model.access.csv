@@ -39,6 +39,8 @@
 "l10n_br_fiscal_document_type_user","Fiscal Document Type for User","model_l10n_br_fiscal_document_type","l10n_br_fiscal.group_user",1,0,0,0
 "l10n_br_fiscal_document_type_manager","Fiscal Document Type for Manager","model_l10n_br_fiscal_document_type","l10n_br_fiscal.group_manager",1,0,0,0
 "l10n_br_fiscal_document_type_maintenance","Fiscal Document Type for Maintenance","model_l10n_br_fiscal_document_type","l10n_br_fiscal.group_data_maintenance",1,1,1,1
+"l10n_br_fiscal_document_email_user","Fiscal Document Email for User","model_l10n_br_fiscal_document_email","l10n_br_fiscal.group_user",1,0,0,0
+"l10n_br_fiscal_document_email_manager","Fiscal Document Email for Manager","model_l10n_br_fiscal_document_email","l10n_br_fiscal.group_manager",1,1,1,1
 "l10n_br_fiscal_document_serie_user","Fiscal Document Serie for User","model_l10n_br_fiscal_document_serie","l10n_br_fiscal.group_user",1,0,0,0
 "l10n_br_fiscal_document_serie_manager","Fiscal Document Serie for Manager","model_l10n_br_fiscal_document_serie","l10n_br_fiscal.group_manager",1,1,1,1
 "l10n_br_fiscal_certificate_user","Fiscal Certificate for User","model_l10n_br_fiscal_certificate","l10n_br_fiscal.group_user",1,0,0,0
@@ -101,3 +103,11 @@
 "l10n_br_fiscal_document_correction_manager","manager_l10n_br_fiscal_document_correction","model_l10n_br_fiscal_document_correction","l10n_br_fiscal.group_manager",1,1,1,1
 "l10n_br_fiscal_closing_user","Fiscal Document Event for User","model_l10n_br_fiscal_closing","l10n_br_fiscal.group_user",1,1,1,0
 "l10n_br_fiscal_closing_manager","Fiscal Document Event for User","model_l10n_br_fiscal_closing","l10n_br_fiscal.group_manager",1,1,1,1
+"l10n_br_fiscal_city_taxation_code_user","Fiscal City Taxation Code for User","model_l10n_br_fiscal_city_taxation_code","l10n_br_fiscal.group_user",1,1,1,0
+"l10n_br_fiscal_city_taxation_code_manager","Fiscal City Taxation Code for Manager","model_l10n_br_fiscal_city_taxation_code","l10n_br_fiscal.group_user",1,1,1,1
+"l10n_br_fiscal_dfe_user","Consut DFe for User","model_l10n_br_fiscal_dfe","l10n_br_fiscal.group_user",1,1,1,0
+"l10n_br_fiscal_dfe_manager","Consut DFe for Manager","model_l10n_br_fiscal_dfe","l10n_br_fiscal.group_manager",1,1,1,1
+"l10n_br_fiscal_dfe_xml_user","Consut DFe XML for User","model_l10n_br_fiscal_dfe_xml","l10n_br_fiscal.group_user",1,1,1,0
+"l10n_br_fiscal_dfe_xml_manager","Consut DFe XML for Manager","model_l10n_br_fiscal_dfe_xml","l10n_br_fiscal.group_manager",1,1,1,1
+"l10n_br_fiscal_mdfe_user","MDFe for User","model_l10n_br_fiscal_mdfe","l10n_br_fiscal.group_user",1,1,1,0
+"l10n_br_fiscal_mdfe_manager","MDFe for Manager","model_l10n_br_fiscal_mdfe","l10n_br_fiscal.group_manager",1,1,1,1

@@ -8,7 +8,7 @@
     "license": "AGPL-3",
     "author": "Akretion, Odoo Community Association (OCA)",
     "website": "http://github.com/OCA/l10n-brazil",
-    "version": "12.0.3.0.0",
+    "version": "12.0.3.8.0",
     "depends": [
         "uom",
         "decimal_precision",
@@ -22,6 +22,7 @@
 
         # Data
         # Some data is being loaded via post_init_hook in hook file
+        "data/l10n_br_fiscal_email_template.xml",
         "data/l10n_br_fiscal_data.xml",
         "data/uom_data.xml",
         "data/product_data.xml",
@@ -67,6 +68,7 @@
         "views/product_genre_view.xml",
         "views/document_type_view.xml",
         "views/document_serie_view.xml",
+        "views/document_email_view.xml",
         "views/certificate_view.xml",
         "views/simplified_tax_view.xml",
         "views/simplified_tax_range_view.xml",
@@ -87,14 +89,19 @@
         "views/subsequent_operation_view.xml",
         "views/subsequent_document_view.xml",
         "views/l10n_br_fiscal_action.xml",
-        "views/l10n_br_fiscal_menu.xml",
         "views/uom_uom.xml",
-        "views/operation_dashboard_view.xml",
         "views/closing.xml",
-        "views/document_event_view.xml",
         "views/document_invalidate_number.xml",
         "views/document_cancel.xml",
         "views/document_correction.xml",
+        "views/city_taxation_code.xml",
+        'views/mdfe/mdfe_views.xml',
+        'views/dfe/dfe_views.xml',
+
+
+        "views/l10n_br_fiscal_menu.xml",
+        "views/operation_dashboard_view.xml",
+        "views/document_event_view.xml",
     ],
     "demo": [
         # Some demo data is being loaded via post_init_hook in hook file

@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-07 15:11+0000\n"
-"PO-Revision-Date: 2020-06-23 00:58+0000\n"
+"PO-Revision-Date: 2020-09-18 21:20+0000\n"
 "Last-Translator: Maurício Liell <mauricio@liell.com.br>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -21,6 +21,15 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_closing__document_nfe_ids
 msgid " NFe Documents"
 msgstr "NF-es"
+
+#. module: l10n_br_fiscal
+#: model:mail.template,subject:l10n_br_fiscal.fiscal_document_change_state_template
+#: model:mail.template,subject:l10n_br_fiscal.fiscal_document_change_state_template_nfse
+msgid ""
+"${object.document_type_id.name}: ${object.number} Serie: ${object."
+"document_serie} is: ${dict(object.fields_get('state').get('state')."
+"get('selection')).get(object.state, '')}"
+msgstr ""
 
 #. module: l10n_br_fiscal
 #: selection:l10n_br_fiscal.document.line,icms_origin:0
@@ -274,6 +283,107 @@ msgid "99 - Outros"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: model:mail.template,body_html:l10n_br_fiscal.fiscal_document_change_state_template
+#: model:mail.template,body_html:l10n_br_fiscal.fiscal_document_change_state_template_nfse
+msgid ""
+"<html>\n"
+"                <head></head>\n"
+"                <body style=\"margin: 0; padding: 0;\">\n"
+"                <table border=\"0\" width=\"100%\" cellpadding=\"0\" bgcolor="
+"\"#ededed\" style=\"padding: 20px; background-color: #ededed; border-"
+"collapse:separate;\">\n"
+"                    <tbody>\n"
+"                      <!-- HEADER -->\n"
+"                      <tr>\n"
+"                        <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                          <table width=\"590\" border=\"0\" cellpadding="
+"\"0\" bgcolor=\"#875A7B\" style=\"min-width: 590px; background-color: "
+"rgb(135,90,123); padding: 20px; border-collapse:separate;\">\n"
+"                            <tr>\n"
+"                              <td valign=\"middle\" align=\"right\">\n"
+"                                <img src=\"/logo.png?company=${object."
+"company_id}\" style=\"padding: 0px; margin: 0px; height: auto; width: 80px;"
+"\" alt=\"${object.company_id.name}\">\n"
+"                              </td>\n"
+"                            </tr>\n"
+"                          </table>\n"
+"                        </td>\n"
+"                      </tr>\n"
+"                      <!-- CONTENT -->\n"
+"                      <tr>\n"
+"                        <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                          <table width=\"590\" border=\"0\" cellpadding="
+"\"0\" bgcolor=\"#ffffff\" style=\"min-width: 590px; background-color: "
+"rgb(255, 255, 255); padding: 20px; border-collapse:separate;\">\n"
+"                            <tbody>\n"
+"                              <tr>\n"
+"                                <td valign=\"top\" style=\"font-family:Arial,"
+"Helvetica,sans-serif; color: #555; font-size: 14px;\">\n"
+"                                  <p>Hello ${object.partner_id.name},</p>\n"
+"                                  <p>The Fiscal Document ${object.number} "
+"has changed.</p>\n"
+"                                </td>\n"
+"                              </tr>\n"
+"                              <tr>\n"
+"                                <td style=\"font-family:Arial,Helvetica,sans-"
+"serif; color: #555; font-size: 14px;\" valign=\"top\">\n"
+"                                  Document Number: ${object.number}\n"
+"                                </td>\n"
+"                              </tr>\n"
+"                              <tr>\n"
+"                                <td style=\"font-family:Arial,Helvetica,sans-"
+"serif; color: #555; font-size: 14px;\" valign=\"top\">\n"
+"                                  Document Serie: ${object.document_serie}\n"
+"                                </td>\n"
+"                              </tr>\n"
+"                              <tr>\n"
+"                                <td style=\"font-family:Arial,Helvetica,sans-"
+"serif; color: #555; font-size: 14px;\" valign=\"top\">\n"
+"                                  Document Key: ${object.key}\n"
+"                                </td>\n"
+"                              </tr>\n"
+"                              <tr>\n"
+"                                <td style=\"font-family:Arial,Helvetica,sans-"
+"serif; color: #555; font-size: 14px;\" valign=\"top\">\n"
+"                                  Document Status: ${dict(object."
+"fields_get('state').get('state').get('selection')).get(object.state, '')}\n"
+"                                </td>\n"
+"                              </tr>\n"
+"                            </tbody>\n"
+"                          </table>\n"
+"                        </td>\n"
+"                      </tr>\n"
+"                      <!-- FOOTER -->\n"
+"                      <tr>\n"
+"                        <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                          <table width=\"590\" border=\"0\" cellpadding="
+"\"0\" bgcolor=\"#875A7B\" style=\"min-width: 590px; background-color: "
+"rgb(135,90,123); padding: 20px; border-collapse:separate;\">\n"
+"                            <tr>\n"
+"                              <td valign=\"middle\" align=\"left\" style="
+"\"color: #fff; padding-top: 10px; padding-bottom: 10px; font-size: 12px;\">\n"
+"                                ${object.company_id.phone}\n"
+"                              </td>\n"
+"                              <td valign=\"middle\" align=\"left\" style="
+"\"color: #fff; padding-top: 10px; padding-bottom: 10px; font-size: 12px;\">\n"
+"                                ${object.company_id.email}\n"
+"                              </td>\n"
+"                              <td valign=\"middle\" align=\"left\" style="
+"\"color: #fff; padding-top: 10px; padding-bottom: 10px; font-size: 12px;\">\n"
+"                                ${object.company_id.website}\n"
+"                              </td>\n"
+"                            </tr>\n"
+"                          </table>\n"
+"                        </td>\n"
+"                      </tr>\n"
+"                    </tbody>\n"
+"                </table>\n"
+"                </body>\n"
+"                </html>\n"
+"            "
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.l10n_br_fiscal_res_config_settings_form
 msgid "<i class=\"fa fa-arrow-right\"/> Generate an Access Key"
 msgstr "<i class=\"fa fa-arrow-right\"/> Gerar uma Chave de Acesso"
@@ -425,6 +535,25 @@ msgid "AMPOLA"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.dfe_form
+msgid ""
+"AVISO - Ao baixar as Notas você estará dando ciência da emissão aos "
+"manifestos correspondentes."
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.view_l10n_br_fiscal_mdfe_form
+msgid ""
+"AVISO - Esta ação será realizada diretamente com o servidor da Receita "
+"Federal."
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__key
+msgid "Access Key"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cfop__account_move
 msgid "Account Move?"
 msgstr "Gera Contabilização?"
@@ -462,6 +591,7 @@ msgstr "Ação Necessária"
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_certificate__active
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__active
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_email__active
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_line__active
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_serie__active
 msgid "Active"
@@ -524,6 +654,11 @@ msgstr "Adicionar Certificado"
 #: model_terms:ir.actions.act_window,help:l10n_br_fiscal.document_type_action
 msgid "Add a new Fiscal Document"
 msgstr "Adicionar Document Fiscal"
+
+#. module: l10n_br_fiscal
+#: model_terms:ir.actions.act_window,help:l10n_br_fiscal.document_email_action
+msgid "Add a new Fiscal Document Email Definition"
+msgstr ""
 
 #. module: l10n_br_fiscal
 #: model_terms:ir.actions.act_window,help:l10n_br_fiscal.document_serie_action
@@ -645,6 +780,7 @@ msgstr ""
 #. module: l10n_br_fiscal
 #: selection:l10n_br_fiscal.document,state_edoc:0
 #: selection:l10n_br_fiscal.document.electronic,state_edoc:0
+#: selection:l10n_br_fiscal.document.email,state_edoc:0
 #: selection:l10n_br_fiscal.document.workflow,state_edoc:0
 #: selection:l10n_br_fiscal.subsequent.operation,generation_situation:0
 msgid "Aguardando envio"
@@ -653,6 +789,7 @@ msgstr ""
 #. module: l10n_br_fiscal
 #: selection:l10n_br_fiscal.document,state_edoc:0
 #: selection:l10n_br_fiscal.document.electronic,state_edoc:0
+#: selection:l10n_br_fiscal.document.email,state_edoc:0
 #: selection:l10n_br_fiscal.document.workflow,state_edoc:0
 #: selection:l10n_br_fiscal.subsequent.operation,generation_situation:0
 msgid "Aguardando processamento"
@@ -680,6 +817,13 @@ msgstr "Tudo"
 msgid ""
 "All Certificate by\n"
 "              Brazilian Fiscal modulo for Odoo."
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model_terms:ir.actions.act_window,help:l10n_br_fiscal.document_email_action
+msgid ""
+"All Document Email Definitions supported by the Brazilian\n"
+"              Fiscal module for Odoo."
 msgstr ""
 
 #. module: l10n_br_fiscal
@@ -715,11 +859,6 @@ msgstr "UoM Alternativa"
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_uom_uom__alternative_ids
 msgid "Alternative names"
 msgstr "Nomes Alternativos"
-
-#. module: l10n_br_fiscal
-#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_status_wizard__nfe_environment
-msgid "Ambiente"
-msgstr ""
 
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__amount_discount
@@ -846,6 +985,11 @@ msgid "Ativo Imobilizado"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_attachment__attachment
+msgid "Attachment"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_certificate__message_attachment_count
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_closing__message_attachment_count
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__message_attachment_count
@@ -860,6 +1004,21 @@ msgid "Attachment Count"
 msgstr "Contagem de Anexos"
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_attachment__attachment_ids
+msgid "Attachments"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__authorization_datetime
+msgid "Authorization Date"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__authorization_protocol
+msgid "Authorization protocol"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: selection:l10n_br_fiscal.cest,segment:0
 msgid "Autopeças"
 msgstr ""
@@ -867,7 +1026,9 @@ msgstr ""
 #. module: l10n_br_fiscal
 #: selection:l10n_br_fiscal.document,state_edoc:0
 #: selection:l10n_br_fiscal.document.electronic,state_edoc:0
+#: selection:l10n_br_fiscal.document.email,state_edoc:0
 #: selection:l10n_br_fiscal.document.workflow,state_edoc:0
+#: selection:l10n_br_fiscal.mdfe,document_state:0
 #: selection:l10n_br_fiscal.subsequent.operation,generation_situation:0
 msgid "Autorizada"
 msgstr ""
@@ -887,6 +1048,11 @@ msgstr ""
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,help:l10n_br_fiscal.field_l10n_br_fiscal_closing__block
 msgid "Avoid new fiscal moves"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.view_l10n_br_fiscal_mdfe_filter
+msgid "Aware"
 msgstr ""
 
 #. module: l10n_br_fiscal
@@ -1123,6 +1289,11 @@ msgid "CNAE"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_city_taxation_code__cnae_id
+msgid "CNAE Code"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: code:addons/l10n_br_fiscal/models/cnae.py:41
 #: sql_constraint:l10n_br_fiscal.cnae:0
 #, python-format
@@ -1144,6 +1315,7 @@ msgstr ""
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_certificate__owner_cnpj_cpf
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_related__cnpj_cpf
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__cnpj_cpf
 msgid "CNPJ/CPF"
 msgstr ""
 
@@ -1500,7 +1672,9 @@ msgstr "Motivo do Cancelamento"
 #. module: l10n_br_fiscal
 #: selection:l10n_br_fiscal.document,state_edoc:0
 #: selection:l10n_br_fiscal.document.electronic,state_edoc:0
+#: selection:l10n_br_fiscal.document.email,state_edoc:0
 #: selection:l10n_br_fiscal.document.workflow,state_edoc:0
+#: selection:l10n_br_fiscal.mdfe,document_state:0
 #: selection:l10n_br_fiscal.subsequent.operation,generation_situation:0
 msgid "Cancelada"
 msgstr ""
@@ -1534,11 +1708,6 @@ msgid "Cancelamento"
 msgstr ""
 
 #. module: l10n_br_fiscal
-#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_status_wizard__retCancNFe
-msgid "Cancelamento NFE"
-msgstr ""
-
-#. module: l10n_br_fiscal
 #: model:ir.actions.act_window,name:l10n_br_fiscal.document_cancel_wizard_action
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.document_cancel_wizard_form
 msgid "Cancelamento de documento fiscal"
@@ -1550,11 +1719,21 @@ msgid "Cancelar"
 msgstr ""
 
 #. module: l10n_br_fiscal
-#: code:addons/l10n_br_fiscal/models/document.py:886
+#: code:addons/l10n_br_fiscal/models/document.py:933
 #, python-format
 msgid ""
 "Canceling the document is not allowed: one or more associated documents have "
 "already been authorized."
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__cancellation_datetime
+msgid "Cancellation Date"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__cancellation_protocol
+msgid "Cancellation protocol"
 msgstr ""
 
 #. module: l10n_br_fiscal
@@ -1626,21 +1805,15 @@ msgid "Cervejas, chopes, refrigerantes, águas e outras bebidas"
 msgstr ""
 
 #. module: l10n_br_fiscal
-#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_status_wizard__chNFe
-msgid "Chave de Acesso NFE"
-msgstr ""
-
-#. module: l10n_br_fiscal
 #: model:ir.model.fields,help:l10n_br_fiscal.field_l10n_br_fiscal_document__partner_is_company
 msgid "Check if the contact is a company, otherwise it is a person"
 msgstr ""
 
 #. module: l10n_br_fiscal
-#: code:addons/l10n_br_fiscal/models/closing.py:251
-#: code:addons/l10n_br_fiscal/models/closing.py:275
+#: code:addons/l10n_br_fiscal/models/closing.py:299
 #, python-format
-msgid "Check write permissions and folder path"
-msgstr "Verifique a permissão de escrita da pasta"
+msgid "Check write permissions in your system temp folder"
+msgstr ""
 
 #. module: l10n_br_fiscal
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.service_type_form
@@ -1653,6 +1826,11 @@ msgid "Children CNAEs"
 msgstr "CNAEs Filhos"
 
 #. module: l10n_br_fiscal
+#: selection:l10n_br_fiscal.mdfe,state:0
+msgid "Ciente da Operação"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: selection:l10n_br_fiscal.cest,segment:0
 msgid "Cigarros e outros produtos derivados do fumo"
 msgstr ""
@@ -1663,9 +1841,22 @@ msgid "Cimentos"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_city_taxation_code__city_id
 #: model:ir.ui.menu,name:l10n_br_fiscal.city_menu
 msgid "City"
 msgstr "Cidade"
+
+#. module: l10n_br_fiscal
+#: model:ir.actions.act_window,name:l10n_br_fiscal.city_taxation_code_act_window
+#: model:ir.model,name:l10n_br_fiscal.model_l10n_br_fiscal_city_taxation_code
+#: model:ir.ui.menu,name:l10n_br_fiscal.city_taxation_code_menu
+msgid "City Taxation Code"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.view_l10n_br_fiscal_mdfe_form
+msgid "Ciência da Emissão"
+msgstr ""
 
 #. module: l10n_br_fiscal
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.document_status_wizard_form
@@ -1684,8 +1875,14 @@ msgid "Closed"
 msgstr "Fechado"
 
 #. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.view_l10n_br_fiscal_mdfe_filter
+msgid "Cnpj supplier"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cest__code
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cfop__code
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_city_taxation_code__code
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cnae__code
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cst__code
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_data_abstract__code
@@ -1713,11 +1910,6 @@ msgstr "Fechado"
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_uom_uom_alternative__code
 msgid "Code"
 msgstr "Código"
-
-#. module: l10n_br_fiscal
-#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_status_wizard__cUF
-msgid "Codigo Estado"
-msgstr ""
 
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_operation__color
@@ -1768,15 +1960,18 @@ msgstr "Empresas"
 #. module: l10n_br_fiscal
 #: code:addons/l10n_br_fiscal/models/tax_pis_cofins.py:33
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_closing__company_id
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe__company_id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__company_id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_cancel__company_id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_correction__company_id
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_email__company_id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_event__company_id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_invalidate_number__company_id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_line__company_id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_mixin__company_id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_serie__company_id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_event_abstract__company_id
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__company_id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_operation__company_id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_operation_document_type__company_id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_tax_definition__company_id
@@ -1784,6 +1979,7 @@ msgstr "Empresas"
 #: model:ir.ui.menu,name:l10n_br_fiscal.company_menu
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.document_form
 #: selection:l10n_br_fiscal.document,issuer:0
+#: selection:l10n_br_fiscal.document.email,issuer:0
 #: selection:l10n_br_fiscal.tax.pis.cofins,piscofins_type:0
 #, python-format
 msgid "Company"
@@ -1916,9 +2112,30 @@ msgid "Configuration"
 msgstr "Configuração"
 
 #. module: l10n_br_fiscal
+#: selection:l10n_br_fiscal.mdfe,state:0
+msgid "Confirmada operação"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.document_form
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.document_invalidate_number_form
 msgid "Confirmar"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.view_l10n_br_fiscal_mdfe_form
+msgid "Confirmar Operação"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.view_l10n_br_fiscal_mdfe_filter
+msgid "Confirmed"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model,name:l10n_br_fiscal.model_l10n_br_fiscal_dfe
+#: model:ir.ui.menu,name:l10n_br_fiscal.dfe_consult_menu
+msgid "Consult DF-e"
 msgstr ""
 
 #. module: l10n_br_fiscal
@@ -2030,6 +2247,7 @@ msgid "Create a new Comment"
 msgstr "Criar uma Observação"
 
 #. module: l10n_br_fiscal
+#: model_terms:ir.actions.act_window,help:l10n_br_fiscal.document_action
 #: model_terms:ir.actions.act_window,help:l10n_br_fiscal.document_cte_in_action
 #: model_terms:ir.actions.act_window,help:l10n_br_fiscal.document_cte_out_action
 #: model_terms:ir.actions.act_window,help:l10n_br_fiscal.document_in_action
@@ -2081,18 +2299,23 @@ msgid "Create new products."
 msgstr "Adicionar novos produtos."
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_attachment__create_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_certificate__create_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cest__create_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cfop__create_uid
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_city_taxation_code__create_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_closing__create_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cnae__create_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_comment__create_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cst__create_uid
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe__create_uid
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe_xml__create_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__create_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_cancel__create_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_cancel_wizard__create_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_correction__create_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_correction_wizard__create_uid
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_email__create_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_event__create_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_invalidate_number__create_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_line__create_uid
@@ -2102,6 +2325,7 @@ msgstr "Adicionar novos produtos."
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_type__create_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_icms_regulation__create_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_icms_relief__create_uid
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__create_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_nbm__create_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_nbs__create_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_ncm__create_uid
@@ -2132,18 +2356,23 @@ msgid "Created by"
 msgstr "Criado por"
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_attachment__create_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_certificate__create_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cest__create_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cfop__create_date
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_city_taxation_code__create_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_closing__create_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cnae__create_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_comment__create_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cst__create_date
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe__create_date
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe_xml__create_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__create_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_cancel__create_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_cancel_wizard__create_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_correction__create_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_correction_wizard__create_date
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_email__create_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_invalidate_number__create_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_line__create_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_related__create_date
@@ -2152,6 +2381,7 @@ msgstr "Criado por"
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_type__create_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_icms_regulation__create_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_icms_relief__create_date
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__create_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_nbm__create_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_nbs__create_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_ncm__create_date
@@ -2200,9 +2430,35 @@ msgid "Custom Tax"
 msgstr "Imposto Definido"
 
 #. module: l10n_br_fiscal
+#: model:product.product,name:l10n_br_fiscal.customized_development_sale
+#: model:product.template,name:l10n_br_fiscal.customized_development_sale_product_template
+msgid "Customized Odoo Development"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__codigo_situacao
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_electronic__codigo_situacao
 msgid "Código situação"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__dfe_id
+msgid "DF-e"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.actions.act_window,name:l10n_br_fiscal.dfe_action
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe_xml__dfe_id
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__dfe_id
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.dfe_form
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.dfe_search
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.dfe_tree
+msgid "DF-e Consult"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model,name:l10n_br_fiscal.model_l10n_br_fiscal_dfe_xml
+msgid "DF-e XML Document"
 msgstr ""
 
 #. module: l10n_br_fiscal
@@ -2248,31 +2504,9 @@ msgid "Date Move"
 msgstr "Data da Movimentação"
 
 #. module: l10n_br_fiscal
-#: model:product.product,uom_name:l10n_br_fiscal.expense_hotel_sale
-#: model:product.template,uom_name:l10n_br_fiscal.expense_hotel_sale_product_template
-msgid "Day(s)"
-msgstr "Dia(s)"
-
-#. module: l10n_br_fiscal
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.l10n_br_fiscal_res_config_settings_form
 msgid "Days Before"
 msgstr "Dias Antes"
-
-#. module: l10n_br_fiscal
-#: model:res.company,overdue_msg:l10n_br_fiscal.empresa_lucro_presumido
-#: model:res.company,overdue_msg:l10n_br_fiscal.empresa_simples_nacional
-msgid ""
-"Dear Sir/Madam,\n"
-"\n"
-"Our records indicate that some payments on your account are still due. "
-"Please find details below.\n"
-"If the amount has already been paid, please disregard this notice. "
-"Otherwise, please forward us the total amount stated below.\n"
-"If you have any queries regarding your account, Please contact us.\n"
-"\n"
-"Thank you in advance for your cooperation.\n"
-"Best Regards,"
-msgstr ""
 
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_tax_definition__is_debit_credit
@@ -2363,7 +2597,9 @@ msgstr "Impostos Padrão"
 #. module: l10n_br_fiscal
 #: selection:l10n_br_fiscal.document,state_edoc:0
 #: selection:l10n_br_fiscal.document.electronic,state_edoc:0
+#: selection:l10n_br_fiscal.document.email,state_edoc:0
 #: selection:l10n_br_fiscal.document.workflow,state_edoc:0
+#: selection:l10n_br_fiscal.mdfe,document_state:0
 #: selection:l10n_br_fiscal.subsequent.operation,generation_situation:0
 msgid "Denegada"
 msgstr ""
@@ -2373,6 +2609,16 @@ msgstr ""
 #: selection:l10n_br_fiscal.document.electronic,state_fiscal:0
 #: selection:l10n_br_fiscal.document.workflow,state_fiscal:0
 msgid "Denegado"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.view_l10n_br_fiscal_mdfe_form
+msgid "Desconhecer Operação"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: selection:l10n_br_fiscal.mdfe,state:0
+msgid "Desconhecimento"
 msgstr ""
 
 #. module: l10n_br_fiscal
@@ -2392,6 +2638,11 @@ msgid "Destination"
 msgstr "Destino"
 
 #. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.view_l10n_br_fiscal_mdfe_tree
+msgid "Destined Documents"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: selection:l10n_br_fiscal.document,edoc_purpose:0
 msgid "Devolução de mercadoria"
 msgstr ""
@@ -2399,6 +2650,11 @@ msgstr ""
 #. module: l10n_br_fiscal
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.document_form
 msgid "Devolver"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__digest_value
+msgid "Digest Value"
 msgstr ""
 
 #. module: l10n_br_fiscal
@@ -2413,9 +2669,11 @@ msgid "Dispatch File"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_attachment__display_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_certificate__display_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cest__display_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cfop__display_name
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_city_taxation_code__display_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_closing__display_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cnae__display_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_comment__display_name
@@ -2423,10 +2681,13 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_data_abstract__display_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_data_ncm_nbs_abstract__display_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_data_product_abstract__display_name
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe__display_name
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe_xml__display_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__display_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_cancel_wizard__display_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_correction_wizard__display_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_electronic__display_name
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_email__display_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_line__display_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_line_mixin__display_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_line_mixin_methods__display_name
@@ -2439,6 +2700,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_workflow__display_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_icms_regulation__display_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_icms_relief__display_name
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__display_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_nbm__display_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_nbs__display_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_ncm__display_name
@@ -2507,6 +2769,11 @@ msgid "Document Lines"
 msgstr "Linhas do Documento"
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__number
+msgid "Document Number"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.document_form
 msgid "Document Related"
 msgstr "Documento Relacionado"
@@ -2535,6 +2802,11 @@ msgid "Document Series"
 msgstr "Séries do Documento"
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__document_state
+msgid "Document State"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_certificate__subtype
 msgid "Document SubType"
 msgstr "Subtipo de Certificado"
@@ -2544,6 +2816,11 @@ msgstr "Subtipo de Certificado"
 #, fuzzy
 msgid "Document Subsequent"
 msgstr "Subtipo de Certificado"
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__document_value
+msgid "Document Total Value"
+msgstr ""
 
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__document_type_id
@@ -2589,6 +2866,22 @@ msgid "Download"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: code:addons/l10n_br_fiscal/models/mdfe/mdfe.py:166
+#, python-format
+msgid "Download Attachment"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.view_l10n_br_fiscal_mdfe_form
+msgid "Download Document's XML"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe__use_cron
+msgid "Download new documents automatically"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: selection:l10n_br_fiscal.closing,state:0
 #: selection:l10n_br_fiscal.operation,state:0
 #: selection:l10n_br_fiscal.operation.line,state:0
@@ -2621,9 +2914,21 @@ msgstr "Eletrônico?"
 #. module: l10n_br_fiscal
 #: selection:l10n_br_fiscal.document,state_edoc:0
 #: selection:l10n_br_fiscal.document.electronic,state_edoc:0
+#: selection:l10n_br_fiscal.document.email,state_edoc:0
 #: selection:l10n_br_fiscal.document.workflow,state_edoc:0
 #: selection:l10n_br_fiscal.subsequent.operation,generation_situation:0
 msgid "Em digitação"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_type__document_email_ids
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_res_company__document_email_ids
+msgid "Email Template Definition"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.document_type_form
+msgid "Email Templates"
 msgstr ""
 
 #. module: l10n_br_fiscal
@@ -2641,6 +2946,16 @@ msgid "Emission"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__emission_datetime
+msgid "Emission Date"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__emitter
+msgid "Emitter"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_operation_line__date_end
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_tax_definition__date_end
 msgid "End Date"
@@ -2649,6 +2964,11 @@ msgstr "Data Final"
 #. module: l10n_br_fiscal
 #: selection:l10n_br_fiscal.cest,segment:0
 msgid "Energia elétrica"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: selection:l10n_br_fiscal.mdfe,operation_type:0
+msgid "Entrada"
 msgstr ""
 
 #. module: l10n_br_fiscal
@@ -2667,13 +2987,18 @@ msgid "Enviar por email:"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: selection:l10n_br_fiscal.dfe_xml,xml_type:0
+msgid "Envio"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: selection:l10n_br_fiscal.document.event,type:0
 msgid "Envio Lote"
 msgstr ""
 
 #. module: l10n_br_fiscal
 #: code:addons/l10n_br_fiscal/models/document_event.py:27
-#: code:addons/l10n_br_fiscal/models/document_event.py:200
+#: code:addons/l10n_br_fiscal/models/document_event.py:204
 #, python-format
 msgid "Erro!"
 msgstr ""
@@ -2690,8 +3015,8 @@ msgid "Error in the request: {}"
 msgstr ""
 
 #. module: l10n_br_fiscal
-#: code:addons/l10n_br_fiscal/models/closing.py:250
-#: code:addons/l10n_br_fiscal/models/closing.py:274
+#: code:addons/l10n_br_fiscal/models/closing.py:294
+#: code:addons/l10n_br_fiscal/models/closing.py:298
 #, python-format
 msgid "Error!"
 msgstr ""
@@ -2874,6 +3199,16 @@ msgid "File Name"
 msgstr "Nome do Arquivo"
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_attachment__file_name
+msgid "Filename"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.view_l10n_br_fiscal_mdfe_filter
+msgid "Filter"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_comment__date_end
 msgid "Final Date"
 msgstr "Data Final"
@@ -2910,6 +3245,11 @@ msgid "Fiscal"
 msgstr "Fiscal"
 
 #. module: l10n_br_fiscal
+#: model:ir.model,name:l10n_br_fiscal.model_l10n_br_fiscal_attachment
+msgid "Fiscal Attachment"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.actions.act_window,name:l10n_br_fiscal.fiscal_closing_action
 #: model:ir.ui.menu,name:l10n_br_fiscal.fiscal_closing_menu
 msgid "Fiscal Closing"
@@ -2942,11 +3282,13 @@ msgid "Fiscal Data Product Abstract"
 msgstr "Dados Fiscais Abstratos de Produto"
 
 #. module: l10n_br_fiscal
+#: model:ir.actions.act_window,name:l10n_br_fiscal.document_action
 #: model:ir.actions.act_window,name:l10n_br_fiscal.document_type_action
 #: model:ir.model,name:l10n_br_fiscal.model_l10n_br_fiscal_document
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_event__fiscal_document_id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_related__fiscal_document_id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_serie__document_type_id
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__document_id
 #: model:ir.ui.menu,name:l10n_br_fiscal.document_type_menu
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.document_cancel_form
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.document_cancel_search
@@ -2985,12 +3327,29 @@ msgid "Fiscal Document Correction Wizard"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_email__email_template_id
+msgid "Fiscal Document E-mail Template"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.actions.act_window,name:l10n_br_fiscal.document_email_action
+#: model:ir.model,name:l10n_br_fiscal.model_l10n_br_fiscal_document_email
+#: model:ir.ui.menu,name:l10n_br_fiscal.document_email_menu
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.document_email_form
+msgid "Fiscal Document Email"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.model,name:l10n_br_fiscal.model_l10n_br_fiscal_document_event
 msgid "Fiscal Document Event"
 msgstr "Evento de Documento Fiscal"
 
 #. module: l10n_br_fiscal
 #: model:ir.actions.act_window,name:l10n_br_fiscal.document_status_wizard_action
+msgid "Fiscal Document Inquiry"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.document_status_wizard_form
 msgid "Fiscal Document Inquiry on SEFAZ"
 msgstr ""
@@ -3027,11 +3386,12 @@ msgstr "Série de Documento Fiscal"
 
 #. module: l10n_br_fiscal
 #: model:ir.model,name:l10n_br_fiscal.model_l10n_br_fiscal_document_status_wizard
-msgid "Fiscal Document Status Inquiry on SEFAZ"
+msgid "Fiscal Document Status"
 msgstr ""
 
 #. module: l10n_br_fiscal
 #: model:ir.model,name:l10n_br_fiscal.model_l10n_br_fiscal_document_type
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_email__document_type_id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_related__document_type_id
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.document_type_form
 msgid "Fiscal Document Type"
@@ -3087,18 +3447,22 @@ msgid "Fiscal Operation Line"
 msgstr "Linha de Operação Fiscal"
 
 #. module: l10n_br_fiscal
-#: code:addons/l10n_br_fiscal/models/operation_line.py:148
+#: code:addons/l10n_br_fiscal/models/operation_line.py:154
 #: sql_constraint:l10n_br_fiscal.operation.line:0
 #, python-format
 msgid "Fiscal Operation Line already exists with this name !"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__fiscal_operation_type
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_line__fiscal_operation_type
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_line_mixin__fiscal_operation_type
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_mixin__fiscal_operation_type
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_operation_line__fiscal_operation_type
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.operation_search
 #, fuzzy
 msgid "Fiscal Operation Type"
-msgstr "Operação Fiscal"
+msgstr "Tipo de Operação Fiscal"
 
 #. module: l10n_br_fiscal
 #: code:addons/l10n_br_fiscal/models/operation.py:121
@@ -3351,19 +3715,20 @@ msgid "Group documents"
 msgstr "Grupo de Documentos"
 
 #. module: l10n_br_fiscal
-#: selection:l10n_br_fiscal.document.status.wizard,nfe_environment:0
-msgid "Homologação"
-msgstr ""
-
-#. module: l10n_br_fiscal
-#: model:product.product,name:l10n_br_fiscal.expense_hotel_sale
-#: model:product.template,name:l10n_br_fiscal.expense_hotel_sale_product_template
-msgid "Hotel Room"
+#: model:product.product,uom_name:l10n_br_fiscal.customized_development_sale
+#: model:product.template,uom_name:l10n_br_fiscal.customized_development_sale_product_template
+msgid "Hour(s)"
 msgstr ""
 
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,help:l10n_br_fiscal.field_l10n_br_fiscal_document__partner_number
 msgid "House Number"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: code:addons/l10n_br_fiscal/models/closing.py:295
+#, python-format
+msgid "I/O Error"
 msgstr ""
 
 #. module: l10n_br_fiscal
@@ -3398,6 +3763,7 @@ msgstr "Atualização IBPT"
 #: selection:l10n_br_fiscal.document.line,tax_icms_or_issqn:0
 #: selection:l10n_br_fiscal.document.line.mixin,tax_icms_or_issqn:0
 #: selection:l10n_br_fiscal.document.type,type:0
+#: selection:l10n_br_fiscal.operation.line,tax_icms_or_issqn:0
 #: selection:product.template,tax_icms_or_issqn:0
 msgid "ICMS"
 msgstr ""
@@ -4179,6 +4545,7 @@ msgstr "Valor do ICMS"
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_line__tax_icms_or_issqn
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_line_mixin__tax_icms_or_issqn
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_operation_line__tax_icms_or_issqn
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_product_product__tax_icms_or_issqn
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_product_template__tax_icms_or_issqn
 msgid "ICMS or ISSQN Tax"
@@ -4191,9 +4558,11 @@ msgid "ICMS relief"
 msgstr "Desoneração de ICMS"
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_attachment__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_certificate__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cest__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cfop__id
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_city_taxation_code__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_closing__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cnae__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_comment__id
@@ -4201,12 +4570,15 @@ msgstr "Desoneração de ICMS"
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_data_abstract__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_data_ncm_nbs_abstract__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_data_product_abstract__id
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe__id
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe_xml__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_cancel__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_cancel_wizard__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_correction__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_correction_wizard__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_electronic__id
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_email__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_event__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_invalidate_number__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_line__id
@@ -4222,6 +4594,7 @@ msgstr "Desoneração de ICMS"
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_event_abstract__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_icms_regulation__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_icms_relief__id
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_nbm__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_nbs__id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_ncm__id
@@ -4542,6 +4915,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.fiscal_res_company_form
 #: selection:l10n_br_fiscal.document.line,tax_icms_or_issqn:0
 #: selection:l10n_br_fiscal.document.line.mixin,tax_icms_or_issqn:0
+#: selection:l10n_br_fiscal.operation.line,tax_icms_or_issqn:0
 #: selection:l10n_br_fiscal.tax.group,tax_domain:0
 #: selection:product.template,tax_icms_or_issqn:0
 msgid "ISSQN"
@@ -4662,6 +5036,13 @@ msgid "Identifies the operation destination."
 msgstr "Identifica o destino da operação."
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,help:l10n_br_fiscal.field_l10n_br_fiscal_dfe__use_cron
+msgid ""
+"If activated, allows new manifestations to be automatically searched with a "
+"Cron"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.model.fields,help:l10n_br_fiscal.field_l10n_br_fiscal_certificate__message_unread
 #: model:ir.model.fields,help:l10n_br_fiscal.field_l10n_br_fiscal_closing__message_unread
 #: model:ir.model.fields,help:l10n_br_fiscal.field_l10n_br_fiscal_document__message_unread
@@ -4709,6 +5090,28 @@ msgid "If your company is industry or ......"
 msgstr "Se a Empresa é uma indústria ou ......"
 
 #. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.dfe_manifestacao_tree
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.view_l10n_br_fiscal_mdfe_form
+msgid "Import Document"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.dfe_form
+msgid "Import all available NF-e"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe__imported_document_ids
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.dfe_form
+msgid "Imported Documents"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.dfe_form
+msgid "Imported Manifestations"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_tax_estimate__state_taxes
 msgid "Impostos Estaduais Nacional"
 msgstr ""
@@ -4751,6 +5154,16 @@ msgid "In"
 msgstr "Entrada"
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__inclusion_datetime
+msgid "Inclusion Date"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__inclusion_mode
+msgid "Inclusion Mode"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.model.fields,help:l10n_br_fiscal.field_l10n_br_fiscal_document_correction__sequencia
 msgid "Indica a sequência da carta de correcão"
 msgstr ""
@@ -4791,6 +5204,11 @@ msgid "Inscr. Estadual/RG"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__ie
+msgid "Inscrição estadual"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__amount_insurance_value
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_line__insurance_value
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_line_mixin__insurance_value
@@ -4806,6 +5224,7 @@ msgstr "Tipo Interno"
 #. module: l10n_br_fiscal
 #: selection:l10n_br_fiscal.document,state_edoc:0
 #: selection:l10n_br_fiscal.document.electronic,state_edoc:0
+#: selection:l10n_br_fiscal.document.email,state_edoc:0
 #: selection:l10n_br_fiscal.document.workflow,state_edoc:0
 #: selection:l10n_br_fiscal.subsequent.operation,generation_situation:0
 msgid "Inutilizada"
@@ -4904,6 +5323,7 @@ msgstr ""
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_certificate__issuer_name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__issuer
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_email__issuer
 msgid "Issuer"
 msgstr "Emissor"
 
@@ -4963,9 +5383,11 @@ msgid "LATA"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_attachment____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_certificate____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cest____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cfop____last_update
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_city_taxation_code____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_closing____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cnae____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_comment____last_update
@@ -4973,12 +5395,15 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_data_abstract____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_data_ncm_nbs_abstract____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_data_product_abstract____last_update
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe____last_update
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe_xml____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_cancel____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_cancel_wizard____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_correction____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_correction_wizard____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_electronic____last_update
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_email____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_event____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_invalidate_number____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_line____last_update
@@ -4994,6 +5419,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_event_abstract____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_icms_regulation____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_icms_relief____last_update
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_nbm____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_nbs____last_update
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_ncm____last_update
@@ -5024,18 +5450,28 @@ msgid "Last Modified on"
 msgstr "Última modificação em"
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe__last_nsu
+msgid "Last NSU"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_attachment__write_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_certificate__write_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cest__write_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cfop__write_uid
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_city_taxation_code__write_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_closing__write_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cnae__write_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_comment__write_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cst__write_uid
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe__write_uid
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe_xml__write_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__write_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_cancel__write_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_cancel_wizard__write_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_correction__write_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_correction_wizard__write_uid
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_email__write_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_event__write_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_invalidate_number__write_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_line__write_uid
@@ -5045,6 +5481,7 @@ msgstr "Última modificação em"
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_type__write_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_icms_regulation__write_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_icms_relief__write_uid
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__write_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_nbm__write_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_nbs__write_uid
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_ncm__write_uid
@@ -5075,18 +5512,23 @@ msgid "Last Updated by"
 msgstr "Última atualização por"
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_attachment__write_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_certificate__write_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cest__write_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cfop__write_date
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_city_taxation_code__write_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_closing__write_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cnae__write_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_comment__write_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cst__write_date
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe__write_date
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe_xml__write_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__write_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_cancel__write_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_cancel_wizard__write_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_correction__write_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_correction_wizard__write_date
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_email__write_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_invalidate_number__write_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_line__write_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_related__write_date
@@ -5095,6 +5537,7 @@ msgstr "Última atualização por"
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_type__write_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_icms_regulation__write_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_icms_relief__write_date
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__write_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_nbm__write_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_nbs__write_date
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_ncm__write_date
@@ -5123,6 +5566,11 @@ msgstr "Última atualização por"
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_uom_uom_alternative__write_date
 msgid "Last Updated on"
 msgstr "Última atualização em"
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe__last_query
+msgid "Last query"
+msgstr ""
 
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__partner_legal_name
@@ -5156,7 +5604,7 @@ msgid "Lista Positiva (valor)"
 msgstr ""
 
 #. module: l10n_br_fiscal
-#: code:addons/l10n_br_fiscal/hooks.py:73
+#: code:addons/l10n_br_fiscal/hooks.py:76
 #, python-format
 msgid "Loading l10n_br_fiscal demo files."
 msgstr ""
@@ -5166,19 +5614,22 @@ msgstr ""
 #, python-format
 msgid "Loading l10n_br_fiscal fiscal files. It may take a minute..."
 msgstr ""
+"Carregando arquivos fiscais do l10n_br_fiscal. Isso pode demorar um minuto..."
 
 #. module: l10n_br_fiscal
-#: code:addons/l10n_br_fiscal/hooks.py:126
+#: code:addons/l10n_br_fiscal/hooks.py:129
 #, python-format
 msgid "Loading l10n_br_fiscal post init files. It may take a minute..."
 msgstr ""
 
 #. module: l10n_br_fiscal
-#: code:addons/l10n_br_fiscal/hooks.py:103
+#: code:addons/l10n_br_fiscal/hooks.py:106
 #, python-format
 msgid ""
 "Loading l10n_br_fiscal production files. It may take at least 3 minutes..."
 msgstr ""
+"Carregando arquivos de produção do l10n_br_fiscal. Isso pode demorar pelo "
+"menos 3 minutos..."
 
 #. module: l10n_br_fiscal
 #: selection:l10n_br_fiscal.cest,segment:0
@@ -5243,8 +5694,34 @@ msgid "Main CNAE"
 msgstr "CNAE Principal"
 
 #. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.dfe_form
+msgid "Manage"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.actions.server,name:l10n_br_fiscal.action_gerencia_selecionados_button
+msgid "Manage Selected"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.actions.act_window,name:l10n_br_fiscal.l10n_br_fiscal_mdfe_action
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.view_l10n_br_fiscal_mdfe_form
+msgid "Manifestation"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__state
+msgid "Manifestation State"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: selection:l10n_br_fiscal.document.event,type:0
 msgid "Manifestação"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe__imported_dfe_ids
+msgid "Manifestações do Destinatário Importadas"
 msgstr ""
 
 #. module: l10n_br_fiscal
@@ -5367,11 +5844,6 @@ msgstr "Mensagens"
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_closing__month
 msgid "Month"
-msgstr ""
-
-#. module: l10n_br_fiscal
-#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_status_wizard__xMotivo
-msgid "Motivo"
 msgstr ""
 
 #. module: l10n_br_fiscal
@@ -5590,9 +6062,15 @@ msgid "NFs Canceladas"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__nsu
+msgid "NSU"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_certificate__name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cest__name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cfop__name
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_city_taxation_code__name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_closing__name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cnae__name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_comment__name
@@ -5601,6 +6079,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_data_ncm_nbs_abstract__name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_data_product_abstract__name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__partner_name
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_email__name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_line__name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_serie__name
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_type__name
@@ -5709,6 +6188,12 @@ msgstr "Próximo Número"
 #: model:ir.model.fields,help:l10n_br_fiscal.field_l10n_br_fiscal_document_serie__sequence_number_next
 msgid "Next number of this sequence"
 msgstr "Próximo Número desta Sequencia"
+
+#. module: l10n_br_fiscal
+#: code:addons/l10n_br_fiscal/models/attachment.py:114
+#, python-format
+msgid "No attachment to download"
+msgstr ""
 
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_cancel__display_name
@@ -5843,7 +6328,7 @@ msgid "Não"
 msgstr ""
 
 #. module: l10n_br_fiscal
-#: code:addons/l10n_br_fiscal/models/document_event.py:201
+#: code:addons/l10n_br_fiscal/models/document_event.py:205
 #, python-format
 msgid ""
 "Não foi possível salvar o arquivo\n"
@@ -5876,6 +6361,11 @@ msgid "Não presencial, teleatendimento"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: selection:l10n_br_fiscal.mdfe,state:0
+msgid "Não realizado"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: selection:l10n_br_fiscal.document,ind_pres:0
 #: selection:l10n_br_fiscal.document.mixin,ind_pres:0
 msgid "Não se aplica"
@@ -5888,7 +6378,7 @@ msgid "Não é permitido faixas sobrepostas!"
 msgstr ""
 
 #. module: l10n_br_fiscal
-#: code:addons/l10n_br_fiscal/models/document_workflow.py:187
+#: code:addons/l10n_br_fiscal/models/document_workflow.py:216
 #, python-format
 msgid ""
 "Não é possível realizar esta operação,\n"
@@ -5900,7 +6390,7 @@ msgid ""
 msgstr ""
 
 #. module: l10n_br_fiscal
-#: code:addons/l10n_br_fiscal/models/document_workflow.py:113
+#: code:addons/l10n_br_fiscal/models/document_workflow.py:142
 #, python-format
 msgid ""
 "Não é possível retornar o documento para em \n"
@@ -5946,6 +6436,7 @@ msgid ""
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: model_terms:ir.actions.act_window,help:l10n_br_fiscal.document_action
 #: model_terms:ir.actions.act_window,help:l10n_br_fiscal.document_cte_in_action
 #: model_terms:ir.actions.act_window,help:l10n_br_fiscal.document_cte_out_action
 #: model_terms:ir.actions.act_window,help:l10n_br_fiscal.document_in_action
@@ -6021,10 +6512,7 @@ msgid "Operation Performed"
 msgstr "Nome da Operação Fiscal"
 
 #. module: l10n_br_fiscal
-#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__fiscal_operation_type
-#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_mixin__fiscal_operation_type
-#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_operation_line__fiscal_operation_type
-#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.operation_search
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__operation_type
 msgid "Operation Type"
 msgstr "Tipo de Operação Fiscal"
 
@@ -6057,6 +6545,11 @@ msgstr ""
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__ind_final
 msgid "Operação com consumidor final"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.view_l10n_br_fiscal_mdfe_form
+msgid "Operação não Realizada"
 msgstr ""
 
 #. module: l10n_br_fiscal
@@ -6412,6 +6905,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_subsequent_operation__partner_id
 #: model:ir.ui.menu,name:l10n_br_fiscal.partner_menu
 #: selection:l10n_br_fiscal.document,issuer:0
+#: selection:l10n_br_fiscal.document.email,issuer:0
 msgid "Partner"
 msgstr "Parceiro"
 
@@ -6518,6 +7012,16 @@ msgid "Pauta (valor)"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: selection:l10n_br_fiscal.mdfe,state:0
+msgid "Pendente"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.view_l10n_br_fiscal_mdfe_filter
+msgid "Pending"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: code:addons/l10n_br_fiscal/constants/fiscal.py:59
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_tax__percent_amount
 #: selection:l10n_br_fiscal.document.line,cofins_base_type:0
@@ -6584,6 +7088,11 @@ msgid "Por período"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_type__prefix
+msgid "Prefix"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: selection:res.company,profit_calculation:0
 msgid "Presumed"
 msgstr "Predumido"
@@ -6628,11 +7137,6 @@ msgstr ""
 #. module: l10n_br_fiscal
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.fiscal_closing_form
 msgid "Processamento Periodico"
-msgstr ""
-
-#. module: l10n_br_fiscal
-#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_status_wizard__procEventoNFe
-msgid "Proceventonfe"
 msgstr ""
 
 #. module: l10n_br_fiscal
@@ -6768,11 +7272,6 @@ msgid "Produtos eletrônicos, eletroeletrônicos e eletrodomésticos"
 msgstr ""
 
 #. module: l10n_br_fiscal
-#: selection:l10n_br_fiscal.document.status.wizard,nfe_environment:0
-msgid "Produção"
-msgstr ""
-
-#. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_res_company__profit_calculation
 msgid "Profit Calculation"
 msgstr ""
@@ -6787,11 +7286,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__protocolo_cancelamento
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_electronic__protocolo_cancelamento
 msgid "Protocolo Autorização"
-msgstr ""
-
-#. module: l10n_br_fiscal
-#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_status_wizard__protNFe
-msgid "Protocolo NFE"
 msgstr ""
 
 #. module: l10n_br_fiscal
@@ -6902,6 +7396,11 @@ msgid "Rascunho"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.view_l10n_br_fiscal_mdfe_filter
+msgid "Razão Social"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: selection:l10n_br_fiscal.cest,segment:0
 msgid "Rações para animais domésticos"
 msgstr ""
@@ -6931,6 +7430,12 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.document_form
 msgid "Recipient"
 msgstr "Destinatário"
+
+#. module: l10n_br_fiscal
+#: model:ir.model,name:l10n_br_fiscal.model_l10n_br_fiscal_mdfe
+#: model:ir.ui.menu,name:l10n_br_fiscal.mdfe_menu
+msgid "Recipient Manifestation"
+msgstr ""
 
 #. module: l10n_br_fiscal
 #: selection:l10n_br_fiscal.tax.ipi.guideline,cst_group:0
@@ -6981,6 +7486,7 @@ msgstr ""
 #. module: l10n_br_fiscal
 #: selection:l10n_br_fiscal.document,state_edoc:0
 #: selection:l10n_br_fiscal.document.electronic,state_edoc:0
+#: selection:l10n_br_fiscal.document.email,state_edoc:0
 #: selection:l10n_br_fiscal.document.workflow,state_edoc:0
 #: selection:l10n_br_fiscal.subsequent.operation,generation_situation:0
 msgid "Rejeitada"
@@ -7023,7 +7529,7 @@ msgid "Related operation"
 msgstr "Parceiros Relacionados"
 
 #. module: l10n_br_fiscal
-#: code:addons/l10n_br_fiscal/models/closing.py:320
+#: code:addons/l10n_br_fiscal/models/closing.py:301
 #, python-format
 msgid ""
 "Replication failed: document attachments [id =% s] is not present in the "
@@ -7049,6 +7555,21 @@ msgstr "Definir Como Rascunho"
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_tax_definition__activity_user_id
 msgid "Responsible User"
 msgstr "Usuário Responsável"
+
+#. module: l10n_br_fiscal
+#: selection:l10n_br_fiscal.dfe_xml,xml_type:0
+msgid "Resposta"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: selection:l10n_br_fiscal.dfe_xml,xml_type:0
+msgid "Resposta-LoteDistDFeInt"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: selection:l10n_br_fiscal.dfe_xml,xml_type:0
+msgid "Resposta-LoteDistDFeInt-DocZip(NFe)"
+msgstr ""
 
 #. module: l10n_br_fiscal
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.document_fiscal_line_mixin_form
@@ -7150,6 +7671,16 @@ msgid "Sale Service"
 msgstr "Venda de Serviço"
 
 #. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.dfe_manifestacao_tree
+msgid "Save XML"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: selection:l10n_br_fiscal.mdfe,operation_type:0
+msgid "Saída"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: code:addons/l10n_br_fiscal/models/data_ncm_nbs_abstract.py:164
 #, python-format
 msgid "Scheduled {} estimate taxes update complete."
@@ -7164,6 +7695,11 @@ msgstr ""
 #. module: l10n_br_fiscal
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.tax_definition_form
 msgid "Search CESTs"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.dfe_form
+msgid "Search Documents"
 msgstr ""
 
 #. module: l10n_br_fiscal
@@ -7190,6 +7726,30 @@ msgid "Segment"
 msgstr "Seguimento"
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,help:l10n_br_fiscal.field_l10n_br_fiscal_document_email__email_template_id
+msgid ""
+"Select the email template that will be sent when this document state change."
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,help:l10n_br_fiscal.field_l10n_br_fiscal_document_email__document_type_id
+msgid ""
+"Select the type of document that will be applied to the email templates "
+"definitions."
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.document_form
+msgid "Send Email"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: code:addons/l10n_br_fiscal/models/document.py:961
+#, python-format
+msgid "Send Fiscal Document Email Notification"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_comment__sequence
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_serie__internal_sequence_id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_subsequent_operation__sequence
@@ -7210,6 +7770,7 @@ msgstr ""
 
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_related__serie
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__serie
 msgid "Serie"
 msgstr ""
 
@@ -7219,11 +7780,17 @@ msgid "Serie Number"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.document_type_form
+msgid "Series"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_event__type
 msgid "Service"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_city_taxation_code__service_type_id
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.service_type_form
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.service_type_search
 msgid "Service Type"
@@ -7354,6 +7921,7 @@ msgstr ""
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__state_edoc
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_electronic__state_edoc
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_email__state_edoc
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_workflow__state_edoc
 msgid "Situação e-doc"
 msgstr ""
@@ -7398,6 +7966,7 @@ msgid "Start Date"
 msgstr "Data de Início"
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_city_taxation_code__state_id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__state
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_related__state_id
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_status_wizard__state
@@ -7407,6 +7976,7 @@ msgstr "Data de Início"
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_tax_estimate__state_id
 #: model:ir.ui.menu,name:l10n_br_fiscal.state_menu
 #: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.tax_definition_form
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.view_l10n_br_fiscal_mdfe_filter
 msgid "State"
 msgstr "Estado"
 
@@ -7418,6 +7988,7 @@ msgstr "Inscrição Estadual"
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_event__state
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_invalidate_number__state
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_status_wizard__document_status
 msgid "Status"
 msgstr "Situação"
 
@@ -7452,6 +8023,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cfop__stock_move
 msgid "Stock Moves?"
 msgstr "Movimenta Estoque?"
+
+#. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.dfe_documents_tree
+msgid "Stock Picking"
+msgstr ""
 
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_service_type__withholding_possible
@@ -7503,8 +8079,24 @@ msgid "Subsequents Documents"
 msgstr "CFes"
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_type__sufix
+msgid "Sufix"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document__partner_suframa
 msgid "Suframa"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__supplier
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.view_l10n_br_fiscal_mdfe_filter
+msgid "Supplier"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_mdfe__partner_id
+msgid "Supplier (partner)"
 msgstr ""
 
 #. module: l10n_br_fiscal
@@ -7945,6 +8537,13 @@ msgid "The closing must be unique for the company in a period of time."
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: code:addons/l10n_br_fiscal/models/document.py:785
+#: code:addons/l10n_br_fiscal/models/document.py:796
+#, python-format
+msgid "The fiscal operation {} has no return Fiscal Operation defined"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.model.fields,help:l10n_br_fiscal.field_l10n_br_fiscal_tax__sequence
 #: model:ir.model.fields,help:l10n_br_fiscal.field_l10n_br_fiscal_tax_group__sequence
 msgid ""
@@ -7961,7 +8560,7 @@ msgid ""
 msgstr ""
 
 #. module: l10n_br_fiscal
-#: code:addons/l10n_br_fiscal/models/document.py:719
+#: code:addons/l10n_br_fiscal/models/document.py:725
 #, python-format
 msgid "There is already a fiscal document with this Serie: {0}, Number: {1} !"
 msgstr ""
@@ -7969,6 +8568,11 @@ msgstr ""
 #. module: l10n_br_fiscal
 #: model_terms:ir.actions.act_window,help:l10n_br_fiscal.open_operation_dashboard_kanban
 msgid "This is the fiscal dashboard"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: sql_constraint:l10n_br_fiscal.document.email:0
+msgid "This name is already used by another email definition !"
 msgstr ""
 
 #. module: l10n_br_fiscal
@@ -8065,8 +8669,14 @@ msgid "Units of Measure"
 msgstr "Unidade de Medida"
 
 #. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.view_l10n_br_fiscal_mdfe_filter
+msgid "Unknown"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cest__code_unmasked
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cfop__code_unmasked
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_city_taxation_code__code_unmasked
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cnae__code_unmasked
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cst__code_unmasked
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_data_abstract__code_unmasked
@@ -8114,6 +8724,11 @@ msgstr "Mensagens não lidas"
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_tax_definition__message_unread_counter
 msgid "Unread Messages Counter"
 msgstr "Contador de Mensagens Não Lidas"
+
+#. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.view_l10n_br_fiscal_mdfe_filter
+msgid "Unrealized"
+msgstr ""
 
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_uom_uom_alternative__uom_id
@@ -8207,7 +8822,6 @@ msgstr ""
 
 #. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_cnae__version
-#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_status_wizard__version
 msgid "Version"
 msgstr "Versão"
 
@@ -8260,7 +8874,21 @@ msgid "Volume"
 msgstr ""
 
 #. module: l10n_br_fiscal
-#: code:addons/l10n_br_fiscal/models/operation_line.py:262
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.dfe_manifestacao_tree
+msgid ""
+"WARNING - When importing a document, you will be informing the issuance of "
+"the corresponding manifest. Do you wish to continue?"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.dfe_manifestacao_tree
+msgid ""
+"WARNING - When saving the XML of a document, you will be informing the "
+"corresponding manifest about the issue. Do you wish to continue?"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: code:addons/l10n_br_fiscal/models/operation_line.py:268
 #, python-format
 msgid "Warning!"
 msgstr ""
@@ -8310,8 +8938,19 @@ msgid "Write Date"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe_xml__xml
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_document_event__xml_sent_id
 msgid "XML"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe__recipient_xml_ids
+msgid "XML Documents"
+msgstr ""
+
+#. module: l10n_br_fiscal
+#: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_dfe_xml__xml_type
+msgid "XML Type"
 msgstr ""
 
 #. module: l10n_br_fiscal
@@ -8340,6 +8979,11 @@ msgid "XML envio"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: model_terms:ir.ui.view,arch_db:l10n_br_fiscal.view_dfe_xml_tree
+msgid "XML's"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_closing__year
 msgid "Year"
 msgstr ""
@@ -8350,7 +8994,7 @@ msgid "You can note repeat the alternative name"
 msgstr ""
 
 #. module: l10n_br_fiscal
-#: code:addons/l10n_br_fiscal/models/operation_line.py:254
+#: code:addons/l10n_br_fiscal/models/operation_line.py:260
 #, python-format
 msgid "You cannot delete an Operation Line which is not draft !"
 msgstr ""
@@ -8368,13 +9012,13 @@ msgid "You cannot delete an Tax Definition which is not draft !"
 msgstr ""
 
 #. module: l10n_br_fiscal
-#: code:addons/l10n_br_fiscal/models/operation_line.py:263
+#: code:addons/l10n_br_fiscal/models/operation_line.py:269
 #, python-format
 msgid "You must first select a operation type."
 msgstr ""
 
 #. module: l10n_br_fiscal
-#: code:addons/l10n_br_fiscal/models/operation_line.py:157
+#: code:addons/l10n_br_fiscal/models/operation_line.py:163
 #, python-format
 msgid "You need set a default fiscal document in your company !"
 msgstr ""
@@ -8390,6 +9034,11 @@ msgid "dias"
 msgstr ""
 
 #. module: l10n_br_fiscal
+#: selection:res.company,processador_edoc:0
+msgid "erpbrasil.edoc"
+msgstr ""
+
+#. module: l10n_br_fiscal
 #: model:ir.model.fields,field_description:l10n_br_fiscal.field_l10n_br_fiscal_certificate__file
 msgid "file"
 msgstr "arquivo"
@@ -8400,8 +9049,8 @@ msgid "key"
 msgstr "chave"
 
 #. module: l10n_br_fiscal
-#: model:product.product,weight_uom_name:l10n_br_fiscal.expense_hotel_sale
-#: model:product.template,weight_uom_name:l10n_br_fiscal.expense_hotel_sale_product_template
+#: model:product.product,weight_uom_name:l10n_br_fiscal.customized_development_sale
+#: model:product.template,weight_uom_name:l10n_br_fiscal.customized_development_sale_product_template
 msgid "kg"
 msgstr ""
 
@@ -8444,6 +9093,12 @@ msgstr ""
 #: selection:uom.category,measure_type:0
 msgid "Àrea / Superfície"
 msgstr ""
+
+#~ msgid "Day(s)"
+#~ msgstr "Dia(s)"
+
+#~ msgid "Check write permissions and folder path"
+#~ msgstr "Verifique a permissão de escrita da pasta"
 
 #~ msgid "Fiscal Document Abstract"
 #~ msgstr "Documento Fiscal Abstrato"

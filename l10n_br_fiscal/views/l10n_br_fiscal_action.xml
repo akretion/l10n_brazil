@@ -397,6 +397,24 @@
         </field>
     </record>
 
+    <!-- Fiscal Document Email -->
+    <record id="document_email_action" model="ir.actions.act_window">
+        <field name="name">Fiscal Document Email</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">l10n_br_fiscal.document.email</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="document_email_tree"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+              Add a new Fiscal Document Email Definition
+            </p><p>
+              All Document Email Definitions supported by the Brazilian
+              Fiscal module for Odoo.
+            </p>
+        </field>
+    </record>
+
     <!-- Simplefied Tax -->
     <record id="simplified_tax_action" model="ir.actions.act_window">
         <field name="name">Simplified Tax</field>
@@ -557,6 +575,24 @@
           </p><p>
             Odoo helps you easily track all activities
             related to a fiscal comment.
+          </p>
+        </field>
+    </record>
+
+    <record id="document_action" model="ir.actions.act_window">
+        <field name="name">Fiscal Document</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">l10n_br_fiscal.document</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="search_view_id" ref="document_search"/>
+        <field name="view_id" ref="document_tree"/>
+        <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+            Create a new Document
+          </p><p>
+            Odoo helps you easily track all activities
+            related to a fiscal operation.
           </p>
         </field>
     </record>
@@ -759,6 +795,15 @@
         <field name="res_model">l10n_br_fiscal.closing</field>
         <field name="view_mode">tree,form</field>
         <field name="view_type">form</field>
+    </record>
+
+    <!-- City Taxation Code-->
+    <record model="ir.actions.act_window" id="city_taxation_code_act_window">
+        <field name="name">City Taxation Code</field>
+        <field name="res_model">l10n_br_fiscal.city.taxation.code</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
     </record>
 
 </odoo>
