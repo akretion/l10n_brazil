@@ -2,10 +2,12 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 import logging
 
+from erpbrasil.base import misc
+
 from odoo import models, fields
 
 try:
-    from nfelib.v4_00 import leiauteNFe  # FIXME: Move me to my module!
+    from nfelib.v4_00 import retEnviNFe as leiauteNFe  # FIXME: Move me to nfe module!
 except ImportError:
     pass
 
@@ -27,7 +29,11 @@ class AbstractSpecMixin(models.AbstractModel):
         ds_class_spec = {i.name: i for i in ds_class.member_data_items_}
 
         for xsd_field in xsd_fields:
+            if not xsd_field:
+                continue
             field_spec_name = xsd_field.replace(class_obj._field_prefix, '')
+            if not ds_class_spec.get(field_spec_name):
+                continue
             member_spec = ds_class_spec[field_spec_name]
             field_data = self._export_field(xsd_field, class_obj, member_spec)
 
@@ -59,6 +65,24 @@ class AbstractSpecMixin(models.AbstractModel):
                 self[xsd_field] is not False:
             return self._export_float_monetary(
                 xsd_field, member_spec, class_obj, xsd_required)
+        elif class_obj._fields[xsd_field]._attrs.get( # TODO move
+            'xsd_type') in ('TCnpj', 'TCpf') and \
+                self[xsd_field] is not False:
+            return misc.punctuation_rm(self[xsd_field])
+        elif 'TIe' in class_obj._fields[xsd_field]._attrs.get( # TODO move
+            'xsd_type', '') and \
+                self[xsd_field] is not False:
+            return misc.punctuation_rm(self[xsd_field])
+        elif 'foneType' in class_obj._fields[xsd_field]._attrs.get( # TODO move
+            'xsd_type', '') and \
+                self[xsd_field] is not False:
+            return self[xsd_field].replace('(', '').replace(
+                                    ')', '').replace(' ', '').replace(
+                                    '-', '').replace('+', '')
+        elif 'CEPType' in class_obj._fields[xsd_field]._attrs.get( # TODO move
+            'xsd_type', '') and \
+                self[xsd_field] is not False:
+            return self[xsd_field].replace('-', '')
         else:
             return self[xsd_field]
 
@@ -134,8 +158,9 @@ class AbstractSpecMixin(models.AbstractModel):
 
         xsd_fields = (
             i for i in self.env[class_name]._fields if
-            self.env[class_name]._fields[i]._attrs.get('xsd')
-        )
+            self.env[class_name]._fields[i].name.startswith('nfe40')
+            and not self.env[class_name]._fields[i].name.startswith('nfe40_choice')  # TODO
+        )   # self.env[class_name]._fields[i]._attrs.get('xsd')
 
         kwargs = {}
 

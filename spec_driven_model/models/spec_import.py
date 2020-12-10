@@ -63,6 +63,8 @@ class AbstractSpecMixin(models.AbstractModel):
             return False
         key = "nfe40_%s" % (attr.get_name(),)  # TODO schema wise
         child_path = '%s.%s' % (path, key)
+        if attr.get_name() == 'hashCSRT': # FIXME
+            return False
 
         if attr.get_child_attrs().get('type') is None\
                 or attr.get_child_attrs().get('type') in ('xs:string',
