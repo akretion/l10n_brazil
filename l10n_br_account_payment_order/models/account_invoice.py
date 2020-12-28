@@ -371,3 +371,28 @@ class AccountInvoice(models.Model):
             receivable_id.residual = inv.residual
 
         return res
+
+    def action_pdf_boleto(self):
+        """
+        Generates and lists all the attachment ids for an Boleto PDF of the
+        invoice
+        :return: actions.act_window
+        """
+        boleto_ids = []
+        for move_line in self.move_line_receivable_ids:
+            for payment_line in move_line.payment_line_ids:
+                payment_line.generate_pdf_boleto()
+
+            if move_line.bank_payment_line_id and \
+                    move_line.bank_payment_line_id.pdf_boleto_id:
+                boleto_ids.append(
+                    move_line.bank_payment_line_id.pdf_boleto_id.id)
+
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Boletos",
+            "res_model": "ir.attachment",
+            "view_mode": "tree,form",
+            "domain": [('id', 'in', boleto_ids)]
+        }
+

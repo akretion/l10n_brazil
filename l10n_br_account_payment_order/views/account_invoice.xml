@@ -11,6 +11,9 @@
             <button name="create_account_payment_line" position="attributes">
                 <attribute name="invisible">1</attribute>
             </button>
+            <button name="preview_invoice" position="after">
+                <button name="action_pdf_boleto" type="object" string="PDFs Boletos" />
+            </button>
             <notebook position="inside">
                 <page string="Vencimentos" name="vencimentos">
                     <field name="move_line_receivable_ids"/>
