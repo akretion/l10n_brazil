@@ -16,6 +16,7 @@
                         name="%(account_move_line_change_act_window)d"
                         attrs="{'invisible': [('payment_method_code', 'not in', ('400', '240', '500'))]}"
                     />
+                    <button name="print_pdf_boleto" type="object" string="PDF Boleto" class="oe_highlight" />
                 </header>
             </sheet>
             <group name="payments" position="after">

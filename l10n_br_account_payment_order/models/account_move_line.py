@@ -269,3 +269,27 @@ class AccountMoveLine(models.Model):
                 if record.payment_mode_id.fixed_journal_id:
                     record.journal_payment_mode_id =\
                         record.payment_mode_id.fixed_journal_id.id
+
+    def print_pdf_boleto(self):
+        """
+        Generates and downloads Boletos PDFs
+        :return: actions.act_url
+        """
+        for line in self.payment_line_ids:
+            line.generate_pdf_boleto()
+
+        if self.bank_payment_line_id and \
+                self.bank_payment_line_id.pdf_boleto_id:
+
+            boleto_id = self.bank_payment_line_id.pdf_boleto_id
+            base_url = self.env['ir.config_parameter'].get_param(
+                'web.base.url')
+            download_url = '/web/content/%s/%s?download=True' % (
+                str(boleto_id.id), boleto_id.name)
+
+            return {
+                "type": "ir.actions.act_url",
+                "url": str(base_url) + str(download_url),
+                "target": "new",
+            }
+
