@@ -160,3 +160,20 @@ class AccountPaymentLine(models.Model):
             res.update({'favored_warning': mode.favored_warning})
 
         return res
+
+    def generate_pdf_boleto(self):
+        """
+        Creates a new attachment with the Boleto PDF if it has not yet been
+        created
+        """
+        if self.bank_line_id and not self.bank_line_id.pdf_boleto_id:
+            self.bank_line_id.pdf_boleto_id = self.env['ir.attachment'].create(
+                {
+                    'name': ("Boleto %s" % self.bank_line_id.display_name),
+                    'datas': self.order_id.generate_pdf_boleto(
+                        self.own_number),
+                    'datas_fname': ("boleto_%s.pdf" %
+                                    self.bank_line_id.display_name),
+                    'type': 'binary'
+                }
+            )

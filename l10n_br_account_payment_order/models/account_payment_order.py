@@ -114,3 +114,11 @@ class AccountPaymentOrder(models.Model):
                 record.message_post(body='Arquivo gerado com sucesso.')
 
         return result
+
+    def generate_pdf_boleto(self, nosso_numero):
+        """
+        Method to be replaced by a specific Boleto API module
+        :param nosso_numero:
+        :return:
+        """
+        pass

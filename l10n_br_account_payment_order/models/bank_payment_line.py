@@ -137,6 +137,12 @@ class BankPaymentLine(models.Model):
         help='Campo G061 do CNAB',
     )
 
+    pdf_boleto_id = fields.Many2one(
+        comodel_name='ir.attachment',
+        string='Attachment',
+        ondelete='cascade'
+    )
+
     @api.multi
     def unlink(self):
         for record in self:
