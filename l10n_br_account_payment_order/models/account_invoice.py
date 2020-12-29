@@ -395,4 +395,3 @@ class AccountInvoice(models.Model):
             "view_mode": "tree,form",
             "domain": [('id', 'in', boleto_ids)]
         }
-

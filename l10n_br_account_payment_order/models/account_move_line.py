@@ -292,4 +292,3 @@ class AccountMoveLine(models.Model):
                 "url": str(base_url) + str(download_url),
                 "target": "new",
             }
-

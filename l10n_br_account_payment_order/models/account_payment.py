@@ -32,4 +32,4 @@ class AccountPayment(models.Model):
 
             super().post()
             record.invoice_ids.create_account_payment_line_cnab_baixa(
-                            record.amount)
+                record.amount)
