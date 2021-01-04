@@ -48,7 +48,7 @@ class ResPartner(spec_models.SpecModel):
     nfe40_fone = fields.Char(related='phone', readonly=False)  # TODO mobile?
 
     # nfe.40.dest
-#    nfe40_idEstrangeiro = fields.Char(
+    nfe40_idEstrangeiro = fields.Char(compute='_compute_nfe_data')
     nfe40_xNome = fields.Char(related='legal_name')
     nfe40_enderDest = fields.Many2one('res.partner',
                                       compute='_compute_nfe40_enderDest')
