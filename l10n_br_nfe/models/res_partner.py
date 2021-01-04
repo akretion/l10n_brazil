@@ -54,6 +54,7 @@ class ResPartner(spec_models.SpecModel):
                                       compute='_compute_nfe40_enderDest')
     nfe40_indIEDest = fields.Selection(related='ind_ie_dest')
     nfe40_IE = fields.Char(related='inscr_est')
+    nfe40_IM = fields.Char(related='inscr_mun')
     nfe40_ISUF = fields.Char(related='suframa')
     nfe40_email = fields.Char(related='email')
 
