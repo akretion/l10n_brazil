@@ -29,7 +29,7 @@ class ResPartner(spec_models.SpecModel):
                              store=True)
                              # TODO may be not store=True -> then override match
     nfe40_CPF = fields.Char(compute='_compute_nfe_data',
-                            inverse='_inverse_nfe40_CNPJ',
+                            inverse='_inverse_nfe40_CPF',
                             store=True)
     nfe40_xLgr = fields.Char(related='street', readonly=False)
     nfe40_nro = fields.Char(related='street_number', readonly=False)
