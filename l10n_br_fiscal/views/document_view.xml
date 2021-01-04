@@ -43,15 +43,14 @@
         <field name="currency_id" invisible="1"/>
         <field name="document_electronic" invisible="1"/>
         <field name="fiscal_operation_type" invisible="1"/>
-        <field name="document_section" invisible="1"/>
         <header>
             <button name="action_document_confirm" type="object" string="Confirmar"   groups="l10n_br_fiscal.group_user"    states="em_digitacao"     class="btn-primary"/>
             <button name="action_document_send"    type="object" string="Enviar"      groups="l10n_br_fiscal.group_user"    states="a_enviar,rejeitada"         class="btn-primary"/>
             <button name="action_document_back2draft"    type="object" string="Voltar p/ Em Digitação"      groups="l10n_br_fiscal.group_user"    states="a_enviar,rejeitada" class="btn-secondary"/>
             <button name="view_pdf" type="object" string="Visualizar PDF" groups="l10n_br_fiscal.group_user" states="a_enviar,enviada,autorizada,rejeitada,cancelada" class="btn-primary"/>
             <button name="view_xml" type="object" string="Visualizar XML" groups="l10n_br_fiscal.group_user" states="a_enviar,enviada,autorizada,rejeitada,cancelada" class="btn-primary"/>
-            <button name="action_document_cancel"  type="object" string="Cancelar"    groups="l10n_br_fiscal.group_user"    states="em_digitacao,a_enviar,enviada,rejeitada,autorizada"/>
-            <button name="action_document_invalidate"  type="object" string="Invalidar"    groups="l10n_br_fiscal.group_user"/>
+            <button name="action_document_cancel" type="object" string="Cancelar" groups="l10n_br_fiscal.group_user" states="autorizada"/>
+            <button name="action_document_invalidate" type="object" string="Invalidar Numeração" groups="l10n_br_fiscal.group_user"/>
             <button name="action_document_correction" type="object" string="Carta de correção" groups="l10n_br_fiscal.group_user" states="autorizada"/>
             <button name="action_create_return" type="object" string="Devolver" groups="l10n_br_fiscal.group_user" states="autorizada"/>
             <button name="action_send_email" type="object" string="Send Email" attrs="{'invisible': [('state', 'not in', ('autorizada', 'cancelada', 'denegada'))]}"/>
@@ -88,7 +87,7 @@
             <group>
               <field name="document_serie_id" attrs="{'invisible': [('issuer', '!=', 'company')], 'required': [('issuer', '=', 'company')]}" context="{'default_document_type_id': document_type_id}"/>
               <field name="document_serie" attrs="{'invisible': [('issuer', '!=', 'partner')], 'required': [('issuer', '=', 'partner')]}"/>
-              <field name="codigo_motivo_situacao" attrs="{'invisible': [('document_electronic', '=', '0')]}"/>
+              <field name="status_description" attrs="{'invisible': [('document_electronic', '=', '0')]}"/>
             </group>
             <group>
               <field name="number" force_save="1" attrs="{'readonly': [('issuer', '=', 'company')], 'required': [('issuer', '=', 'partner')]}"/>
@@ -178,7 +177,7 @@
               </field>
             </page>
             <page name="document_related" string="Document Related">
-              <field name="fiscal_document_related_ids"/>
+              <field name="document_related_ids"/>
               <separator colspan="4" string="Subsequents Documents"/>
               <field name="document_subsequent_ids">
                   <tree editable="bottom">
@@ -198,20 +197,19 @@
                     <field name="operation_name"/>
                 </group>
                 <group>
-                    <group name="autorizacao" string="Autorização" colspan="4">
-                        <field name="data_hora_autorizacao"/>
-                        <field name="protocolo_autorizacao"/>
-                        <field name="file_xml_id"/>
-                        <field name="file_xml_autorizacao_id"/>
-                        <field name="file_pdf_id"/>
+                    <group name="authorization" string="Authorization" colspan="4">
+                        <field name="authorization_date"/>
+                        <field name="authorization_protocol"/>
+                        <field name="send_file_id"/>
+                        <field name="authorization_file_id"/>
+                        <field name="file_report_id"/>
                     </group>
-                    <group name="cancelamento" string="Autorização" colspan="4" attrs="{'invisible': [('state', '!=', 'cancelado')]}" >
-                        <field name="data_hora_cancelamento"/>
-                        <field name="protocolo_cancelamento"/>
-                        <field name="file_xml_cancelamento_id"/>
-                        <field name="file_xml_autorizacao_cancelamento_id"/>
+                    <group name="cancel" string="Cancelation" colspan="4" attrs="{'invisible': [('state', '!=', 'cancelado')]}">
+                        <field name="cancel_date"/>
+                        <field name="cancel_protocol_number"/>
+                        <field name="cancel_file_id"/>
                     </group>
-                    <field name="document_event_ids">
+                    <field name="event_ids">
                         <tree>
                             <field name="id"/>
                             <field name="type"/>
@@ -280,6 +278,8 @@
                     <field name="amount_freight_value"/>
                     <field name="amount_tax"/>
                     <field name="amount_total"/>
+                    <field name="amount_tax_withholding"/>
+                    <field name="amount_financial"/>
                   </group>
                 </group>
               </group>

@@ -1,7 +1,7 @@
 # Copyright (C) 2019 - Raphael Valyi Akretion
-# License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
-import logging
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0.en.html).
 
+import logging
 import sys
 import inspect
 from odoo import api, models, SUPERUSER_ID
@@ -24,7 +24,7 @@ def post_init_hook(cr, registry, module_name, spec_module):
         rec_id = "acl_%s_nfe_40_%s" % ('todo'.split('.')[-1],
                                        underline_name)
         # TODO no nfe ref
-        model_id = "l10n_br_spec_nfe.model_%s" % (underline_name,)
+        model_id = "l10n_br_nfe_spec.model_%s" % (underline_name,)
         access_data.append([rec_id, underline_name, model_id,
                             'base.group_user', '1', '1', '1', '1'])
         # TODO make more secure!
@@ -101,8 +101,10 @@ def register_hook(env, module_name, spec_module):
         spec_class._module = "fiscal"  # TODO use python_module ?
         c = type(name, (SpecModel, spec_class),
                  {'_name': spec_class._name,
-                  '_inherit': ['spec.mixin.nfe'],
+                  '_inherit': [spec_class._inherit, 'spec.mixin'],
                   '_original_module': "fiscal",
+                  '_odoo_module': module_name,
+                  '_spec_module': spec_module,
                   '_rec_name': spec_class._concrete_rec_name})
         models.MetaModel.module_to_models[module_name] += [c]
 

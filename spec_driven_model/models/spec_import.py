@@ -1,5 +1,7 @@
-import logging
+# Copyright 2019-2020 Akretion - Raphael Valyi <raphael.valyi@akretion.com>
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0.en.html).
 
+import logging
 import re
 from datetime import datetime
 from odoo import api, models
@@ -15,8 +17,7 @@ class AbstractSpecMixin(models.AbstractModel):
     _inherit = 'spec.mixin'
 
     @api.model
-    def build(self, node, defaults=False):
-
+    def build(self, node, defaults=False, create=True):
         if not defaults:
             defaults = dict()
 
@@ -24,8 +25,11 @@ class AbstractSpecMixin(models.AbstractModel):
         # TODO ability to match existing record here
         model_name = SpecModel._get_concrete(self._name) or self._name
         model = self.env[model_name]
-        attrs = model.build_attrs(node, create_m2o=True, defaults=defaults)
-        return model.create(attrs)
+        attrs = model.build_attrs(node, create_m2o=create, defaults=defaults)
+        if create:
+            return model.create(attrs)
+        else:
+            return model.new(attrs)
 
     @api.model
     def build_attrs(self, node, create_m2o=False, path='', defaults=False):
@@ -40,7 +44,8 @@ class AbstractSpecMixin(models.AbstractModel):
         fields = self.fields_get()
         # no default image for easier debugging
         vals = self.default_get([f for f, v in fields.items()
-                                 if v['type'] != 'binary'])
+                                 if v['type'] not in ['binary', 'integer',
+                                                      'float', 'monetary']])
         if path == '':
             vals.update(defaults)
         # we sort attrs to be able to define m2o related values
@@ -61,11 +66,10 @@ class AbstractSpecMixin(models.AbstractModel):
             return False
         key = "nfe40_%s" % (attr.get_name(),)  # TODO schema wise
         child_path = '%s.%s' % (path, key)
-        if attr.get_name() == 'hashCSRT': # FIXME
-            return False
 
         if attr.get_child_attrs().get('type') is None\
-                or attr.get_child_attrs().get('type') == 'xs:string':
+                or attr.get_child_attrs().get('type') in ('xs:string',
+                                                          'xs:base64Binary'):
             # SimpleType
             if fields[key]['type'] == 'datetime':
                 if 'T' in value:
@@ -90,6 +94,8 @@ class AbstractSpecMixin(models.AbstractModel):
                 comodel_name = "nfe.40.%s" % (clean_type,)  # TODO clean
 
             comodel = self.get_concrete_model(comodel_name)
+            if comodel is None:  # example skip ICMS100 class
+                return
 
             if attr.get_container() == 0:
                 # m2o
@@ -100,8 +106,9 @@ class AbstractSpecMixin(models.AbstractModel):
                 child_defaults = self._extract_related_values(vals, key)
 
                 new_value.update(child_defaults)
+                # FIXME comodel._build_many2one
                 self._build_many2one(comodel, vals, new_value, key,
-                                     create_m2o)
+                                     create_m2o, value, child_path)
             elif attr.get_container() == 1:
                 # o2m
                 lines = []
@@ -116,7 +123,8 @@ class AbstractSpecMixin(models.AbstractModel):
     def _build_string_not_simple_type(self, key, vals, value, node):
         vals[key] = value
 
-    def _build_many2one(self, comodel, vals, new_value, key, create_m2o):
+    def _build_many2one(self, comodel, vals, new_value, key, create_m2o,
+                        value, path):
         if comodel._name == self._name:
             # stacked m2o
             vals.update(new_value)
@@ -132,7 +140,7 @@ class AbstractSpecMixin(models.AbstractModel):
                 is not None:
             return self.env[models.MetaModel.mixin_mappings[comodel_name]]
         else:
-            return self.env[comodel_name]
+            return self.env.get(comodel_name)
 
     @api.model
     def _extract_related_values(self, vals, key):
@@ -152,8 +160,10 @@ class AbstractSpecMixin(models.AbstractModel):
         return key_vals
 
     @api.model
-    def _prepare_import_dict(self, vals, defaults=False):
-        """NOTE: this is debatable if we could use an api multi with values in
+    def _prepare_import_dict(self, vals, defaults=False, create_m2o=True):
+        """
+        Set non computed field values based on XML values if required.
+        NOTE: this is debatable if we could use an api multi with values in
         self instead of the vals dict. Then that would be like when new()
         is used in account_invoice or sale_order before playing some onchanges
         """
@@ -185,6 +195,7 @@ class AbstractSpecMixin(models.AbstractModel):
                         related_many2ones[related_m2o] = key_vals
 
         # now we deal with the related m2o with compound related
+        # (example: create Nfe lines product)
         for related_m2o, sub_val in related_many2ones.items():
             comodel_name = fields[related_m2o]['relation']
             comodel = self.get_concrete_model(comodel_name)
@@ -192,10 +203,10 @@ class AbstractSpecMixin(models.AbstractModel):
                 self._verify_related_many2ones(related_many2ones)
             if hasattr(comodel, 'match_or_create_m2o'):
                 vals[related_m2o] = comodel.match_or_create_m2o(sub_val, vals,
-                                                                True)
-            else:  # res.country for instance
+                                                                create_m2o)
+            else:  # search res.country with Brasil for instance
                 vals[related_m2o] = self.match_or_create_m2o(sub_val, vals,
-                                                             True, comodel)
+                                                             create_m2o, comodel)
         return vals
 
     def _verify_related_many2ones(self, related_many2ones):
@@ -203,7 +214,7 @@ class AbstractSpecMixin(models.AbstractModel):
 
     @api.model
     def match_record(self, rec_dict, parent_dict, model=None):
-        """ inpsired from match_* methods from
+        """ inspired from match_* methods from
         https://github.com/OCA/edi/blob/11.0/base_business_document_import
         /models/business_document_import.py"""
         if model is None:
@@ -250,6 +261,7 @@ class AbstractSpecMixin(models.AbstractModel):
             rec_id = self.match_record(rec_dict, parent_dict, model)
         if not rec_id:
             if create_m2o:
+                rec_dict = self._prepare_import_dict(rec_dict)
                 r = model.with_context(parent_dict=parent_dict).create(rec_dict)
                 # _logger.info('r %s', r)
                 rec_id = r.id

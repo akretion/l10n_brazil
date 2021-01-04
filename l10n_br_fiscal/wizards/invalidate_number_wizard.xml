@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2019 KMEE
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<odoo>
+
+    <record id="invalidate_number_wizard" model="ir.ui.view">
+        <field name="name">l10n_br_fiscal.invalidate.number.wizard</field>
+        <field name="model">l10n_br_fiscal.invalidate.number.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Inutilização de documento fiscal">
+                <group>
+                    <field name="invalidate_mode" widget="radio"/>
+                    <field name="document_id" force_save="1" readonly="1" attrs="{'invisible': [('invalidate_mode', '=', 'range_numbers')], 'required': [('invalidate_mode', '=', 'one_number')]}"/>
+                    <field name="number_start" attrs="{'invisible': [('invalidate_mode', '=', 'one_number')], 'required': [('invalidate_mode', '=', 'range_numbers')]}"/>
+                    <field name="number_end" attrs="{'invisible': [('invalidate_mode', '=', 'one_number')], 'required': [('invalidate_mode', '=', 'range_numbers')]}"/>
+                    <field name="justification"/>
+                </group>
+                <footer>
+                    <button name="doit" string="OK" class="btn-primary" type="object"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="invalidate_number_wizard_action" model="ir.actions.act_window">
+        <field name="name">Inutilização de documento fiscal</field>
+        <field name="res_model">l10n_br_fiscal.invalidate.number.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="context">{}</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

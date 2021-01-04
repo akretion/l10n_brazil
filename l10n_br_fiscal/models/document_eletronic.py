@@ -10,10 +10,6 @@ from ..constants.fiscal import (
     PROCESSADOR_NENHUM
 )
 
-import logging
-
-_logger = logging.getLogger(__name__)
-
 
 def filter_processador(record):
     if record.document_electronic and \
@@ -23,105 +19,114 @@ def filter_processador(record):
 
 
 class DocumentEletronic(models.AbstractModel):
-    _name = "l10n_br_fiscal.document.electronic"
-    _description = "Fiscal Eletronic Document"
+    _name = 'l10n_br_fiscal.document.electronic'
+    _description = 'Fiscal Eletronic Document'
+    _inherit = 'l10n_br_fiscal.document.workflow'
 
-    _inherit = "l10n_br_fiscal.document.workflow"
-
-    @api.depends('codigo_situacao', 'motivo_situacao')
-    def _compute_codigo_motivo_situacao(self):
-        for record in self:
-            if record.motivo_situacao and record.codigo_situacao:
-                record.codigo_motivo_situacao = '{} - {}'.format(
-                    record.codigo_situacao,
-                    record.motivo_situacao
-                )
-
-    codigo_situacao = fields.Char(
-        string='Código situação',
-        copy=False,)
-
-    motivo_situacao = fields.Char(
-        string='Motivo situação',
-        copy=False,)
-
-    codigo_motivo_situacao = fields.Char(
-        compute='_compute_codigo_motivo_situacao',
-        string='Situação',
-        copy=False,)
-
-    # Eventos de envio
-    data_hora_autorizacao = fields.Datetime(
-        string="Data Hora",
-        readonly=True,
-        copy=False)
-
-    protocolo_autorizacao = fields.Char(
-        string="Protocolo",
-        readonly=True,
-        copy=False)
-
-    autorizacao_event_id = fields.Many2one(
-        comodel_name="l10n_br_fiscal.document.event",
-        string="Autorização",
-        readonly=True,
-        copy=False)
-
-    file_xml_id = fields.Many2one(
-        comodel_name="ir.attachment",
-        related="autorizacao_event_id.xml_sent_id",
-        string="XML envio",
-        ondelete="restrict",
+    status_code = fields.Char(
+        string='Status Code',
         copy=False,
-        readonly=True)
-
-    file_xml_autorizacao_id = fields.Many2one(
-        comodel_name="ir.attachment",
-        related="autorizacao_event_id.xml_returned_id",
-        string="XML de autorização",
-        ondelete="restrict",
-        copy=False,
-        readonly=True)
-
-    file_pdf_id = fields.Many2one(
-        comodel_name="ir.attachment",
-        string="PDF",
-        ondelete="restrict",
-        copy=False)
-
-    # Eventos de cancelamento
-    data_hora_cancelamento = fields.Datetime(
-        string="Data Hora Autorização",
-        readonly=True)
-
-    protocolo_cancelamento = fields.Char(
-        string="Protocolo Autorização",
-        readonly=True)
-
-    cancel_document_event_id = fields.Many2one(
-        comodel_name="l10n_br_fiscal.document.cancel", string="Cancelamento"
     )
 
-    file_xml_cancelamento_id = fields.Many2one(
-        comodel_name="ir.attachment",
-        string="XML de cancelamento",
-        ondelete="restrict",
-        copy=False)
+    status_name = fields.Char(
+        string='Status Name',
+        copy=False,
+    )
 
-    file_xml_autorizacao_cancelamento_id = fields.Many2one(
-        comodel_name="ir.attachment",
-        string="XML de autorização de cancelamento",
-        ondelete="restrict",
-        copy=False)
+    status_description = fields.Char(
+        compute='_compute_status_description',
+        string='Status Description',
+        copy=False,
+    )
+
+    # Authorization Event Related Fields
+    authorization_event_id = fields.Many2one(
+        comodel_name='l10n_br_fiscal.event',
+        string='Authorization Event',
+        readonly=True,
+        copy=False,
+    )
+
+    authorization_date = fields.Datetime(
+        string='Authorization Date',
+        related='authorization_event_id.date',
+        readonly=True,
+    )
+
+    authorization_protocol = fields.Char(
+        string='Authorization Protocol',
+        related='authorization_event_id.protocol_number',
+        readonly=True,
+    )
+
+    send_file_id = fields.Many2one(
+        comodel_name='ir.attachment',
+        related='authorization_event_id.file_request_id',
+        string='Send Document File XML',
+        ondelete='restrict',
+        readonly=True,
+    )
+
+    authorization_file_id = fields.Many2one(
+        comodel_name='ir.attachment',
+        related='authorization_event_id.file_response_id',
+        string='Authorization File XML',
+        ondelete='restrict',
+        readonly=True,
+    )
+
+    # Cancel Event Related Fields
+    cancel_event_id = fields.Many2one(
+        comodel_name='l10n_br_fiscal.event',
+        string='Cancel Event',
+        copy=False,
+    )
+
+    cancel_date = fields.Datetime(
+        string='Cancel Date',
+        related='cancel_event_id.date',
+        readonly=True,
+    )
+
+    cancel_protocol_number = fields.Char(
+        string='Cancel Protocol Number',
+        related='cancel_event_id.protocol_number',
+        readonly=True,
+    )
+
+    cancel_file_id = fields.Many2one(
+        comodel_name='ir.attachment',
+        related='cancel_event_id.file_response_id',
+        string='Cancel File XML',
+        ondelete='restrict',
+        readonly=True,
+    )
 
     document_version = fields.Char(
-        string='Versão',
+        string='Version',
         default='4.00',
         readonly=True)
 
     is_edoc_printed = fields.Boolean(
-        string="Impresso",
+        string="Is Printed?",
         readonly=True)
+
+    file_report_id = fields.Many2one(
+        comodel_name='ir.attachment',
+        string='Document Report',
+        ondelete='restrict',
+        readonly=True,
+        copy=False,
+    )
+
+    @api.depends('status_code', 'status_name')
+    def _compute_status_description(self):
+        for record in self:
+            if record.status_code:
+                record.status_description = '{} - {}'.format(
+                    record.status_code or '',
+                    record.status_name or '',
+                )
 
     def _eletronic_document_send(self):
         """ Implement this method in your transmission module,
@@ -140,20 +145,20 @@ class DocumentEletronic(models.AbstractModel):
 
     def _document_send(self):
         no_electronic = self.filtered(lambda d: not d.document_electronic)
-        super(DocumentEletronic, no_electronic)._document_send()
+        super()._document_send()
 
         electronic = self - no_electronic
         electronic._eletronic_document_send()
 
     def _gerar_evento(self, arquivo_xml, event_type):
-        event_obj = self.env["l10n_br_fiscal.document.event"]
+        event_obj = self.env["l10n_br_fiscal.event"]
 
         vals = {
             "type": event_type,
             "company_id": self.company_id.id,
             "origin": self.document_type_id.code + "/" + self.number,
             "create_date": fields.Datetime.now(),
-            "fiscal_document_id": self.id,
+            "document_id": self.id,
         }
         event_id = event_obj.create(vals)
         event_id._grava_anexo(arquivo_xml, "xml")
@@ -184,11 +189,11 @@ class DocumentEletronic(models.AbstractModel):
                 }
 
     def view_xml(self):
-        xml_file = self.file_xml_autorizacao_id or self.file_xml_id
+        xml_file = self.authorization_file_id or self.send_file_id
         if not xml_file:
             self._document_export()
-            xml_file = self.file_xml_autorizacao_id or self.file_xml_id
+            xml_file = self.authorization_file_id or self.send_file_id
         return self._target_new_tab(xml_file)
 
     def view_pdf(self):
-        return self._target_new_tab(self.file_pdf_id)
+        return self._target_new_tab(self.file_report_id)

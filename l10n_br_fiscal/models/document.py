@@ -118,6 +118,10 @@ class Document(models.Model):
                 line.freight_value for line in record.line_ids)
             record.amount_total = sum(
                 line.amount_total for line in record.line_ids)
+            record.amount_financial = sum(
+                line.amount_financial for line in record.line_ids)
+            record.amount_tax_withholding = sum(
+                line.amount_tax_withholding for line in record.line_ids)
 
     # used mostly to enable _inherits of account.invoice on
     # fiscal_document when existing invoices have no fiscal document.
@@ -134,11 +138,6 @@ class Document(models.Model):
 
     fiscal_operation_type = fields.Selection(
         related=False,
-    )
-
-    is_edoc_printed = fields.Boolean(
-        string='Printed',
-        readonly=True,
     )
 
     number = fields.Char(
@@ -203,9 +202,9 @@ class Document(models.Model):
         string='Serie Number',
     )
 
-    fiscal_document_related_ids = fields.One2many(
+    document_related_ids = fields.One2many(
         comodel_name='l10n_br_fiscal.document.related',
-        inverse_name='fiscal_document_id',
+        inverse_name='document_id',
         string='Fiscal Document Related',
     )
 
@@ -588,6 +587,15 @@ class Document(models.Model):
         compute='_compute_amount',
     )
 
+    amount_tax_withholding = fields.Monetary(
+        string="Amount Tax Withholding",
+        compute='_compute_amount')
+
+    amount_financial = fields.Monetary(
+        string='Amount Financial',
+        compute='_compute_amount',
+    )
+
     amount_discount = fields.Monetary(
         string='Amount Discount',
         compute='_compute_amount',
@@ -618,21 +626,6 @@ class Document(models.Model):
         copy=True,
     )
 
-    # TODO esse campo deveria ser calculado de
-    # acordo com o fiscal_document_id
-    document_section = fields.Selection(
-        selection=[
-            ('nfe', 'NF-e'),
-            ('nfse_recibos', 'NFS-e e Recibos'),
-            ('nfce_cfe', 'NFC-e e CF-e'),
-            ('cte', 'CT-e'),
-            ('todos', 'Todos'),
-        ],
-        string='Document Section',
-        readonly=True,
-        copy=True,
-    )
-
     edoc_purpose = fields.Selection(
         selection=[
             ('1', 'Normal'),
@@ -644,9 +637,9 @@ class Document(models.Model):
         default='1',
     )
 
-    document_event_ids = fields.One2many(
-        comodel_name='l10n_br_fiscal.document.event',
-        inverse_name='fiscal_document_id',
+    event_ids = fields.One2many(
+        comodel_name='l10n_br_fiscal.event',
+        inverse_name='document_id',
         string='Events',
         copy=False,
         readonly=True,
@@ -726,38 +719,6 @@ class Document(models.Model):
     def _onchange_company_id(self):
         if self.company_id:
             self.currency_id = self.company_id.currency_id
-
-    @api.multi
-    @api.onchange('document_section')
-    def _onchange_document_section(self):
-        if self.document_section:
-            domain = dict()
-            if self.document_section == 'nfe':
-                domain['document_type_id'] = [('code', '=', '55')]
-                self.document_type_id = \
-                    self.env['l10n_br_fiscal.document.type'].search([
-                        ('code', '=', '55')
-                    ])[0]
-            elif self.document_section == 'nfse_recibos':
-                domain['document_type_id'] = [('code', '=', 'SE')]
-                self.document_type_id = \
-                    self.env['l10n_br_fiscal.document.type'].search([
-                        ('code', '=', 'SE')
-                    ])[0]
-            elif self.document_section == 'nfce_cfe':
-                domain['document_type_id'] = [('code', 'in', ('59', '65'))]
-                self.document_type_id = \
-                    self.env['l10n_br_fiscal.document.type'].search([
-                        ('code', '=', '59')
-                    ])[0]
-            elif self.document_section == 'cte':
-                domain['document_type_id'] = [('code', '=', '57')]
-                self.document_type_id = \
-                    self.env['l10n_br_fiscal.document.type'].search([
-                        ('code', '=', '57')
-                    ])[0]
-
-            return {'domain': domain}
 
     def _create_return(self):
         return_docs = self.env[self._name]
@@ -875,8 +836,8 @@ class Document(models.Model):
 
     def _document_reference(self, reference_ids):
         for referenced_item in reference_ids:
-            referenced_item.fiscal_document_related_ids = self.id
-            self.fiscal_document_related_ids |= referenced_item
+            referenced_item.document_related_ids = self.id
+            self.document_related_ids |= referenced_item
 
     @api.depends('document_subsequent_ids.subsequent_document_id')
     def _compute_document_subsequent_generated(self):

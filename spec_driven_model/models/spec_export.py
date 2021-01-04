@@ -1,18 +1,10 @@
 # Copyright 2019 KMEE
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0.en.html).
+from io import StringIO
 import logging
-
+import sys
 from odoo import models, fields
 
-try:
-    from nfelib.v4_00 import leiauteNFe  # FIXME: Move me to my module!
-except ImportError:
-    pass
-
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
 
 _logger = logging.getLogger(__name__)
 
@@ -21,19 +13,17 @@ class AbstractSpecMixin(models.AbstractModel):
     _inherit = 'spec.mixin'
 
     def _get_ds_class(self, class_obj):
-        #  FIXME: leiauteNFe hardcoded
-        return getattr(leiauteNFe, class_obj._generateds_type)
+        binding_module = sys.modules[self._binding_module]
+        return getattr(binding_module, class_obj._generateds_type)
 
     def _export_fields(self, xsd_fields, class_obj, export_dict):
         # FIXME: Remove all references of nfe, make it generic!
         ds_class = self._get_ds_class(class_obj)
-        ds_class_sepc = {i.name: i for i in ds_class.member_data_items_}
+        ds_class_spec = {i.name: i for i in ds_class.member_data_items_}
 
         for xsd_field in xsd_fields:
-#            if not xsd_field:
-#                continue
-            field_spec_name = xsd_field.replace(self._field_prefix, '')
-            member_spec = ds_class_sepc[field_spec_name]
+            field_spec_name = xsd_field.replace(class_obj._field_prefix, '')
+            member_spec = ds_class_spec[field_spec_name]
             field_data = self._export_field(xsd_field, class_obj, member_spec)
 
             if not self[xsd_field] and not field_data:
@@ -74,12 +64,8 @@ class AbstractSpecMixin(models.AbstractModel):
                     'original_spec_model')
             )
         else:
-            if self[field_name]:
-                return self[field_name]._build_generateds(
-                    class_obj._fields[field_name].comodel_name)
-            else:
-                return self._build_generateds(
-                    class_obj._fields[field_name].comodel_name)
+            return (self[field_name] or self)._build_generateds(
+                class_obj._fields[field_name].comodel_name)
 
     def _export_one2many(self, field_name, class_obj=None):
         relational_data = []
@@ -120,7 +106,7 @@ class AbstractSpecMixin(models.AbstractModel):
         for c in set(classes):
             if c is None:
                 continue
-            if 'nfe.' not in c:  # make generic brittle
+            if not c.startswith("%s." % (self._schema_name,)):
                 continue
             # the following filter to fields to show
             # when several XSD class are injected in the same object
@@ -142,8 +128,9 @@ class AbstractSpecMixin(models.AbstractModel):
             return
 
         xsd_fields = (
-            i for i in self.env[class_name]._fields if
-            self.env[class_name]._fields[i]._attrs.get('xsd')
+            i for i in class_obj._fields if
+            class_obj._fields[i].name.startswith(class_obj._field_prefix)
+            and "_choice" not in class_obj._fields[i].name
         )
 
         kwargs = {}

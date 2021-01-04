@@ -1,3 +1,6 @@
+# Copyright 2019-2020 Akretion - Raphael Valyi <raphael.valyi@akretion.com>
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0.en.html).
+
 import sys
 import collections
 from inspect import getmembers, isclass
@@ -5,10 +8,6 @@ from odoo import api, models, SUPERUSER_ID, _
 import logging
 
 _logger = logging.getLogger(__name__)
-
-FIELD_PREFIX = "nfe40_"
-# TODO use schema name as default root key unless a key is provided in the
-#  class
 
 
 class SpecModel(models.AbstractModel):
@@ -26,10 +25,6 @@ class SpecModel(models.AbstractModel):
     _register = False           # not visible in ORM registry
     _abstract = False
     _transient = False
-    _spec_module = 'override.with.your.python.module'
-    _field_prefix = 'nfe40_'  # TODO in inherit / autoload hook
-    _schema_name = 'nfe'
-    _tab_name = 'NFe'
     _spec_module_classes = None  # a cache storing spec classes
 
     # TODO generic onchange method that check spec field simple type formats
@@ -56,9 +51,34 @@ class SpecModel(models.AbstractModel):
         existing concrete Odoo models. In that last case, the comodels of the
         relational fields pointing to such mixins should be remapped to the
         proper concrete models where these mixins are injected."""
+        cls._inject_spec_mixin(pool, cr)
         ModelClass = super(SpecModel, cls)._build_model(pool, cr)
         ModelClass._mutate_relational_fields(pool, cr)
         return ModelClass
+
+    @classmethod
+    def _inject_spec_mixin(cls, pool, cr):
+        """
+        xsd generated spec mixins do not need to depend on this opinionated
+        module. That's why the spec.mixin is dynamically injected as a parent
+        class as long as generated class inherit from some
+        spec.mixin.<schema_name> mixin.
+        """
+        parents = cls._inherit
+        parents = [parents] if isinstance(parents, str) else (parents or [])
+        for parent in parents:
+            super_parents = pool[parent]._inherit
+            if isinstance(super_parents, str):
+                super_parents = [super_parents]
+            else:
+                super_parents = super_parents or []
+            for super_parent in super_parents:
+                if super_parent.startswith('spec.mixin.'):
+                    cls._map_concrete(parent, cls._name)
+                    if not hasattr(pool[parent], 'build'):
+                        pool[parent]._inherit = super_parents + ['spec.mixin']
+                        pool[parent].__bases__ = ((pool['spec.mixin'],)
+                                                  + pool[parent].__bases__)
 
     @classmethod
     def _mutate_relational_fields(cls, pool, cr):
@@ -67,9 +87,9 @@ class SpecModel(models.AbstractModel):
         remap the comodel to the proper concrete model."""
         # mutate o2m and o2m related to m2o comodel to target proper
         # concrete implementation
+        env = api.Environment(cr, SUPERUSER_ID, {})
         if len(cls._inherit) > 1:  # only debug non automatic models
-            # _logger.info("\n==== BUILDING SpecModel %s %s" % (cls._name, cls))
-            env = api.Environment(cr, SUPERUSER_ID, {})
+            # _logger.info("\n==== BUILDING SpecModel %s %s" % (cls._name, cls)
             env[cls._name]._prepare_setup()
             env[cls._name]._setup_base()
 
@@ -77,7 +97,7 @@ class SpecModel(models.AbstractModel):
             if not hasattr(klass, '_name')\
                     or not hasattr(klass, '_fields')\
                     or klass._name is None\
-                    or not klass._name.startswith(cls._schema_name):
+                    or not klass._name.startswith(env[cls._name]._schema_name):
                 continue
             if klass._name != cls._name:
                 cls._map_concrete(klass._name, cls._name)
@@ -141,7 +161,7 @@ class SpecModel(models.AbstractModel):
         if not hasattr(models.MetaModel, 'mixin_mappings'):
             models.MetaModel.mixin_mappings = {}
         if not quiet:
-            _logger.debug(key, "--->", target)
+            _logger.debug("%s ---> %s" % (key, target))
         models.MetaModel.mixin_mappings[key] = target
 
     @classmethod
@@ -163,11 +183,8 @@ class SpecModel(models.AbstractModel):
     def _register_hook(self):
         res = super(SpecModel, self)._register_hook()
         if not hasattr(self.env.registry, '_spec_loaded'):  # TODO schema wise
-            # _logger.info("HHHHHHHHHHHHHHHOOK %s", self._module)
             from .. import hooks  # importing here avoids loop
-            hooks.register_hook(
-                self.env, 'l10n_br_nfe',
-                'odoo.addons.l10n_br_spec_nfe.models.v4_00.leiauteNFe')
+            hooks.register_hook(self.env, self._odoo_module, self._spec_module)
             self.env.registry._spec_loaded = True
         return res
 
@@ -184,7 +201,7 @@ class StackedModel(SpecModel):
     stacked in a denormalized way inside these two tables only.
     Because StackedModel has its _build_method overriden to do some magic
     during module loading it should be inherited the Python way
-    with MyObject(spec_models.StackedModel).
+    with MyModel(spec_models.StackedModel).
     """
     _register = False  # forces you to inherit StackeModel properly
 
@@ -202,7 +219,7 @@ class StackedModel(SpecModel):
         "inject all stacked m2o as inherited classes"
         # inject all stacked m2o as inherited classes
         if cls._stacked:
-            # _logger.info("\n\n====  BUILDING StackedModel %s %s\n" % (cls._name, cls))
+            _logger.info("\n\n====  BUILDING StackedModel %s %s\n" % (cls._name, cls))
             node = cls._odoo_name_to_class(cls._stacked, cls._spec_module)
             classes = set()
             cls._visit_stack(node, classes, cls._stacked.split('.')[-1], pool,
@@ -272,7 +289,7 @@ class StackedModel(SpecModel):
             if child is None:  # Not a spec field
                 continue
             child_concrete = SpecModel._get_concrete(child._name)
-            field_path = name.replace(cls._field_prefix, '')
+            field_path = name.replace(registry[node._name]._field_prefix, '')
             if f['type'] == 'one2many':
                 # _logger.info("%s    \u2261 <%s> %s" % (
                 #     indent, field_path, child_concrete or child._name))

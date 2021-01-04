@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-26 11:58+0000\n"
-"PO-Revision-Date: 2020-11-09 03:08+0000\n"
-"Last-Translator: Eder Brito <britoederr@gmail.com>\n"
+"PO-Revision-Date: 2020-12-18 21:48+0000\n"
+"Last-Translator: Marcel Savegnago <marcel.savegnago@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 3.10\n"
+"X-Generator: Weblate 4.3.2\n"
 
 #. module: l10n_br_hr
 #: model:ir.model.fields,field_description:l10n_br_hr.field_hr_employee_dependent__meeting_count
@@ -396,6 +396,11 @@ msgid "Contacts"
 msgstr "Contatos"
 
 #. module: l10n_br_hr
+#: model:ir.model.fields,field_description:l10n_br_hr.field_hr_employee_dependent__contract_ids
+msgid "Contracts"
+msgstr "Contratos"
+
+#. module: l10n_br_hr
 #: model:ir.model.fields,field_description:l10n_br_hr.field_hr_employee_dependent__contracts_count
 msgid "Contracts Count"
 msgstr "Contagem de Contratos"
@@ -516,6 +521,11 @@ msgstr "Descrição da deficiência"
 #: model:ir.model.fields,field_description:l10n_br_hr.field_hr_employee_dependent__trust
 msgid "Degree of trust you have in this debtor"
 msgstr "Grau de confiança que você tem neste devedor"
+
+#. module: l10n_br_hr
+#: model:ir.model.fields,field_description:l10n_br_hr.field_hr_employee_dependent__property_delivery_carrier_id
+msgid "Delivery Method"
+msgstr "Método de Entrega"
 
 #. module: l10n_br_hr
 #: model_terms:ir.ui.view,arch_db:l10n_br_hr.view_l10n_br_hr_employee_dependent_form
@@ -788,7 +798,7 @@ msgstr "Plano de saúde"
 #. module: l10n_br_hr
 #: model:ir.model.fields,field_description:l10n_br_hr.field_hr_employee_dependent__street_number
 msgid "House"
-msgstr "casa"
+msgstr "Casa"
 
 #. module: l10n_br_hr
 #: model:ir.model.fields,help:l10n_br_hr.field_hr_employee_dependent__street_number
@@ -1044,8 +1054,8 @@ msgid ""
 msgstr ""
 "A última vez que a correspondência de faturas e pagamentos foi realizada "
 "para este parceiro. Ele é definido se não houver pelo menos um débito não "
-"reconciliado e um crédito não reconciliado ou se você clicar no botão \""
-"Concluído\"."
+"reconciliado e um crédito não reconciliado ou se você clicar no botão "
+"\"Concluído\"."
 
 #. module: l10n_br_hr
 #: model:ir.model.fields,field_description:l10n_br_hr.field_hr_employee_dependent__last_time_entries_checked
@@ -1282,11 +1292,6 @@ msgid "Partner"
 msgstr "Parceiro"
 
 #. module: l10n_br_hr
-#: model:ir.model.fields,field_description:l10n_br_hr.field_hr_employee_dependent__contract_ids
-msgid "Partner Contracts"
-msgstr "Contratos de Parceiro"
-
-#. module: l10n_br_hr
 #: model:ir.model.fields,field_description:l10n_br_hr.field_hr_employee_dependent__debit_limit
 msgid "Payable Limit"
 msgstr "Limite de Pagamento"
@@ -1305,6 +1310,11 @@ msgstr "Telefone"
 #: model:ir.model.fields,field_description:l10n_br_hr.field_hr_employee_dependent__property_product_pricelist
 msgid "Pricelist"
 msgstr "Lista de Preços"
+
+#. module: l10n_br_hr
+#: model:ir.model.fields,field_description:l10n_br_hr.field_hr_employee_dependent__purchase_contract_count
+msgid "Purchase Contracts"
+msgstr "Contratos de Compra"
 
 #. module: l10n_br_hr
 #: model:ir.model.fields,field_description:l10n_br_hr.field_hr_employee__rg
@@ -1358,6 +1368,11 @@ msgstr "Reservista"
 #: model:ir.model.fields,field_description:l10n_br_hr.field_hr_employee_dependent__activity_user_id
 msgid "Responsible User"
 msgstr "Usuário Responsável"
+
+#. module: l10n_br_hr
+#: model:ir.model.fields,field_description:l10n_br_hr.field_hr_employee_dependent__sale_contract_count
+msgid "Sale Contracts"
+msgstr "Contratos de Venda"
 
 #. module: l10n_br_hr
 #: model:ir.model.fields,field_description:l10n_br_hr.field_hr_employee_dependent__sale_order_count
@@ -1648,6 +1663,11 @@ msgstr ""
 "Essa conta a receber será usada para o parceiro atual, substituindo a padrão"
 
 #. module: l10n_br_hr
+#: model:ir.model.fields,help:l10n_br_hr.field_hr_employee_dependent__property_delivery_carrier_id
+msgid "This delivery method will be used when invoicing from picking."
+msgstr "Este método de entrega será usado ao faturar a partir da separação."
+
+#. module: l10n_br_hr
 #: model:ir.model.fields,help:l10n_br_hr.field_hr_employee_dependent__image
 msgid ""
 "This field holds the image used as avatar for this contact, limited to "
@@ -1832,6 +1852,9 @@ msgstr "XXX.XXXXX.XX-X"
 #: model:ir.model.fields,field_description:l10n_br_hr.field_hr_employee_dependent__zip
 msgid "Zip"
 msgstr "CEP"
+
+#~ msgid "Partner Contracts"
+#~ msgstr "Contratos de Parceiro"
 
 #, fuzzy
 #~ msgid "Dependent name"
