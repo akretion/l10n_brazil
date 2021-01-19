@@ -4,12 +4,28 @@
 
 import time
 
-from openerp import models, fields, api
-from openerp.addons import decimal_precision as dp
+from odoo import models, fields, api
+from odoo.addons import decimal_precision as dp
 from .res_company import COMPANY_FISCAL_TYPE, COMPANY_FISCAL_TYPE_DEFAULT
 
 
-class AccountFiscalPositionRuleTemplate(models.Model):
+class AccountFiscalPositionRuleAbstract(object):
+
+    fiscal_category_id = fields.Many2one(
+        'l10n_br_account.fiscal.category', 'Categoria')
+    fiscal_type = fields.Selection(
+        COMPANY_FISCAL_TYPE, u'Regime Tributário', required=True,
+        default=COMPANY_FISCAL_TYPE_DEFAULT)
+    revenue_start = fields.Float(
+        'Faturamento Inicial', digits=dp.get_precision('Account'),
+        default=0.00, help="Faixa inicial de faturamento bruto")
+    revenue_end = fields.Float(
+        'Faturamento Final', digits=dp.get_precision('Account'),
+        default=0.00, help="Faixa inicial de faturamento bruto")
+
+
+class AccountFiscalPositionRuleTemplate(AccountFiscalPositionRuleAbstract,
+                                        models.Model):
     _inherit = 'account.fiscal.position.rule.template'
 
     partner_fiscal_type_id = fields.Many2many(
@@ -28,24 +44,11 @@ class AccountFiscalPositionRuleTemplate(models.Model):
         column2='partner_special_fiscal_type_id',
         string='Regime especial'
     )
-    fiscal_category_id = fields.Many2one(
-        'l10n_br_account.fiscal.category', 'Categoria')
-    fiscal_type = fields.Selection(
-        COMPANY_FISCAL_TYPE, u'Regime Tributário', required=True,
-        default=COMPANY_FISCAL_TYPE_DEFAULT)
-    revenue_start = fields.Float(
-        'Faturamento Inicial', digits_compute=dp.get_precision('Account'),
-        default=0.00, help="Faixa inicial de faturamento bruto")
-    revenue_end = fields.Float(
-        'Faturamento Final', digits_compute=dp.get_precision('Account'),
-        default=0.00, help="Faixa inicial de faturamento bruto")
-    parent_id = fields.Many2one(
-        'account.fiscal.position.rule.template', 'Regra Pai')
-    child_ids = fields.One2many(
-        'account.fiscal.position.rule.template', 'parent_id', 'Regras Filhas')
 
 
-class AccountFiscalPositionRule(models.Model):
+class AccountFiscalPositionRule(AccountFiscalPositionRuleAbstract,
+                                models.Model):
+
     _inherit = 'account.fiscal.position.rule'
 
     partner_fiscal_type_id = fields.Many2many(
@@ -62,25 +65,10 @@ class AccountFiscalPositionRule(models.Model):
         column2='partner_special_fiscal_type_id',
         string='Regime especial'
     )
-    fiscal_category_id = fields.Many2one(
-        'l10n_br_account.fiscal.category', 'Categoria')
-    fiscal_type = fields.Selection(
-        COMPANY_FISCAL_TYPE, u'Regime Tributário', required=True,
-        default=COMPANY_FISCAL_TYPE_DEFAULT)
-    revenue_start = fields.Float(
-        'Faturamento Inicial', digits_compute=dp.get_precision('Account'),
-        default=0.00, help="Faixa inicial de faturamento bruto")
-    revenue_end = fields.Float(
-        'Faturamento Final', digits_compute=dp.get_precision('Account'),
-        default=0.00, help="Faixa inicial de faturamento bruto")
-    parent_id = fields.Many2one('account.fiscal.position.rule', 'Regra Pai')
-    child_ids = fields.One2many(
-        'account.fiscal.position.rule', 'parent_id', 'Regras Filhas')
 
     def _map_domain(self, partner, addrs, company, **kwargs):
         from_country = company.partner_id.country_id.id
         from_state = company.partner_id.state_id.id
-        fiscal_rule_parent_id = company.fiscal_rule_parent_id.id
         partner_fiscal_type_id = partner.partner_fiscal_type_id.id
 
         document_date = self.env.context.get('date', time.strftime('%Y-%m-%d'))
@@ -101,18 +89,22 @@ class AccountFiscalPositionRule(models.Model):
             domain += special_domain
         else:
             domain += [('partner_special_fiscal_type_id', '=', False)]
+
+        if kwargs.get('fiscal_category_id'):
+            fiscal_category_id = kwargs.get('fiscal_category_id').id
+        else:
+            fiscal_category_id = False
+
         domain += [
             ('company_id', '=', company.id), use_domain,
             ('fiscal_type', '=', company.fiscal_type),
-            ('fiscal_category_id', '=', kwargs.get('fiscal_category_id')),
+            ('fiscal_category_id', '=', fiscal_category_id),
             '|', ('partner_fiscal_type_id', '=', partner_fiscal_type_id),
             ('partner_fiscal_type_id', '=', False),
             '|', ('from_country', '=', from_country),
             ('from_country', '=', False),
             '|', ('from_state', '=', from_state),
             ('from_state', '=', False),
-            '|', ('parent_id', '=', fiscal_rule_parent_id),
-            ('parent_id', '=', False),
             '|', ('date_start', '=', False),
             ('date_start', '<=', document_date),
             '|', ('date_end', '=', False),
@@ -121,6 +113,10 @@ class AccountFiscalPositionRule(models.Model):
             ('revenue_start', '<=', company.annual_revenue),
             '|', ('revenue_end', '=', False),
             ('revenue_end', '>=', company.annual_revenue)]
+
+        if kwargs.get('fiscal_category_id'):
+            fc = kwargs.get('fiscal_category_id')
+            domain += [('fiscal_category_id', '=', fc.id)]
 
         for address_type, address in addrs.items():
             key_country = 'to_%s_country' % address_type
@@ -141,16 +137,15 @@ class AccountFiscalPositionRule(models.Model):
 
         if not product_id or not fiscal_category_id:
             return result
-        product_tmpl_id = self.env['product.product'].browse(
-            product_id).product_tmpl_id.id
+        product_tmpl_id = product_id.product_tmpl_id
         fiscal_category = self.env[
             'l10n_br_account.product.category'].search(
-            [('product_tmpl_id', '=', product_tmpl_id),
-             ('fiscal_category_source_id', '=', fiscal_category_id),
+            [('product_tmpl_id', '=', product_tmpl_id.id),
+             ('fiscal_category_source_id', '=', fiscal_category_id.id),
              '|', ('to_state_id', '=', False),
-             ('to_state_id', '=', to_state_id)])
+             ('to_state_id', '=', to_state_id)], limit=1)
         if fiscal_category:
-            result = fiscal_category[0].fiscal_category_destination_id.id
+            result = fiscal_category.fiscal_category_destination_id
         return result
 
 

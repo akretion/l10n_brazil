@@ -12,17 +12,34 @@ class ResBank(models.Model):
 
     _inherit = 'res.bank'
 
-    district = fields.Char(u'Bairro', size=32)
-    number = fields.Char(u'Número', size=10)
+    district = fields.Char(
+        string=u'Bairro',
+        size=32)
 
-    country_id = fields.Many2one('res.country', related='country',
-                                 string=u'País')
+    number = fields.Char(
+        string=u'Número',
+        size=10)
 
-    state_id = fields.Many2one('res.country.state', related='state',
-                               string=u'Estado')
+    country_id = fields.Many2one(
+        comodel_name='res.country',
+        related='country',
+        string=u'País')
 
-    l10n_br_city_id = fields.Many2one('l10n_br_base.city', u'Municipio',
-                                      domain="[('state_id','=',state_id)]")
+    state_id = fields.Many2one(
+        comodel_name='res.country.state',
+        string=u'Estado',
+        related='state')
+
+    l10n_br_city_id = fields.Many2one(
+        comodel_name='l10n_br_base.city',
+        string=u'Municipio',
+        domain="[('state_id','=',state_id)]")
+
+    code_bc = fields.Char(
+        string=u'Brazilian Bank Code',
+        size=3,
+        help=u'Brazilian Bank Code ex.: 001 is the code of Banco do Brasil'
+    )
 
     @api.onchange('l10n_br_city_id')
     def _onchange_l10n_br_city_id(self):

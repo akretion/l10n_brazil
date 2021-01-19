@@ -17,6 +17,8 @@
         'data/l10n_br_base.city.csv',
         'data/l10n_br_base_data.xml',
         'data/res.country.state.csv',
+        'data/res.bank.csv',
+        'data/res_company_data.xml',
         'views/l10n_br_base_view.xml',
         'views/res_bank_view.xml',
         'views/res_country_view.xml',
@@ -26,13 +28,8 @@
     ],
     'demo': [
         'demo/l10n_br_base_demo.xml',
-        'demo/res_partner_demo.xml',
-    ],
-    'test': [
-        'test/base_inscr_est_valid.yml',
-        'test/base_inscr_est_invalid.yml',
-        'test/res_partner_test.yml',
-        'test/res_company_test.yml',
+        'demo/res_company_demo.xml',
+        'demo/res_partner_demo.xml'
     ],
     'installable': True,
     'auto_install': False,

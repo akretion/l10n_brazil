@@ -7,7 +7,7 @@
 import re
 
 from odoo import models, fields, api
-from odoo.addons.l10n_br_base.tools import fiscal
+from ..tools import fiscal
 from odoo.exceptions import ValidationError
 
 
@@ -48,6 +48,10 @@ class ResPartner(models.Model):
     cnpj_cpf = fields.Char('CNPJ/CPF', size=18)
 
     inscr_est = fields.Char('Inscr. Estadual/RG', size=16)
+    other_inscr_est_lines = fields.One2many(
+        'other.inscricoes.estaduais', 'partner_id',
+        string=u'Outras Inscrições Estaduais', ondelete='cascade'
+    )
 
     inscr_mun = fields.Char('Inscr. Municipal', size=18)
 
@@ -64,6 +68,8 @@ class ResPartner(models.Model):
     district = fields.Char('Bairro', size=32)
 
     number = fields.Char(u'Número', size=10)
+
+    union_entity_code = fields.Char(string='Union entity code')
 
     @api.multi
     @api.constrains('cnpj_cpf', 'inscr_est')
@@ -121,7 +127,7 @@ class ResPartner(models.Model):
                 raise ValidationError(u"{} Invalido!".format(document))
 
     @api.multi
-    @api.constrains('inscr_est', 'state_id')
+    @api.constrains('inscr_est')
     def _check_ie(self):
         """Checks if company register number in field insc_est is valid,
         this method call others methods because this validation is State wise
@@ -139,20 +145,18 @@ class ResPartner(models.Model):
             if not result:
                 raise ValidationError(u"Inscrição Estadual Invalida!")
 
+    @api.onchange('state_id')
+    def _onchange_state_id(self):
+        for record in self:
+            record.inscr_est = None
+
     @api.onchange('cnpj_cpf', 'country_id')
     def _onchange_cnpj_cpf(self):
-        cnpj_cpf = None
-        country_code = self.country_id.code or ''
-        if self.cnpj_cpf and country_code.upper() == 'BR':
-            val = re.sub('[^0-9]', '', self.cnpj_cpf)
-            if self.is_company and len(val) == 14:
-                cnpj_cpf = "%s.%s.%s/%s-%s" % (
-                    val[0:2], val[2:5], val[5:8], val[8:12], val[12:14])
-            elif not self.is_company and len(val) == 11:
-                cnpj_cpf = "%s.%s.%s-%s" % (
-                    val[0:3], val[3:6], val[6:9], val[9:11])
-            if cnpj_cpf:
-                self.cnpj_cpf = cnpj_cpf
+        country = self.country_id.code or ''
+        cpf_cnpj = fiscal.format_cpf_cnpj(self.cnpj_cpf, country,
+                                          self.is_company)
+        if cpf_cnpj:
+            self.cnpj_cpf = cpf_cnpj
 
     @api.onchange('l10n_br_city_id')
     def _onchange_l10n_br_city_id(self):
@@ -183,6 +187,33 @@ class ResPartner(models.Model):
         address_fields = super(ResPartner, self)._address_fields()
         return list(address_fields + ['l10n_br_city_id', 'number', 'district'])
 
+    @api.multi
+    @api.constrains('other_inscr_est_lines')
+    def _check_other_ie_lines(self):
+        """Checks if field other insc_est is valid,
+        this method call others methods because this validation is State wise
+        :Return: True or False.
+        """
+        for record in self:
+            for inscr_est_line in record.other_inscr_est_lines:
+                state_code = inscr_est_line.state_id.code or ''
+                uf = state_code.lower()
+                valid_ie = fiscal.validate_ie(uf, inscr_est_line.inscr_est)
+                if not valid_ie:
+                    raise ValidationError(u"Inscrição Estadual Invalida!")
+                if inscr_est_line.state_id.id == record.state_id.id:
+                    raise ValidationError(
+                        u"Somente pode existir uma Inscrição"
+                        u" Estadual por estado para cada Parceiro!")
+                duplicate_ie = record.search([
+                    ('state_id', '=', inscr_est_line.state_id.id),
+                    ('inscr_est', '=', inscr_est_line.inscr_est)
+                ])
+                if duplicate_ie:
+                    raise ValidationError(
+                        u"Inscrição Estadual já usada"
+                        u" por %s" % duplicate_ie.name)
+
 
 class ResPartnerBank(models.Model):
     """ Adiciona campos necessários para o cadastramentos de contas
@@ -200,12 +231,15 @@ class ResPartnerBank(models.Model):
         'l10n_br_base.city', 'Municipio',
         domain="[('state_id','=',state_id)]")
     acc_number = fields.Char("Account Number", size=64, required=False)
-    bank = fields.Many2one('res.bank', 'Bank', required=False)
     acc_number_dig = fields.Char('Digito Conta', size=8)
     bra_number = fields.Char(u'Agência', size=8)
     bra_number_dig = fields.Char(u'Dígito Agência', size=8)
     zip = fields.Char('CEP', size=24, change_default=True)
     country_id = fields.Many2one('res.country', 'País', ondelete='restrict')
+    bra_bank_bic = fields.Char(
+        string='BIC/Swift Final Code.',
+        size=3,
+        help='Last part of BIC/Swift Code.')
 
     @api.multi
     def onchange_partner_id(self, partner_id):
@@ -216,9 +250,20 @@ class ResPartnerBank(models.Model):
         result['value']['l10n_br_city_id'] = partner.l10n_br_city_id.id
         return result
 
-    @api.onchange('zip')
-    def _onchange_zip(self):
-        if self.zip:
-            val = re.sub('[^0-9]', '', self.zip)
-            if len(val) == 8:
-                self.zip = "%s-%s" % (val[0:5], val[5:8])
+
+class OtherInscricoesEstaduais(models.Model):
+    _name = 'other.inscricoes.estaduais'
+
+    partner_id = fields.Many2one('res.partner')
+    inscr_est = fields.Char(
+        size=16, string='Inscr. Estadual', required=True
+    )
+    state_id = fields.Many2one(
+        'res.country.state', 'Estado', required=True
+    )
+
+    _sql_constraints = [
+        ('other_inscricoes_estaduais_id_uniq',
+         'unique (state_id, partner_id)',
+         u'O Parceiro já possui uma Inscrição Estadual para esse Estado!')
+    ]
