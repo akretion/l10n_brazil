@@ -8,7 +8,7 @@ from odoo.addons.spec_driven_model.models import spec_models
 
 class ResPartner(spec_models.StackedModel):
     _name = 'res.partner'
-    _inherit = ['res.partner', 'nfe.40.dest']
+    _inherit = ['res.partner', 'nfe.40.dest', 'nfe.40.tendereco', 'nfe.40.tlocal']
     _stacked = 'nfe.40.dest'
     _field_prefix = 'nfe40_'
     _schema_name = 'nfe'
