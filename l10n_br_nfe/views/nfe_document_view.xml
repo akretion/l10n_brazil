@@ -53,6 +53,9 @@
               <group>
                   <field name="nfe40_detPag"/>
               </group>
+              <group>
+                  <field name="nfe40_cobr"/>
+              </group>
           </page>
           <field name="state_fiscal" position="after">
               <field name="nfe40_infAdic"/>
@@ -80,6 +83,48 @@
               <group>
                   <field name="nfe40_tPag"/>
                   <field name="nfe40_vPag"/>
+              </group>
+          </form>
+      </field>
+  </record>
+
+  <record id="nfe_40_cobr_form" model="ir.ui.view">
+      <field name="name">nfe.40.cobr.form</field>
+      <field name="model">nfe.40.cobr</field>
+      <field name="arch" type="xml">
+          <form>
+              <group>
+                  <field name="nfe40_fat"/>
+                  <field name="nfe40_dup"/>
+              </group>
+          </form>
+      </field>
+  </record>
+
+  <record id="nfe_40_fat_form" model="ir.ui.view">
+      <field name="name">nfe.40.fat.form</field>
+      <field name="model">nfe.40.fat</field>
+      <field name="arch" type="xml">
+          <form>
+              <group>
+                  <field name="nfe40_nFat"/>
+                  <field name="nfe40_vOrig"/>
+                  <field name="nfe40_vDesc"/>
+                  <field name="nfe40_vLiq"/>
+              </group>
+          </form>
+      </field>
+  </record>
+
+  <record id="nfe_40_dup_form" model="ir.ui.view">
+      <field name="name">nfe.40.dup.form</field>
+      <field name="model">nfe.40.dup</field>
+      <field name="arch" type="xml">
+          <form>
+              <group>
+                  <field name="nfe40_nDup"/>
+                  <field name="nfe40_dVenc"/>
+                  <field name="nfe40_vDup"/>
               </group>
           </form>
       </field>
