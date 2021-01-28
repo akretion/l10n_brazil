@@ -301,20 +301,25 @@ class NFe(spec_models.StackedModel):
             self.nfe40_cNF = self.key[38:-1]
             self.nfe40_cDV = self.key[-1]
 
-    def _serialize(self, edocs):
-        edocs = super()._serialize(edocs)
+    def _generate_nfe_binding(self):
         for record in (self.with_context(
                        {'lang': 'pt_BR'}).filtered(filter_processador_edoc_nfe)):
             inf_nfe = record.export_ds()[0]
-
-            tnfe = leiauteNFe.TNFe(
+            nfe_binding = leiauteNFe.TNFe(
                 infNFe=inf_nfe,
                 infNFeSupl=None,
                 Signature=None)
-            tnfe.original_tagname_ = 'NFe'
+            nfe_binding.original_tagname_ = 'NFe'
+        return nfe_binding
 
-            edocs.append(tnfe)
+    def _generate_nfe_xml(self, edocs, nfe_binding):
+        edocs = super()._serialize(edocs)
+        edocs.append(nfe_binding)
+        return edocs
 
+    def _serialize(self, edocs):
+        nfe_binding = self._generate_nfe_binding()
+        edocs = self._generate_nfe_xml(edocs, nfe_binding)
         return edocs
 
     def _processador(self):
