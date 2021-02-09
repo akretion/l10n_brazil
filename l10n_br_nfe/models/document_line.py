@@ -61,10 +61,12 @@ class NFeLine(spec_models.StackedModel):
 
     nfe40_vUnCom = fields.Float(
         related='price_unit',
+        string='Valor unitário de comercialização',
     )
 
     nfe40_vUnTrib = fields.Float(
         related='fiscal_price',
+        string='Valor unitário de tributação',
     )
 
     nfe40_choice9 = fields.Selection([
@@ -106,11 +108,13 @@ class NFeLine(spec_models.StackedModel):
     nfe40_choice13 = fields.Selection(
         compute='_compute_nfe40_choice13',
         store=True,
+        string='Tipo de Tributação do PIS',
     )
 
     nfe40_choice16 = fields.Selection(
         compute='_compute_nfe40_choice16',
         store=True,
+        string='Tipo de Tributação do COFINS'
     )
 
     nfe40_orig = fields.Selection(
@@ -163,6 +167,34 @@ class NFeLine(spec_models.StackedModel):
 
     nfe40_vTotTrib = fields.Monetary(
         related='amount_estimate_tax',
+    )
+
+    nfe40_PISAliq = fields.Many2one(
+        "nfe.40.pisaliq",
+        string="Código de Situação Tributária do PIS (Alíquota)",
+        help="Código de Situação Tributária do PIS."
+        "\n01 – Operação Tributável - Base de Cálculo = Valor da Operação"
+        "\nAlíquota Normal (Cumulativo/Não Cumulativo);"
+        "\n02 - Operação Tributável - Base de Calculo = Valor da Operação"
+        "\n(Alíquota Diferenciada);")
+
+    nfe40_COFINSAliq = fields.Many2one(
+        "nfe.40.cofinsaliq",
+        string="Código de Situação Tributária do COFINS (Alíquota)",
+        help="Código de Situação Tributária do COFINS."
+             "\n01 – Operação Tributável - Base de Cálculo = Valor da Operação"
+             "\nAlíquota Normal (Cumulativo/Não Cumulativo);"
+             "\n02 - Operação Tributável - Base de Calculo = Valor da Operação"
+             "\n(Alíquota Diferenciada);")
+
+    # Todo: Calcular
+    nfe40_vFCPUFDest = fields.Monetary(
+        string='Valor total do ICMS relativo ao Fundo de Combate à Pobreza',
+    )
+
+    # Todo: Calcular
+    nfe40_vFCPSTRet = fields.Monetary(
+        string='Valor do ICMS relativo ao Fundo de Combate à Pobreza Retido por ST',
     )
 
     @api.depends('icms_cst_id')
