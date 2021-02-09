@@ -78,9 +78,9 @@ class SpecViewMixin(models.AbstractModel):
                 if not self.fields_get().get(field_name):
                     continue
                 field = self.fields_get()[field_name]
-#                print("----", field_name, field)
+                if field['type'] in ['one2many', 'many2one']:
+                    field['views'] = {}  # no inline views
                 res['fields'][field_name] = field
-                # print("looking for", field_name)
                 field_node = doc.xpath("//field[@name='%s']" %
                                        (field_name,))
                 if field_node:
@@ -191,10 +191,8 @@ class SpecViewMixin(models.AbstractModel):
                     # be optional too
                 else:  # assume dynamically required via attrs
                     required = False
-
                 if selector_name is not None:
-                    invisible = "[('%s','!=','%s')]" % (selector_name,
-                                                        field_name)
+                    invisible = [('%s' % (selector_name,), '!=', field_name)]
                     attrs = {'invisible': invisible}
                 else:
                     attrs = False
