@@ -63,6 +63,7 @@
             <field name="state" widget="statusbar" statusbar_visible="em_digitacao,autorizada"/>
         </header>
         <sheet string="Fiscal Document">
+          <div class="oe_button_box" name="button_box"/>
           <div class="oe_title">
             <h1>
                 <field name="document_type_id" readonly="1"/>:
