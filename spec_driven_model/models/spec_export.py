@@ -21,7 +21,10 @@ class AbstractSpecMixin(models.AbstractModel):
         ds_class_spec = {i.name: i for i in ds_class.member_data_items_}
 
         for xsd_field in xsd_fields:
-            if not xsd_field or not self._fields.get(xsd_field):
+            if not xsd_field:
+                continue
+            if (not self._fields.get(xsd_field)) and xsd_field not in self._stacking_points.keys():
+                print("NEXT", self, class_obj, xsd_field, self._stacking_points.keys())
                 continue
             field_spec_name = xsd_field.replace(class_obj._field_prefix, '')
             if not ds_class_spec.get(field_spec_name):
@@ -29,21 +32,25 @@ class AbstractSpecMixin(models.AbstractModel):
                 continue
             member_spec = ds_class_spec[field_spec_name]
             field_data = self._export_field(xsd_field, class_obj, member_spec)
-
-            if not self[xsd_field] and not field_data:
+            if xsd_field in self._stacking_points.keys():
+                if not field_data:
+                # stacked nested tags are skipped if empty
+                    continue
+            elif not self[xsd_field] and not field_data:
                 continue
 
             export_dict[field_spec_name] = field_data
 
     def _export_field(self, xsd_field, class_obj, member_spec):
         # TODO: Export number required fields with Zero.
-        xsd_required = class_obj._fields[xsd_field]._attrs.get(
+        field = class_obj._fields.get(xsd_field, self._stacking_points.get(xsd_field))
+        xsd_required = field._attrs.get(
             'xsd_required')
 
-        if self._fields[xsd_field].type == 'many2one':
-            if not self[xsd_field] and not xsd_required:
-                if class_obj._fields[xsd_field].comodel_name \
-                        not in self._get_spec_classes():
+        if field.type == 'many2one':
+            if ((not self._stacking_points.get(xsd_field))
+                and (not self[xsd_field] and not xsd_required)):
+                if field.comodel_name not in self._get_spec_classes():
                     return False
             return self._export_many2one(xsd_field, xsd_required,
                                          class_obj)
@@ -62,10 +69,9 @@ class AbstractSpecMixin(models.AbstractModel):
             return self[xsd_field]
 
     def _export_many2one(self, field_name, xsd_required, class_obj=None):
-        if self._fields[field_name]._attrs.get('original_spec_model'):
-            return self[field_name]._build_generateds(
-                class_name=self._fields[field_name]._attrs.get(
-                    'original_spec_model')
+        if field_name in self._stacking_points.keys():
+            return self._build_generateds(
+                class_name=self._stacking_points[field_name].comodel_name
             )
         else:
             return (self[field_name] or self)._build_generateds(
