@@ -114,7 +114,7 @@
                         <group>
                             <field name="invoice_line_tax_ids" context="{'type': invoice_type}" domain="[('type_tax_use','!=','none'),('company_id', '=', company_id)]" widget="many2many_tags" options="{'no_create': True}"/>
                             <field name="insurance_value"/>
-                            <field name="other_costs_value"/>
+                            <field name="costs_value"/>
                             <field name="freight_value"/>
                         </group>
                     </page>
