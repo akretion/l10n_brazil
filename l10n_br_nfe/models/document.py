@@ -390,7 +390,7 @@ class NFe(spec_models.StackedModel):
             # TODO map this better
             total = sum(self.line_ids.filtered(
                 lambda l: l.cfop_id.finance_move).mapped('amount_total'))
-            tpag = '99'
+            tpag = '15'
             if not total:
                 tpag = '90'
 
@@ -439,7 +439,7 @@ class NFe(spec_models.StackedModel):
             # TODO map this better
             total = sum(self.line_ids.filtered(
                 lambda l: l.cfop_id.finance_move).mapped('amount_total'))
-            tpag = '99'
+            tpag = '15'
             if not total:
                 tpag = '90'
             record.nfe40_detPag = [(5, 0, 0), (0, 0, {
