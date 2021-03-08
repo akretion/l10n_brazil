@@ -4,7 +4,6 @@
 
 from lxml import etree
 from odoo import api, fields, models
-from odoo.addons import decimal_precision as dp
 from odoo.addons.l10n_br_fiscal.constants.fiscal import DOCUMENT_ISSUER_PARTNER
 
 
