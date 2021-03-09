@@ -225,6 +225,14 @@ class NFe(spec_models.StackedModel):
         related='amount_icms_value'
     )
 
+    nfe40_vBCST = fields.Monetary(
+        related='amount_icmsst_base'
+    )
+
+    nfe40_vST = fields.Monetary(
+        related='amount_icmsst_value'
+    )
+
     nfe40_vPIS = fields.Monetary(
         related='amount_pis_value'
     )
