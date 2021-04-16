@@ -26,9 +26,10 @@
                 <field name="amount_discount_value" groups="l10n_br_sale.group_discount_per_value" widget='monetary' options="{'currency_field': 'currency_id'}"/>
             </field>
             <field name="amount_untaxed" position="after">
-                <field name="amount_freight_value" widget='monetary' options="{'currency_field': 'currency_id'}"/>
-                <field name="amount_insurance_value" widget='monetary' options="{'currency_field': 'currency_id'}" />
-                <field name="amount_other_value" widget='monetary' options="{'currency_field': 'currency_id'}" />
+                <field name="delivery_costs" invisible="1"/>
+                <field name="amount_freight_value" widget='monetary' options="{'currency_field': 'currency_id'}" attrs="{'readonly': [('delivery_costs', '=', 'line')]}"/>
+                <field name="amount_insurance_value" widget='monetary' options="{'currency_field': 'currency_id'}" attrs="{'readonly': [('delivery_costs', '=', 'line')]}"/>
+                <field name="amount_other_value" widget='monetary' options="{'currency_field': 'currency_id'}"  attrs="{'readonly': [('delivery_costs', '=', 'line')]}"/>
             </field>
             <field name="amount_total" position="after">
                 <field name="amount_financial" widget='monetary' options="{'currency_field': 'currency_id'}"/>
@@ -100,9 +101,10 @@
                   </page>
                   <page name="others" string="Others">
                       <group>
-                          <field name="freight_value"/>
-                          <field name="insurance_value"/>
-                          <field name="other_value"/>
+                          <field name="delivery_costs" invisible="1"/>
+                          <field name="freight_value" attrs="{'readonly': [('delivery_costs', '=', 'total')]}"/>
+                          <field name="insurance_value" attrs="{'readonly': [('delivery_costs', '=', 'total')]}"/>
+                          <field name="other_value" attrs="{'readonly': [('delivery_costs', '=', 'total')]}"/>
                       </group>
                   </page>
                   <page name="fiscal_line_extra_info" string="Extra Info"/>
