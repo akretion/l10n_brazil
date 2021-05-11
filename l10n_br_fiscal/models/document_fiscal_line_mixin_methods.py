@@ -7,7 +7,7 @@ from lxml import etree
 
 from odoo import api, models
 
-from ..constants.fiscal import CFOP_DESTINATION_EXPORT, FISCAL_IN
+from ..constants.fiscal import CFOP_DESTINATION_EXPORT, FISCAL_IN, TAX_CALC_MANUAL
 from ..constants.icms import ICMS_BASE_TYPE_DEFAULT, ICMS_ST_BASE_TYPE_DEFAULT
 from .tax import TAX_DICT_VALUES
 
@@ -250,6 +250,11 @@ class FiscalDocumentLineMixinMethods(models.AbstractModel):
         return taxes
 
     def _remove_all_fiscal_tax_ids(self):
+        tax_calc = self.env.context.get(
+            "tax_calc_override"  # , self.fiscal_operation_line_id.tax_calc ?
+        )
+        if tax_calc == TAX_CALC_MANUAL:
+            return
         for line in self:
             line.fiscal_tax_ids = False
 
@@ -346,6 +351,9 @@ class FiscalDocumentLineMixinMethods(models.AbstractModel):
 
     @api.onchange("fiscal_operation_line_id")
     def _onchange_fiscal_operation_line_id(self):
+        tax_calc = self.env.context.get(
+            "tax_calc_override"  # , self.fiscal_operation_line_id.tax_calc ?
+        )
         # Reset Taxes
         self._remove_all_fiscal_tax_ids()
         if self.fiscal_operation_line_id:
@@ -362,6 +370,10 @@ class FiscalDocumentLineMixinMethods(models.AbstractModel):
             )
 
             self.cfop_id = mapping_result["cfop"]
+
+            if tax_calc == TAX_CALC_MANUAL:
+                return
+
             self.ipi_guideline_id = mapping_result["ipi_guideline"]
             self.icms_tax_benefit_id = mapping_result["icms_tax_benefit_id"]
             taxes = self.env["l10n_br_fiscal.tax"]

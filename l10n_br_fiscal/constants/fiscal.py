@@ -524,3 +524,5 @@ FISCAL_PAYMENT_MODE = [
     ("90", "90 - Sem Pagamento"),
     ("99", "99 - Outros"),
 ]
+
+TAX_CALC_MANUAL = "tax_calc_manual"
