@@ -3,7 +3,7 @@
 
 import logging
 
-from odoo import fields
+from odoo import api, fields
 from odoo.addons.spec_driven_model.models import spec_models
 
 _logger = logging.getLogger(__name__)
