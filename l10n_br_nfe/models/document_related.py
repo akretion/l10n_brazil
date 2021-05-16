@@ -65,7 +65,6 @@ class NFeRelated(spec_models.StackedModel):
     #     store=True,
     # )
 
-    @api.multi
     @api.depends('document_type_id')
     def _compute_nfe_data(self):
         """Set schema data which are not just related fields"""

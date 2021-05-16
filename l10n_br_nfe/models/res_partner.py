@@ -3,7 +3,7 @@
 
 import logging
 
-from odoo import api, fields
+from odoo import fields
 from odoo.addons.spec_driven_model.models import spec_models
 
 _logger = logging.getLogger(__name__)
@@ -75,19 +75,16 @@ class ResPartner(spec_models.SpecModel):
         ('nfe40_CPF', 'CPF')],
         "CNPJ/CPF do Parceiro")
 
-    @api.multi
     def _compute_nfe40_xEnder(self):
         for rec in self:
             rec.nfe40_xEnder = rec.street + ', ' + rec.street_number
             if rec.street2:
                 rec.nfe40_xEnder = rec.nfe40_xEnder + ' - ' + rec.street2
 
-    @api.multi
     def _compute_nfe40_enderDest(self):
         for rec in self:
             rec.nfe40_enderDest = rec.id
 
-    @api.multi
     def _compute_nfe_data(self):
         """Set schema data which are not just related fields"""
         for rec in self:

@@ -283,7 +283,6 @@ class NFe(spec_models.StackedModel):
                 ).encode('ASCII', 'ignore').decode('ASCII').replace(
                     '\n', '').replace('\r', '')
 
-    @api.multi
     @api.depends('fiscal_operation_type')
     def _compute_nfe_data(self):
         """Set schema data which are not just related fields"""
@@ -294,7 +293,6 @@ class NFe(spec_models.StackedModel):
             }
             rec.nfe40_tpNF = operation_2_tpNF[rec.fiscal_operation_type]
 
-    @api.multi
     @api.depends('partner_id', 'company_id')
     def _compute_nfe40_idDest(self):
         for rec in self:
@@ -316,7 +314,6 @@ class NFe(spec_models.StackedModel):
                 }
                 rec.fiscal_operation_type = tpNF_2_operation[rec.nfe40_tpNF]
 
-    @api.multi
     def _document_number(self):
         # TODO: Criar campos no fiscal para codigo aleatorio e digito verificador,
         # pois outros modelos também precisam dessescampos: CT-e, MDF-e etc
@@ -359,7 +356,6 @@ class NFe(spec_models.StackedModel):
             versao=self.nfe_version, ambiente=self.nfe_environment
         )
 
-    @api.multi
     def _document_export(self, pretty_print=True):
         super()._document_export()
         for record in self.filtered(filter_processador_edoc_nfe):
@@ -429,7 +425,6 @@ class NFe(spec_models.StackedModel):
             ]
         self.nfe40_detPag.__class__._field_prefix = 'nfe40_'
 
-    @api.multi
     def _eletronic_document_send(self):
         super(NFe, self)._eletronic_document_send()
         for record in self.filtered(filter_processador_edoc_nfe):
@@ -472,7 +467,6 @@ class NFe(spec_models.StackedModel):
                 })
         return
 
-    @api.multi
     def _document_date(self):
         super()._document_date()
         for record in self.filtered(filter_processador_edoc_nfe):
@@ -649,7 +643,6 @@ class NFe(spec_models.StackedModel):
         new_root.append(protNFe_node)
         return etree.tostring(new_root)
 
-    @api.multi
     def _document_cancel(self, justificative):
         super(NFe, self)._document_cancel(justificative)
         online_event = self.filtered(filter_processador_edoc_nfe)
@@ -707,14 +700,12 @@ class NFe(spec_models.StackedModel):
                 file_response_xml=processo.retorno.content.decode('utf-8'),
             )
 
-    @api.multi
     def _document_correction(self, justificative):
         super(NFe, self)._document_correction(justificative)
         online_event = self.filtered(filter_processador_edoc_nfe)
         if online_event:
             online_event._nfe_correction(justificative)
 
-    @api.multi
     def _nfe_correction(self, justificative):
         self.ensure_one()
         processador = self._processador()
