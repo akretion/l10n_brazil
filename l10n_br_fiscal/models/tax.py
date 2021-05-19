@@ -2,7 +2,6 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 from odoo import api, fields, models
-from odoo.addons import decimal_precision as dp
 from odoo.tools import float_is_zero
 
 from ..constants.fiscal import (
@@ -90,19 +89,19 @@ class Tax(models.Model):
     percent_amount = fields.Float(
         string="Percent",
         default=0.00,
-        digits=dp.get_precision("Fiscal Tax Percent"),
+        digits="Fiscal Tax Percent",
         required=True)
 
     percent_reduction = fields.Float(
         string="Percent Reduction",
         default=0.00,
-        digits=dp.get_precision("Fiscal Tax Percent"),
+        digits="Fiscal Tax Percent",
         required=True)
 
     percent_debit_credit = fields.Float(
         string="Percent Debit/Credit",
         default=0.00,
-        digits=dp.get_precision("Fiscal Tax Percent"),
+        digits="Fiscal Tax Percent",
         required=True)
 
     currency_id = fields.Many2one(
@@ -113,7 +112,7 @@ class Tax(models.Model):
     value_amount = fields.Float(
         string="Value",
         default=0.00,
-        digits=dp.get_precision("Fiscal Tax Value"),
+        digits="Fiscal Tax Value",
         required=True)
 
     uot_id = fields.Many2one(
@@ -160,20 +159,19 @@ class Tax(models.Model):
     icmsst_mva_percent = fields.Float(
         string="MVA Percent",
         default=0.00,
-        digits=dp.get_precision("Fiscal Tax Percent"),
+        digits="Fiscal Tax Percent",
         required=True)
 
     icmsst_value = fields.Float(
         string="PFC Value",
         default=0.00,
-        digits=dp.get_precision("Fiscal Tax Value"),
+        digits="Fiscal Tax Value",
         required=True)
 
     _sql_constraints = [(
         "fiscal_tax_code_uniq", "unique (name)",
         "Tax already exists with this name !")]
 
-    @api.multi
     def get_account_tax(self, fiscal_operation_type=FISCAL_OUT):
         account_tax_type = {'out': 'sale', 'in': 'purchase'}
         type_tax_use = account_tax_type.get(fiscal_operation_type, 'sale')
@@ -652,7 +650,6 @@ class Tax(models.Model):
 
         return self._compute_tax(tax, taxes_dict, **kwargs)
 
-    @api.multi
     def compute_taxes(self, **kwargs):
         """
         arguments:

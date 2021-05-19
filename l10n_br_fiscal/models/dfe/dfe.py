@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright 2020 KMEE INFORMATICA LTDA
 # License AGPL-3 or later (http://www.gnu.org/licenses/agpl)
@@ -35,7 +34,6 @@ class DFe(models.Model):
         string="XML Documents",
     )
 
-    @api.multi
     @api.depends('company_id.name', 'last_nsu')
     def name_get(self):
         return [(r.id, '{} - NSU: {}'.format(
@@ -61,7 +59,6 @@ class DFe(models.Model):
              'searched with a Cron',
     )
 
-    @api.multi
     def action_manage_manifestations(self):
 
         return {

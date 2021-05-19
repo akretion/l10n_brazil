@@ -5,7 +5,6 @@
 import logging
 
 from odoo import api, fields, models
-from odoo.addons import decimal_precision as dp
 
 from ..constants.fiscal import (
     INDUSTRY_TYPE,
@@ -42,7 +41,6 @@ _logger = logging.getLogger(__name__)
 class ResCompany(models.Model):
     _inherit = "res.company"
 
-    @api.multi
     def _get_company_address_fields(self, partner):
         """ Read the l10n_br specific functional fields. """
         partner_fields = super()._get_company_address_fields(partner)
@@ -143,7 +141,7 @@ class ResCompany(models.Model):
         string="Annual Revenue",
         currency_field="currency_id",
         default=0.00,
-        digits=dp.get_precision("Fiscal Documents"))
+        digits="Fiscal Documents")
 
     simplifed_tax_id = fields.Many2one(
         comodel_name="l10n_br_fiscal.simplified.tax",
@@ -163,13 +161,13 @@ class ResCompany(models.Model):
         default=0.00,
         compute='_compute_simplifed_tax',
         store=True,
-        digits=dp.get_precision("Fiscal Tax Percent"))
+        digits="Fiscal Tax Percent")
 
     payroll_amount = fields.Monetary(
         string="Last Period Payroll Amount",
         currency_field="currency_id",
         default=0.00,
-        digits=dp.get_precision("Fiscal Documents"))
+        digits="Fiscal Documents")
 
     coefficient_r = fields.Boolean(
         compute='_compute_simplifed_tax',

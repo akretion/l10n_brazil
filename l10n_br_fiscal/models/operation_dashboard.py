@@ -38,7 +38,6 @@ class Operation(models.Model):
     #         query = self._where_calc(args)
     #         self._apply_ir_rules(query, 'read')
 
-    @api.one
     def _compute_kanban_dashboard(self):
         self.kanban_dashboard = json.dumps(
             self.get_operation_dashboard_datas())
@@ -50,7 +49,6 @@ class Operation(models.Model):
         string='Color Index',
         default=0)
 
-    @api.multi
     def get_operation_dashboard_datas(self):
         title = ''
         if self.fiscal_type in ('sale', 'purchase'):
@@ -92,7 +90,6 @@ class Operation(models.Model):
             ('state_edoc', 'in', EDOC_CANCELED)
         ])
 
-    @api.multi
     def action_create_new(self):
         ctx = self._context.copy()
         model = 'l10n_br_fiscal.document'
@@ -112,7 +109,6 @@ class Operation(models.Model):
             'context': ctx,
         }
 
-    @api.multi
     def open_action(self):
         """return action based on type for related journals"""
 

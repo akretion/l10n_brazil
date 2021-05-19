@@ -13,7 +13,6 @@ class DocumentCancelWizard(models.TransientModel):
     def do_cancel(self):
         self.document_id._document_cancel(self.justification)
 
-    @api.multi
     def doit(self):
         for wizard in self:
             if wizard.document_id:

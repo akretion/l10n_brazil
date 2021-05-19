@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright 2020 KMEE INFORMATICA LTDA
 # License AGPL-3 or later (http://www.gnu.org/licenses/agpl)
@@ -32,7 +31,6 @@ class Attachment(models.TransientModel):
         string='Attachments',
     )
 
-    @api.multi
     def build_compressed_attachment(self, record_ids=None):
         '''
 

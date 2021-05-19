@@ -7,7 +7,6 @@ from lxml import etree
 from erpbrasil.base import misc
 
 from odoo import _, api, fields, models
-from odoo.addons import decimal_precision as dp
 from odoo.osv import orm
 
 from .ibpt.taxes import DeOlhoNoImposto
@@ -39,14 +38,14 @@ class DataNcmNbsAbstract(models.AbstractModel):
         string='Estimate Tax Nacional Percent',
         store=True,
         readonly=True,
-        digits=dp.get_precision('Fiscal Tax Percent'),
+        digits='Fiscal Tax Percent',
         compute='_compute_amount')
 
     estimate_tax_imported = fields.Float(
         string='Estimate Tax Imported Percent',
         store=True,
         readonly=True,
-        digits=dp.get_precision('Fiscal Tax Percent'),
+        digits='Fiscal Tax Percent',
         compute='_compute_amount')
 
     @api.depends('tax_estimate_ids')
@@ -73,7 +72,6 @@ class DataNcmNbsAbstract(models.AbstractModel):
     def _get_ibpt(self, config, code_unmasked):
         return False
 
-    @api.multi
     def action_ibpt_inquiry(self):
         if not self.env.user.company_id.ibpt_api:
             return False

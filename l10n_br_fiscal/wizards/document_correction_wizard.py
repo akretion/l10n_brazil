@@ -10,7 +10,6 @@ class DocumentCorrectionWizard(models.TransientModel):
     _description = 'Fiscal Document Correction Wizard'
     _inherit = 'l10n_br_fiscal.base.wizard.mixin'
 
-    @api.multi
     def doit(self):
         for wizard in self:
             if wizard.document_id:

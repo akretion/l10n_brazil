@@ -21,7 +21,6 @@ class InvalidateNumberWizard(models.TransientModel):
         })
         invalidate._invalidate(self.document_id)
 
-    @api.multi
     def doit(self):
         for wizard in self:
             wizard.do_invalidate()

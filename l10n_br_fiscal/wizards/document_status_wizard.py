@@ -9,7 +9,6 @@ class DocumentStatusWizard(models.TransientModel):
     _description = 'Fiscal Document Status Wizard'
     _inherit = 'l10n_br_fiscal.base.wizard.mixin'
 
-    @api.multi
     def get_document_status(self):
         self.write({
             "document_status": self.document_id._document_status(),
@@ -17,7 +16,6 @@ class DocumentStatusWizard(models.TransientModel):
         })
         return self._reopen()
 
-    @api.multi
     def doit(self):
         for wizard in self:
             if wizard.document_id:
