@@ -14,7 +14,32 @@ class AbstractSpecMixin(models.AbstractModel):
 
     def _get_ds_class(self, class_obj):
         binding_module = sys.modules[self._binding_module]
-        return getattr(binding_module, class_obj._generateds_type)
+        mro = type(class_obj).mro()
+        try:
+            generateds_type = next(filter(
+                lambda x: (class_obj._spec_module in str(x)), mro)
+            ).__name__
+            if hasattr(binding_module, generateds_type):
+                return getattr(binding_module, generateds_type)
+            elif hasattr(binding_module, generateds_type + "Type"):
+                return getattr(binding_module, generateds_type + "Type")
+            elif hasattr(
+                binding_module,
+                generateds_type[0].lower() + generateds_type[1:]
+            ):
+                # eventually the generateDS class was lowercase if tag was lowercase
+                return getattr(generateds_type[0].lower() + generateds_type[1:])
+            elif hasattr(
+                binding_module,
+                generateds_type[0].lower() + generateds_type[1:] + "Type"
+            ):
+                # eventually the generateDS class was lowercase if tag was lowercase
+                return getattr(
+                    binding_module,
+                    generateds_type[0].lower() + generateds_type[1:] + "Type"
+                )
+        except (StopIteration, AttributeError):
+            return False
 
     def _export_fields(self, xsd_fields, class_obj, export_dict):
         """
@@ -158,9 +183,6 @@ class AbstractSpecMixin(models.AbstractModel):
                 class_name = self._name
 
         class_obj = self.env[class_name]
-        if not class_obj._generateds_type:
-            return
-
         xsd_fields = (
             i for i in class_obj._fields if
             class_obj._fields[i].name.startswith(class_obj._field_prefix)
@@ -168,8 +190,9 @@ class AbstractSpecMixin(models.AbstractModel):
         )
 
         kwargs = {}
-
         ds_class = self._get_ds_class(class_obj)
+        if not ds_class:
+            return False
         self._export_fields(xsd_fields, class_obj, export_dict=kwargs)
 
         if kwargs:
