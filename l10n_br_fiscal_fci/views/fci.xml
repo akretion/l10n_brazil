@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="fci_search" model="ir.ui.view">
+      <field name="name">l10n_br_fiscal_fci.search</field>
+      <field name="model">l10n_br_fiscal.fci</field>
+        <field name="arch" type="xml">
+            <search string="FCI">
+                <field name="name"/>
+                <field name="hash_code"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="fci_tree" model="ir.ui.view">
+      <field name="name">l10n_br_fiscal_fci.tree</field>
+      <field name="model">l10n_br_fiscal.fci</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="company_id" groups="base.group_multi_company" />
+                <field name="state" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="fci_form" model="ir.ui.view">
+        <field name="name">l10n_br_fiscal_fci.form</field>
+        <field name="model">l10n_br_fiscal.fci</field>
+        <field name="arch" type="xml">
+            <form string="FCI">
+                <sheet>
+                    <group>
+                        <field name="name" />
+                        <field name="hash_code" />
+                        <field name="company_id" groups="base.group_multi_company" />
+                        <field name="state" widget="statusbar" />
+                    </group>
+                    <field name="line_ids" nolabel="1"/>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="fci_line_search" model="ir.ui.view">
+      <field name="name">l10n_br_fiscal_fci.line.search</field>
+      <field name="model">l10n_br_fiscal.fci.line</field>
+        <field name="arch" type="xml">
+            <search string="FCI Line">
+                <field name="product_id"/>
+                <field name="product_tmpl_id"/>
+                <field name="hash_code"/>
+                <field name="fci_id"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="fci_line_tree" model="ir.ui.view">
+      <field name="name">l10n_br_fiscal_fci.line.tree</field>
+      <field name="model">l10n_br_fiscal.fci.line</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="product_tmpl_id" />
+                <field name="product_id" />
+                <field name="hash_code" />
+                <field name="import_content_percent" />
+                <field name="fci_id" invisible="1" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="fci_line_form" model="ir.ui.view">
+        <field name="name">l10n_br_fiscal_fci.line.form</field>
+        <field name="model">l10n_br_fiscal.fci.line</field>
+        <field name="arch" type="xml">
+            <form string="FCI Line">
+                <sheet>
+                    <group>
+                        <field name="hash_code" />
+                        <field name="product_tmpl_id" />
+                        <field name="product_id" />
+                        <field name="hash_code" />
+                        <field name="import_content_percent" />
+                        <field name="fci_id" invisible="1" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>
