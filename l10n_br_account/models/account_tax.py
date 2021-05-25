@@ -10,8 +10,6 @@ class AccountTax(models.Model):
     fiscal_tax_ids = fields.Many2many(
         comodel_name='l10n_br_fiscal.tax',
         relation='l10n_br_fiscal_account_tax_rel',
-        colunm1='account_tax_id',
-        colunm2='fiscal_tax_id',
         string='Fiscal Taxes',
     )
 
