@@ -41,8 +41,6 @@ class Cest(models.Model):
     ncm_ids = fields.Many2many(
         comodel_name='l10n_br_fiscal.ncm',
         relation='fiscal_cest_ncm_rel',
-        colunm1='cest_id',
-        colunm2='ncm_id',
         readonly=True,
         string='NCMs')
 

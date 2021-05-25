@@ -69,8 +69,6 @@ class TaxPisCofins(models.Model):
     ncm_ids = fields.Many2many(
         comodel_name='l10n_br_fiscal.ncm',
         relation='fiscal_pis_cofins_ncm_rel',
-        colunm1='piscofins_id',
-        colunm2='ncm_id',
         compute='_compute_ncms',
         store=True,
         readonly=True,
