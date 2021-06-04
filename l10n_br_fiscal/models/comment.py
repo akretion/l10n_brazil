@@ -149,8 +149,10 @@ class Comment(models.Model):
                 "relativedelta": lambda *a, **kw: relativedelta.relativedelta(*a, **kw),
                 # adding format amount
                 # now we can format values like currency on fiscal observation
-                "format_amount": lambda amount, context=self._context: self.format_amount(
-                    self.env, amount, self.env.ref("base.BRL")
+                "format_amount": (
+                    lambda amount, context=self._context: self.format_amount(
+                        self.env, amount, self.env.ref("base.BRL")
+                    )
                 ),
             }
         )
