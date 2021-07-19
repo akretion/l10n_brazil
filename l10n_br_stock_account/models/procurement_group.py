@@ -4,6 +4,7 @@
 from odoo import api, models
 
 
+# TODO can we not trash this file now??
 class ProcurementGroup(models.Model):
     _inherit = "procurement.group"
 

@@ -8,6 +8,7 @@ from lxml import etree
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+from odoo.tools import float_is_zero
 
 from odoo.addons.l10n_br_fiscal.constants.fiscal import (
     DOCUMENT_ISSUER_COMPANY,
@@ -280,11 +281,17 @@ class AccountInvoice(models.Model):
 
     @api.model
     def invoice_line_move_line_get(self):
+        """
+        Overriden to filter out lines with no financial move,
+        such as the lines of "remessa".
+        """
         move_lines_dict = super().invoice_line_move_line_get()
         new_mv_lines_dict = []
         for line in move_lines_dict:
             invoice_line = self.invoice_line_ids.browse(line.get("invl_id"))
-            line["price"] = invoice_line.price_total
+            # line["price"] = invoice_line.price_total  # why that?
+            # TODO explain this override better because it kills anglo-saxon
+            # valuation!
             if invoice_line.cfop_id:
                 if invoice_line.cfop_id.finance_move:
                     new_mv_lines_dict.append(line)
@@ -308,12 +315,31 @@ class AccountInvoice(models.Model):
 
     def finalize_invoice_move_lines(self, move_lines):
         lines = super().finalize_invoice_move_lines(move_lines)
-        dummy_doc = self.env.ref("l10n_br_fiscal.fiscal_document_dummy")
-        financial_lines = [
-            line for line in lines if line[2]["account_id"] == self.account_id.id
-        ]
-        count = 1
 
+        # in the case of "notas de remessa", the invoice may
+        # have the tax lines of the product moved, the anglo-saxon
+        # stock lines but it may not have "financial lines".
+        # Here we filter out such a nullified financial total line if any:
+        new_lines = [
+            line for line in lines if not (
+                line[2]["account_id"] == self.account_id.id
+                and float_is_zero(
+                    line[2]["debit"],
+                    precision_rounding=self.currency_id.rounding
+                )
+                and float_is_zero(
+                    line[2]["credit"],
+                    precision_rounding=self.currency_id.rounding
+                )
+            )
+        ]
+
+        # now we will write the fiscal doc name in the financial lines if any:
+        financial_lines = [
+            line for line in new_lines if line[2]["account_id"] == self.account_id.id
+        ]
+        dummy_doc = self.env.ref("l10n_br_fiscal.fiscal_document_dummy")
+        count = 1
         for line in financial_lines:
             if line[2]["debit"] or line[2]["credit"]:
                 if self.fiscal_document_id != dummy_doc:
@@ -325,7 +351,7 @@ class AccountInvoice(models.Model):
                         len(financial_lines),
                     )
                     count += 1
-        return lines
+        return new_lines
 
     def get_taxes_values(self):
         # uncomment these lines
