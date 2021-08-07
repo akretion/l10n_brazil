@@ -194,7 +194,7 @@ class AccountInvoice(models.Model):
     def create(self, values):
         if not values.get("document_type_id"):
             values.update(
-                {"fiscal_document_id": self.env.user.company_id.fiscal_dummy_id.id}
+                {"fiscal_document_id": self.env.company.fiscal_dummy_id.id}
             )
         invoice = super().create(values)
         invoice._write_shadowed_fields()
