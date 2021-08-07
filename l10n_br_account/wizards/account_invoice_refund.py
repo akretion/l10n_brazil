@@ -24,8 +24,8 @@ class AccountInvoiceRefund(models.TransientModel):
 
         domain = result["domain"]
         ids_domain = [x for x in domain if x[0] == "id"][0]
-        invoice_ids = ids_domain[2]
-        for invoice in self.env["account.move"].browse(invoice_ids):
+        move_ids = ids_domain[2]
+        for invoice in self.env["account.move"].browse(move_ids):
 
             if not invoice.document_type_id:
                 continue

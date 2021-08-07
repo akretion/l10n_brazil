@@ -328,10 +328,10 @@ class AccountInvoice(models.Model):
 
             taxes = line.invoice_line_tax_ids.compute_all(
                 price_unit=line.price_unit,
-                currency=line.invoice_id.currency_id,
+                currency=line.move_id.currency_id,
                 quantity=line.quantity,
                 product=line.product_id,
-                partner=line.invoice_id.partner_id,
+                partner=line.move_id.partner_id,
                 fiscal_taxes=line.fiscal_tax_ids,
                 operation_line=line.fiscal_operation_line_id,
                 ncm=line.ncm_id,
