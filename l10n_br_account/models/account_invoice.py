@@ -82,7 +82,8 @@ class AccountInvoice(models.Model):
         comodel_name="account.move.line",
         string="Financial Move Lines",
         store=True,
-        compute="_compute_financial",
+# TODO FIXME migrate!
+#        compute="_compute_financial",
     )
 
     document_electronic = fields.Boolean(
@@ -111,14 +112,14 @@ class AccountInvoice(models.Model):
         """Get object lines instaces used to compute fields"""
         return self.mapped("line_ids")
 
-    @api.depends("move_id.line_ids", "move_id.state")
-    def _compute_financial(self):
-        for invoice in self:
-            lines = invoice.move_id.line_ids.filtered(
-                lambda l: l.account_id == invoice.account_id
-                and l.account_id.internal_type in ("receivable", "payable")
-            )
-            invoice.financial_move_line_ids = lines.sorted()
+#    @api.depends("move_id.line_ids", "move_id.state")
+#    def _compute_financial(self):
+#        for invoice in self:
+#            lines = invoice.move_id.line_ids.filtered(
+#                lambda l: l.account_id == invoice.account_id
+#                and l.account_id.internal_type in ("receivable", "payable")
+#            )
+#            invoice.financial_move_line_ids = lines.sorted()
 
     @api.model
     def _shadowed_fields(self):
@@ -221,11 +222,12 @@ class AccountInvoice(models.Model):
 
     @api.depends(
         "line_ids.price_total",
-        "tax_line_ids.amount",
-        "tax_line_ids.amount_rounding",
+# TODO FIXME migrate!
+#        "tax_line_ids.amount",
+#        "tax_line_ids.amount_rounding",
         "currency_id",
         "company_id",
-        "date_invoice",
+        "invoice_date",
         "type",
     )
     def _compute_amount(self):
