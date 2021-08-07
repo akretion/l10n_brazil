@@ -112,7 +112,6 @@ class AccountInvoiceLine(models.Model):
         string="PIS ST CST Code",
     )
 
-    @api.one
     @api.depends(
         "price_unit",
         "discount",
