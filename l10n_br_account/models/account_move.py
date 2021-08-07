@@ -13,7 +13,7 @@ class AccountMove(models.Model):
     _inherit = "account.move"
 
     def post(self, invoice=False):
-        result = super().post(invoice)
+        result = super().post()
         if invoice:
             if (
                 invoice.document_type_id
