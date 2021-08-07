@@ -51,7 +51,7 @@ class AccountInvoiceRefund(models.TransientModel):
                 "fiscal_operation_id": invoice.fiscal_operation_id.id,
             }
 
-            for line in invoice.invoice_line_ids:
+            for line in invoice.line_ids:
                 if not self.force_fiscal_operation_id and not line.fiscal_operation_id:
                     raise UserError(_("Document line without Operation !"))
 
