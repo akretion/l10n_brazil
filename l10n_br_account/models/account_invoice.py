@@ -45,7 +45,7 @@ SHADOWED_FIELDS = [
 
 
 class AccountInvoice(models.Model):
-    _name = "account.invoice"
+    _name = "account.move"
     _inherit = [
         _name,
         "l10n_br_fiscal.document.mixin.methods",
