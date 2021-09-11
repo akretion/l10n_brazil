@@ -106,7 +106,7 @@ class NFeImportTest(SavepointCase):
         )
         self.assertEqual(nfe.line_ids[2].product_id.name, "QUINOA PICANTE 100G (2X50G)")
 
-        # ds_object = nfe._build_generateds()
+        # ds_object = nfe._build_binding()
         # ds_object.export(
         #   sys.stdout,
         #   0,
