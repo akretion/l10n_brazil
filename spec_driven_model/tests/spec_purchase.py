@@ -43,7 +43,6 @@ class PurchaseOrder(spec_models.StackedModel):
     _inherit = ["fake.purchase.order", "poxsd.10.purchaseorder"]
     _spec_module = "odoo.addons.spec_driven_model.tests.spec_poxsd"
     _stacked = "poxsd.10.purchaseorder"
-    _stacking_points = {}
     _poxsd10_spec_module_classes = None
 
     poxsd10_orderDate = fields.Date(compute="_compute_date")

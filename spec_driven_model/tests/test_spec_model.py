@@ -124,7 +124,7 @@ class TestSpecModel(SavepointCase, FakeModelLoader):
 
         # 2nd we serialize it into a binding object:
         # (that could be further XML serialized)
-        po_binding = po._build_generateds()
+        po_binding = po._build_binding()
         self.assertEqual(po_binding.billTo.name, "Wood Corner")
         self.assertEqual(po_binding.items.item[0].productName, "Some product desc")
         self.assertEqual(po_binding.items.item[0].quantity, 42)

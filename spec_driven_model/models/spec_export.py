@@ -122,11 +122,11 @@ class AbstractSpecMixin(models.AbstractModel):
     def _export_many2one(self, field_name, xsd_required, class_obj=None):
         self.ensure_one()
         if field_name in self._stacking_points.keys():
-            return self._build_generateds(
+            return self._build_binding(
                 class_name=self._stacking_points[field_name].comodel_name
             )
         else:
-            return (self[field_name] or self)._build_generateds(
+            return (self[field_name] or self)._build_binding(
                 class_obj._fields[field_name].comodel_name
             )
 
@@ -134,7 +134,7 @@ class AbstractSpecMixin(models.AbstractModel):
         self.ensure_one()
         relational_data = []
         for relational_field in self[field_name]:
-            field_data = relational_field._build_generateds(
+            field_data = relational_field._build_binding(
                 class_obj._fields[field_name].comodel_name
             )
             relational_data.append(field_data)
@@ -161,7 +161,7 @@ class AbstractSpecMixin(models.AbstractModel):
             ).isoformat("T")
         )
 
-    def _build_generateds(self, class_name=False):
+    def _build_binding(self, class_name=False):
         """
         Iterates over an Odoo record and its m2o and o2m sub-records
         using a pre-order tree traversal and maps the Odoo record values
@@ -199,7 +199,7 @@ class AbstractSpecMixin(models.AbstractModel):
         result = []
 
         if hasattr(self, "_stacked"):
-            binding_instance = self._build_generateds()
+            binding_instance = self._build_binding()
             if print_xml:
                 self._print_xml(binding_instance)
             result.append(binding_instance)
@@ -207,7 +207,7 @@ class AbstractSpecMixin(models.AbstractModel):
         else:
             spec_classes = self._get_spec_classes()
             for class_name in spec_classes:
-                binding_instance = self._build_generateds(class_name)
+                binding_instance = self._build_binding(class_name)
                 if print:
                     self._print_xml(binding_instance)
                 result.append(binding_instance)
