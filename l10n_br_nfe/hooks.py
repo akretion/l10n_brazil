@@ -16,6 +16,7 @@ _logger = logging.getLogger(__name__)
 
 def post_init_hook(cr, registry):
     env = api.Environment(cr, SUPERUSER_ID, {})
+    registry._l10n_br_nfe_need_hook = True
     hooks.register_hook(
         env, "l10n_br_nfe", "odoo.addons.l10n_br_nfe_spec.models.v4_00.leiauteNFe"
     )
