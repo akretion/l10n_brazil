@@ -6,12 +6,12 @@ from odoo import fields, models
 
 class PoXsdMixin(models.AbstractModel):
     _description = "Abstract Model for PO XSD"
-    _name = "spec.mixin.poxsd"
-    _field_prefix = "poxsd10_"
-    _schema_name = "poxsd"
+    _name = "spec.mixin.po"
+    _field_prefix = "po10_"
+    _schema_name = "po"
     _schema_version = "1.0"
-    _odoo_module = "poxsd"
-    _spec_module = "odoo.addons.spec_driven_model.tests.spec_poxsd"
+    _odoo_module = "po"
+    _spec_module = "odoo.addons.spec_driven_model.tests.spec_po"
     _binding_module = "odoo.addons.spec_driven_model.tests.purchase_order_lib"
 
     # TODO rename

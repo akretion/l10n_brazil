@@ -31,7 +31,7 @@ class TestSpecModel(SavepointCase, FakeModelLoader):
 
         # import generated spec mixins
         from .fake_mixin import PoXsdMixin
-        from .spec_poxsd import Item, Items, PurchaseOrder, USAddress
+        from .spec_po import Item, Items, PurchaseOrder, USAddress
 
         cls.loader.update_registry((PoXsdMixin, Item, Items, USAddress, PurchaseOrder))
 
@@ -56,20 +56,20 @@ class TestSpecModel(SavepointCase, FakeModelLoader):
             self.env.cr,
             self.env.registry,
             "spec_driven_model",
-            "odoo.addons.spec_driven_model.tests.spec_poxsd",
+            "odoo.addons.spec_driven_model.tests.spec_po",
         )
-        self.assertEqual(remaining_spec_models, {"poxsd.10.dangling_model"})
+        self.assertEqual(remaining_spec_models, {"po.10.dangling_model"})
 
     def test_spec_models(self):
         self.assertTrue(
             set(self.env["res.partner"]._fields.keys()).issuperset(
-                set(self.env["poxsd.10.usaddress"]._fields.keys())
+                set(self.env["po.10.usaddress"]._fields.keys())
             )
         )
 
         self.assertTrue(
             set(self.env["fake.purchase.order.line"]._fields.keys()).issuperset(
-                set(self.env["poxsd.10.item"]._fields.keys())
+                set(self.env["po.10.item"]._fields.keys())
             )
         )
 
@@ -80,26 +80,26 @@ class TestSpecModel(SavepointCase, FakeModelLoader):
         )
         self.assertTrue(
             po_fields_or_stacking.issuperset(
-                set(self.env["poxsd.10.purchaseorder"]._fields.keys())
+                set(self.env["po.10.purchaseorder"]._fields.keys())
             )
         )
         self.assertEqual(
             list(self.env["fake.purchase.order"]._stacking_points.keys()),
-            ["poxsd10_items"],
+            ["po10_items"],
         )
 
         # let's ensure fields are remapped to their proper concrete types:
         self.assertEqual(
-            self.env["fake.purchase.order"]._fields["poxsd10_shipTo"].comodel_name,
+            self.env["fake.purchase.order"]._fields["po10_shipTo"].comodel_name,
             "res.partner",
         )
         self.assertEqual(
-            self.env["fake.purchase.order"]._fields["poxsd10_billTo"].comodel_name,
+            self.env["fake.purchase.order"]._fields["po10_billTo"].comodel_name,
             "res.partner",
         )
 
         self.assertEqual(
-            self.env["fake.purchase.order"]._fields["poxsd10_item"].comodel_name,
+            self.env["fake.purchase.order"]._fields["po10_item"].comodel_name,
             "fake.purchase.order.line",
         )
 
