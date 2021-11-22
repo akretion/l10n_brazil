@@ -4,19 +4,18 @@
 from odoo import api, fields, models
 
 
-class AccountInvoice(models.Model):
+class AccountMove(models.Model):
     _inherit = "account.move"
 
-    financial_move_line_ids = fields.Many2many(
+    financial_move_line_ids = fields.One2many(
         comodel_name="account.move.line",
-        relation="account_invoice_account_financial_move_line_rel",
-        compute="_compute_financial",
-        store=True,
+        inverse_name="move_id",
         string="Financial Move Lines",
+        domain="[('account_id.user_type_id.type', 'in', ('receivable', 'payable'))]",
     )
 
     payment_move_line_ids = fields.Many2many(
-        "account.move.line",
+        comodel_name="account.move.line",
         string="Payment Move Lines",
         compute="_compute_payments",
         store=True,
