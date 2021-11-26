@@ -2,46 +2,19 @@
 # Copyright 2019 KMEE INFORMATICA LTDA
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-import base64
-import logging
 import re
-from datetime import datetime
+
 from unicodedata import normalize
 
-from erpbrasil.assinatura import certificado as cert
-from erpbrasil.base.fiscal.edoc import ChaveEdoc
-from erpbrasil.edoc.nfe import NFe as edoc_nfe
-from erpbrasil.edoc.pdf import base
-from erpbrasil.transmissao import TransmissaoSOAP
-from lxml import etree
-from nfelib.v4_00 import retEnviNFe as leiauteNFe
-from requests import Session
+from odoo import api, fields, models
 
-from odoo import _, api, fields
-from odoo.exceptions import UserError, ValidationError
+from odoo.addons.spec_driven_model.models import spec_models
 
 from odoo.addons.l10n_br_fiscal.constants.fiscal import (
-    AUTORIZADO,
-    CANCELADO,
-    CANCELADO_DENTRO_PRAZO,
-    CANCELADO_FORA_PRAZO,
-    DENEGADO,
     DOCUMENT_ISSUER_COMPANY,
-    EVENT_ENV_HML,
-    EVENT_ENV_PROD,
-    EVENTO_RECEBIDO,
-    LOTE_PROCESSADO,
     MODELO_FISCAL_NFCE,
     MODELO_FISCAL_NFE,
-    PROCESSADOR_OCA,
-    SITUACAO_EDOC_AUTORIZADA,
-    SITUACAO_EDOC_CANCELADA,
-    SITUACAO_EDOC_DENEGADA,
-    SITUACAO_EDOC_REJEITADA,
-    SITUACAO_FISCAL_CANCELADO,
-    SITUACAO_FISCAL_CANCELADO_EXTEMPORANEO,
 )
-from odoo.addons.spec_driven_model.models import spec_models
 
 from ..constants.nfe import (
     NFCE_DANFE_LAYOUTS,
@@ -51,19 +24,17 @@ from ..constants.nfe import (
     NFE_VERSIONS,
 )
 
-_logger = logging.getLogger(__name__)
+
+class NFe(models.Model):
+    _name = "l10n_br_fiscal.document"
+    _inherit = [
+        "l10n_br_fiscal.document",
+        "l10n_br_nfe.document.workflow",
+        "l10n_br_nfe.document.electronic",
+    ]
 
 
-def filter_processador_edoc_nfe(record):
-    if record.processador_edoc == PROCESSADOR_OCA and record.document_type_id.code in [
-        MODELO_FISCAL_NFE,
-        MODELO_FISCAL_NFCE,
-    ]:
-        return True
-    return False
-
-
-class NFe(spec_models.StackedModel):
+class NFeSpec(spec_models.StackedModel):
     _name = "l10n_br_fiscal.document"
     _inherit = ["l10n_br_fiscal.document", "nfe.40.infnfe"]
     _stacked = "nfe.40.infnfe"
@@ -79,25 +50,15 @@ class NFe(spec_models.StackedModel):
     # all m2o at this level will be stacked even if not required:
     _force_stack_paths = ("infnfe.total", "infnfe.infAdic", "infnfe.exporta")
 
-    def _compute_emit(self):
-        for doc in self:  # TODO if out
-            doc.nfe40_emit = doc.company_id
+    ##########################
+    # NF-e spec related fields
+    ##########################
 
-    # emit and dest are not related fields as their related fields
-    # can change depending if it's and incoming our outgoing NFe
-    # specially when importing (ERP NFe migration vs supplier Nfe).
-    nfe40_emit = fields.Many2one(
-        "res.company", compute="_compute_emit", readonly=True, string="Emit"
-    )
+    ##########################
+    # NF-e tag: infNFe
+    ##########################
 
-    @api.depends("partner_id")
-    def _compute_dest(self):
-        for doc in self:  # TODO if out
-            doc.nfe40_dest = doc.partner_id
-
-    nfe40_dest = fields.Many2one(
-        "res.partner", compute="_compute_dest", readonly=True, string="Dest"
-    )
+    nfe40_versao = fields.Char(related="document_version")
 
     nfe_version = fields.Selection(
         selection=NFE_VERSIONS,
@@ -106,11 +67,56 @@ class NFe(spec_models.StackedModel):
         default=lambda self: self.env.user.company_id.nfe_version,
     )
 
-    nfe_environment = fields.Selection(
-        selection=NFE_ENVIRONMENTS,
-        string="NFe Environment",
-        copy=False,
-        default=lambda self: self.env.user.company_id.nfe_environment,
+    nfe40_Id = fields.Char(
+        compute="_compute_nfe_data",
+        inverse="_inverse_nfe40_Id",
+    )
+
+    def _inverse_nfe40_Id(self):
+        for record in self:
+            if record.nfe40_Id:
+                record.document_key = re.findall(r"\d+", str(record.nfe40_Id))[0]
+
+    ##########################
+    # NF-e tag: ide
+    ##########################
+
+    nfe40_cUF = fields.Char( # TODO criar uma função para tratar quando for entrada
+        related="company_id.partner_id.state_id.ibge_code",
+        string="nfe40_cUF",
+    )
+
+    # <cNF>17983659</cNF> TODO
+
+    nfe40_natOp = fields.Char(related="operation_name")
+
+    nfe40_mod = fields.Char(related="document_type_id.code", string="nfe40_mod")
+
+    nfe40_serie = fields.Char(related="document_serie")
+
+    nfe40_nNF = fields.Char(related="document_number")
+
+    nfe40_dhEmi = fields.Datetime(related="document_date")
+
+    nfe40_dhSaiEnt = fields.Datetime(related="date_in_out")
+
+    nfe40_tpNF = fields.Selection(
+        compute="_compute_nfe_data",
+        inverse="_inverse_nfe40_tpNF",
+    )
+
+    nfe40_idDest = fields.Selection(compute="_compute_nfe40_idDest")
+
+    cMunFG = fields.Char(related="company_id.partner_id.city_id.ibge_code")
+
+    danfe_layout = fields.Selection(
+        selection=NFE_DANFE_LAYOUTS + NFCE_DANFE_LAYOUTS,
+        string="Danfe Layout",
+    )
+
+    nfe40_tpImp = fields.Selection(
+        compute="_compute_nfe_data",
+        inverse="_inverse_nfe40_tpImp",
     )
 
     nfe_transmission = fields.Selection(
@@ -120,180 +126,36 @@ class NFe(spec_models.StackedModel):
         default=lambda self: self.env.user.company_id.nfe_transmission,
     )
 
-    nfe40_finNFe = fields.Selection(
-        related="edoc_purpose",
-    )
-
-    nfe40_versao = fields.Char(
-        related="document_version",
-    )
-
-    nfe40_nNF = fields.Char(
-        related="document_number",
-    )
-
-    nfe40_Id = fields.Char(
-        compute="_compute_nfe_data",
-        inverse="_inverse_nfe40_Id",
-    )
-
-    # TODO should be done by framework?
-    nfe40_det = fields.One2many(
-        comodel_name="l10n_br_fiscal.document.line",
-        inverse_name="document_id",
-        related="line_ids",
-    )
-
-    nfe40_NFref = fields.One2many(
-        comodel_name="l10n_br_fiscal.document.related",
-        related="document_related_ids",
-        inverse_name="document_id",
-    )
-
-    nfe40_dhEmi = fields.Datetime(
-        related="document_date",
-    )
-
-    nfe40_dhSaiEnt = fields.Datetime(
-        related="date_in_out",
-    )
-
-    nfe40_natOp = fields.Char(
-        related="operation_name",
-    )
-
-    nfe40_serie = fields.Char(related="document_serie")
-
-    nfe40_indFinal = fields.Selection(
-        related="ind_final",
-    )
-
-    nfe40_indPres = fields.Selection(
-        related="ind_pres",
-    )
-
-    nfe40_vNF = fields.Monetary(
-        related="amount_total",
-    )
-
-    nfe40_tpAmb = fields.Selection(
-        related="nfe_environment",
-    )
-
-    nfe40_indIEDest = fields.Selection(
-        related="partner_ind_ie_dest", string="Contribuinte do ICMS (NFe)"
-    )
-
-    nfe40_tpNF = fields.Selection(
-        compute="_compute_nfe_data",
-        inverse="_inverse_nfe40_tpNF",
-    )
-
-    danfe_layout = fields.Selection(
-        selection=NFE_DANFE_LAYOUTS + NFCE_DANFE_LAYOUTS,
-        string="Danfe Layout",
-    )
-
-    nfe40_tpImp = fields.Selection(
-        compute="_compute_nfe_data",
-        inverse="_inverse_nfe40_tpEmis",
-    )
-
-    nfe40_modFrete = fields.Selection(
-        default="9",
-    )
-
     nfe40_tpEmis = fields.Selection(
         compute="_compute_nfe_data",
         inverse="_inverse_nfe40_tpEmis",
     )
 
-    nfe40_procEmi = fields.Selection(
-        default="0",
+    # <cDV>0</cDV> TODO
+
+    nfe_environment = fields.Selection(
+        selection=NFE_ENVIRONMENTS,
+        string="NFe Environment",
+        copy=False,
+        default=lambda self: self.env.user.company_id.nfe_environment,
     )
+
+    nfe40_tpAmb = fields.Selection(related="nfe_environment")
+
+    nfe40_finNFe = fields.Selection(related="edoc_purpose")
+
+    nfe40_indFinal = fields.Selection(related="ind_final")
+
+    nfe40_indPres = fields.Selection(related="ind_pres")
+
+    nfe40_procEmi = fields.Selection(default="0")
 
     nfe40_verProc = fields.Char(
         copy=False,
         default=lambda s: s.env["ir.config_parameter"]
         .sudo()
-        .get_param("l10n_br_nfe.version.name", default="Odoo Brasil OCA 12.0"),
+        .get_param("l10n_br_nfe.version.name", default="Odoo Brasil OCA v12.0"),
     )
-
-    nfe40_CRT = fields.Selection(
-        related="company_tax_framework",
-        string="Código de Regime Tributário (NFe)",
-    )
-
-    nfe40_vFrete = fields.Monetary(
-        related="amount_freight_value",
-    )
-
-    nfe40_vFCPUFDest = fields.Monetary(
-        related="amount_icmsfcp_value",
-    )
-
-    nfe40_vDesc = fields.Monetary(related="amount_discount_value")
-
-    nfe40_vTotTrib = fields.Monetary(related="amount_estimate_tax")
-
-    nfe40_vBC = fields.Monetary(
-        string="BC do ICMS",
-        related="amount_icms_base",
-    )
-    nfe40_vBCST = fields.Monetary(related="amount_icmsst_base")
-
-    nfe40_vICMS = fields.Monetary(related="amount_icms_value")
-    nfe40_vST = fields.Monetary(related="amount_icmsst_value")
-
-    nfe40_vPIS = fields.Monetary(
-        string="Valor do PIS (NFe)", related="amount_pis_value"
-    )
-
-    nfe40_vIPI = fields.Monetary(related="amount_ipi_value")
-
-    nfe40_vCOFINS = fields.Monetary(
-        string="valor do COFINS (NFe)", related="amount_cofins_value"
-    )
-
-    nfe40_infAdFisco = fields.Char(
-        compute="_compute_nfe40_additional_data",
-    )
-
-    nfe40_infCpl = fields.Char(
-        compute="_compute_nfe40_additional_data",
-    )
-
-    nfe40_transporta = fields.Many2one(comodel_name="res.partner")
-
-    nfe40_infRespTec = fields.Many2one(
-        comodel_name="res.partner", related="company_id.technical_support_id"
-    )
-
-    nfe40_idDest = fields.Selection(
-        compute="_compute_nfe40_idDest",
-    )
-
-    @api.depends("fiscal_additional_data", "fiscal_additional_data")
-    def _compute_nfe40_additional_data(self):
-        for record in self:
-            record.nfe40_infCpl = False
-            record.nfe40_infAdFisco = False
-            if record.fiscal_additional_data:
-                record.nfe40_infAdFisco = (
-                    normalize("NFKD", record.fiscal_additional_data)
-                    .encode("ASCII", "ignore")
-                    .decode("ASCII")
-                    .replace("\n", "")
-                    .replace("\r", "")
-                )
-            if record.customer_additional_data:
-                record.nfe40_infCpl = (
-                    normalize("NFKD", record.customer_additional_data)
-                    .encode("ASCII", "ignore")
-                    .decode("ASCII")
-                    .replace("\n", "")
-                    .replace("\r", "")
-                )
 
     @api.depends("fiscal_operation_type", "nfe_transmission")
     def _compute_nfe_data(self):
@@ -325,16 +187,6 @@ class NFe(spec_models.StackedModel):
                 if record.document_type_id.code == MODELO_FISCAL_NFCE:
                     record.nfe40_tpImp = record.company_id.nfce_danfe_layout
 
-    @api.depends("partner_id", "company_id")
-    def _compute_nfe40_idDest(self):
-        for rec in self:
-            if rec.company_id.partner_id.state_id == rec.partner_id.state_id:
-                rec.nfe40_idDest = "1"
-            elif rec.company_id.partner_id.country_id == rec.partner_id.country_id:
-                rec.nfe40_idDest = "2"
-            else:
-                rec.nfe40_idDest = "3"
-
     def _inverse_nfe40_tpNF(self):
         for rec in self:
             if rec.nfe40_tpNF:
@@ -343,11 +195,6 @@ class NFe(spec_models.StackedModel):
                     "0": "in",
                 }
                 rec.fiscal_operation_type = tpNF_2_operation[rec.nfe40_tpNF]
-
-    def _inverse_nfe40_Id(self):
-        for record in self:
-            if record.nfe40_Id:
-                record.document_key = re.findall(r"\d+", str(record.nfe40_Id))[0]
 
     def _inverse_nfe40_tpEmis(self):
         for record in self:
@@ -359,109 +206,150 @@ class NFe(spec_models.StackedModel):
             if record.nfe40_tpImp:
                 record.danfe_layout = record.nfe40_tpImp
 
-    def _document_number(self):
-        # TODO: Criar campos no fiscal para codigo aleatorio e digito verificador,
-        # pois outros modelos também precisam dessescampos: CT-e, MDF-e etc
-        super()._document_number()
-        for record in self.filtered(filter_processador_edoc_nfe):
-            if record.document_key:
-                try:
-                    chave = ChaveEdoc(record.document_key)
-                    record.nfe40_cNF = chave.codigo_aleatorio
-                    record.nfe40_cDV = chave.digito_verificador
-                except Exception as e:
-                    raise ValidationError(
-                        _("{}:\n {}".format(record.document_type_id.name, e))
-                    )
+    ##########################
+    # NF-e tag: NFref
+    ##########################
 
-    def _serialize(self, edocs):
-        edocs = super()._serialize(edocs)
-        for record in self.with_context({"lang": "pt_BR"}).filtered(
-            filter_processador_edoc_nfe
-        ):
-            inf_nfe = record.export_ds()[0]
+    nfe40_NFref = fields.One2many(
+        comodel_name="l10n_br_fiscal.document.related",
+        related="document_related_ids",
+        inverse_name="document_id",
+    )
 
-            tnfe = leiauteNFe.TNFe(infNFe=inf_nfe, infNFeSupl=None, Signature=None)
-            tnfe.original_tagname_ = "NFe"
+    ##########################
+    # NF-e tag: emit
+    ##########################
 
-            edocs.append(tnfe)
+    # emit and dest are not related fields as their related fields
+    # can change depending if it's and incoming our outgoing NFe
+    # specially when importing (ERP NFe migration vs supplier Nfe).
+    nfe40_emit = fields.Many2one(
+        comodel_name="res.company",
+        compute="_compute_emit",
+        readonly=True,
+        string="Emit",
+    )
 
-        return edocs
+    nfe40_CRT = fields.Selection(
+        related="company_tax_framework",
+        string="Código de Regime Tributário (NFe)",
+    )
 
-    def _processador(self):
-        if not self.company_id.certificate_nfe_id:
-            raise UserError(_("Certificado não encontrado"))
+    def _compute_emit(self):
+        for doc in self:  # TODO if out
+            doc.nfe40_emit = doc.company_id
 
-        certificado = cert.Certificado(
-            arquivo=self.company_id.certificate_nfe_id.file,
-            senha=self.company_id.certificate_nfe_id.password,
-        )
-        session = Session()
-        session.verify = False
-        transmissao = TransmissaoSOAP(certificado, session)
-        return edoc_nfe(
-            transmissao,
-            self.company_id.state_id.ibge_code,
-            versao=self.nfe_version,
-            ambiente=self.nfe_environment,
-        )
+    ##########################
+    # NF-e tag: dest
+    ##########################
 
-    def _document_export(self, pretty_print=True):
-        super()._document_export()
-        for record in self.filtered(filter_processador_edoc_nfe):
-            record._export_fields_pagamentos()
-            edoc = record.serialize()[0]
-            processador = record._processador()
-            xml_file = processador._generateds_to_string_etree(
-                edoc, pretty_print=pretty_print
-            )[0]
-            _logger.debug(xml_file)
-            event_id = self.event_ids.create_event_save_xml(
-                company_id=self.company_id,
-                environment=(
-                    EVENT_ENV_PROD if self.nfe_environment == "1" else EVENT_ENV_HML
-                ),
-                event_type="0",
-                xml_file=xml_file,
-                document_id=self,
-            )
-            record.authorization_event_id = event_id
+    nfe40_dest = fields.Many2one(
+        comodel_name="res.partner",
+        compute="_compute_dest",
+        readonly=True,
+        string="Dest",
+    )
 
-    def atualiza_status_nfe(self, infProt, xml_file):
-        self.ensure_one()
-        # TODO: Verificar a consulta de notas
-        # if not infProt.chNFe == self.key:
-        #     self = self.search([
-        #         ('key', '=', infProt.chNFe)
-        #     ])
-        if infProt.cStat in AUTORIZADO:
-            state = SITUACAO_EDOC_AUTORIZADA
-        elif infProt.cStat in DENEGADO:
-            state = SITUACAO_EDOC_DENEGADA
-        else:
-            state = SITUACAO_EDOC_REJEITADA
-        if self.authorization_event_id and infProt.nProt:
-            if type(infProt.dhRecbto) == datetime:
-                protocol_date = fields.Datetime.to_string(infProt.dhRecbto)
+    nfe40_indIEDest = fields.Selection(
+        related="partner_ind_ie_dest",
+        string="Contribuinte do ICMS (NFe)",
+    )
+
+    @api.depends("partner_id")
+    def _compute_dest(self):
+        for doc in self:  # TODO if out
+            doc.nfe40_dest = doc.partner_id
+
+    @api.depends("partner_id", "company_id")
+    def _compute_nfe40_idDest(self):
+        for rec in self:
+            if rec.company_id.partner_id.state_id == rec.partner_id.state_id:
+                rec.nfe40_idDest = "1"
+            elif rec.company_id.partner_id.country_id == rec.partner_id.country_id:
+                rec.nfe40_idDest = "2"
             else:
-                protocol_date = fields.Datetime.to_string(
-                    datetime.fromisoformat(infProt.dhRecbto)
-                )
+                rec.nfe40_idDest = "3"
 
-            self.authorization_event_id.set_done(
-                status_code=infProt.cStat,
-                response=infProt.xMotivo,
-                protocol_date=protocol_date,
-                protocol_number=infProt.nProt,
-                file_response_xml=xml_file,
-            )
-        self.write(
-            {
-                "status_code": infProt.cStat,
-                "status_name": infProt.xMotivo,
-            }
-        )
-        self._change_state(state)
+    ##########################
+    # NF-e tag: det
+    ##########################
+
+    # TODO should be done by framework?
+    nfe40_det = fields.One2many(
+        comodel_name="l10n_br_fiscal.document.line",
+        inverse_name="document_id",
+        related="line_ids",
+    )
+
+    ##########################
+    # NF-e tag: ICMSTot
+    ##########################
+
+    nfe40_vBC = fields.Monetary(string="BC do ICMS", related="amount_icms_base")
+
+    nfe40_vICMS = fields.Monetary(related="amount_icms_value")
+
+    # <vICMSDeson>0.00</vICMSDeson>
+
+    nfe40_vFCPUFDest = fields.Monetary(related="amount_icmsfcp_value")
+
+    nfe40_vICMSUFDest = fields.Monetary(related="amount_icms_destination_value")
+
+    nfe40_vICMSUFRemet = fields.Monetary(related="amount_icms_origin_value")
+
+    # <vFCP>0.00</vFCP> TODO
+
+    nfe40_vBCST = fields.Monetary(related="amount_icmsst_base")
+
+    nfe40_vST = fields.Monetary(related="amount_icmsst_value")
+
+    # <vFCPST>0.00</vFCPST> TODO
+
+    # <vFCPSTRet>0.00</vFCPSTRet> TODO
+
+    nfe40_vProd = fields.Monetary(related="amount_price_gross")
+
+    nfe40_vFrete = fields.Monetary(related="amount_freight_value")
+
+    nfe40_vSeg = fields.Monetary(related="amount_insurance_value")
+
+    nfe40_vDesc = fields.Monetary(related="amount_discount_value")
+
+    nfe40_vII = fields.Monetary(related="amount_ii_value")
+
+    nfe40_vIPI = fields.Monetary(related="amount_ipi_value")
+
+    # <vIPIDevol>0.00</vIPIDevol> TODO
+
+    nfe40_vPIS = fields.Monetary(
+        string="Valor do PIS (NFe)", related="amount_pis_value"
+    )
+
+    nfe40_vCOFINS = fields.Monetary(
+        string="valor do COFINS (NFe)", related="amount_cofins_value"
+    )
+
+    nfe40_vOutro = fields.Monetary(related="amount_other_value")
+
+    nfe40_vNF = fields.Monetary(related="amount_total")
+
+    nfe40_vTotTrib = fields.Monetary(related="amount_estimate_tax")
+
+    ##########################
+    # NF-e tag: transp
+    ##########################
+
+    nfe40_modFrete = fields.Selection(default="9")
+
+    ##########################
+    # NF-e tag: transporta
+    ##########################
+
+    nfe40_transporta = fields.Many2one(comodel_name="res.partner")
+
+    ##########################
+    # NF-e tag: pag
+    ##########################
 
     def _prepare_amount_financial(self, ind_pag, t_pag, v_pag):
         return {
@@ -478,82 +366,54 @@ class NFe(spec_models.StackedModel):
             ]
         self.nfe40_detPag.__class__._field_prefix = "nfe40_"
 
-        # the following was disabled because it blocks the normal
-        # invoice validation https://github.com/OCA/l10n-brazil/issues/1559
-        # if not self.nfe40_detPag:  # (empty list)
-        #    raise UserError(_("Favor preencher os dados do pagamento"))
+    ##########################
+    # NF-e tag: infAdic
+    ##########################
 
-    def _eletronic_document_send(self):
-        super(NFe, self)._eletronic_document_send()
-        for record in self.filtered(filter_processador_edoc_nfe):
-            record._export_fields_pagamentos()
-            processador = record._processador()
-            for edoc in record.serialize():
-                processo = None
-                for p in processador.processar_documento(edoc):
-                    processo = p
-                    if processo.webservice == "nfeAutorizacaoLote":
-                        record.authorization_event_id._save_event_file(
-                            processo.envio_xml.decode("utf-8"), "xml"
-                        )
+    nfe40_infAdFisco = fields.Char(compute="_compute_nfe40_additional_data")
 
-            if processo.resposta.cStat in LOTE_PROCESSADO + ["100"]:
-                record.atualiza_status_nfe(
-                    processo.protocolo.infProt, processo.processo_xml.decode("utf-8")
+    ##########################
+    # NF-e tag: infCpl
+    ##########################
+
+    nfe40_infCpl = fields.Char(compute="_compute_nfe40_additional_data")
+
+    @api.depends("fiscal_additional_data", "fiscal_additional_data")
+    def _compute_nfe40_additional_data(self):
+        for record in self:
+            record.nfe40_infCpl = False
+            record.nfe40_infAdFisco = False
+            if record.fiscal_additional_data:
+                record.nfe40_infAdFisco = (
+                    normalize("NFKD", record.fiscal_additional_data)
+                    .encode("ASCII", "ignore")
+                    .decode("ASCII")
+                    .replace("\n", "")
+                    .replace("\r", "")
                 )
-                if processo.protocolo.infProt.cStat in AUTORIZADO:
-                    try:
-                        record.make_pdf()
-                    except Exception as e:
-                        # Não devemos interromper o fluxo
-                        # E dar rollback em um documento
-                        # autorizado, podendo perder dados.
-
-                        # Se der problema que apareça quando
-                        # o usuário clicar no gera PDF novamente.
-                        _logger.error("DANFE Error \n {}".format(e))
-
-            elif processo.resposta.cStat == "225":
-                state = SITUACAO_EDOC_REJEITADA
-
-                self._change_state(state)
-
-                self.write(
-                    {
-                        "status_code": processo.resposta.cStat,
-                        "status_name": processo.resposta.xMotivo,
-                    }
+            if record.customer_additional_data:
+                record.nfe40_infCpl = (
+                    normalize("NFKD", record.customer_additional_data)
+                    .encode("ASCII", "ignore")
+                    .decode("ASCII")
+                    .replace("\n", "")
+                    .replace("\r", "")
                 )
-        return
 
-    def _document_date(self):
-        super()._document_date()
-        for record in self.filtered(filter_processador_edoc_nfe):
-            if not record.date_in_out:
-                record.date_in_out = fields.Datetime.now()
+    ##########################
+    # NF-e tag: infRespTec
+    ##########################
 
-    def _export_fields(self, xsd_fields, class_obj, export_dict):
-        if self.company_id.partner_id.state_id.ibge_code:
-            self.nfe40_cUF = self.company_id.partner_id.state_id.ibge_code
-        if self.document_type_id.code:
-            self.nfe40_mod = self.document_type_id.code
-        self.nfe40_cMunFG = self.company_id.partner_id.city_id.ibge_code
-        return super(NFe, self)._export_fields(xsd_fields, class_obj, export_dict)
+    nfe40_infRespTec = fields.Many2one(
+        comodel_name="res.partner",
+        related="company_id.technical_support_id",
+    )
+
+    ################################
+    # Framework Spec model's methods
+    ################################
 
     def _export_field(self, xsd_field, class_obj, member_spec):
-        if xsd_field in ("nfe40_vICMSUFDest", "nfe40_vICMSUFRemet"):
-            if (
-                self.ind_final == "1"
-                and self.nfe40_idDest == "2"
-                and self.nfe40_indIEDest == "9"
-            ):
-                self.nfe40_vICMSUFDest = sum(self.line_ids.mapped("nfe40_vICMSUFDest"))
-                self.nfe40_vICMSUFRemet = sum(
-                    self.line_ids.mapped("nfe40_vICMSUFRemet")
-                )
-            else:
-                self.nfe40_vICMSUFDest = 0.0
-                self.nfe40_vICMSUFRemet = 0.0
         if xsd_field == "nfe40_tpAmb":
             self.env.context = dict(self.env.context)
             self.env.context.update({"tpAmb": self[xsd_field]})
@@ -568,7 +428,7 @@ class NFe(spec_models.StackedModel):
             self.nfe40_detPag and self.nfe40_detPag[0].nfe40_tPag == "90"
         ):
             return False
-        return super(NFe, self)._export_field(xsd_field, class_obj, member_spec)
+        return super()._export_field(xsd_field, class_obj, member_spec)
 
     def _export_many2one(self, field_name, xsd_required, class_obj=None):
         self.ensure_one()
@@ -592,17 +452,10 @@ class NFe(spec_models.StackedModel):
                 ):
                     return False
 
-        return super(NFe, self)._export_many2one(field_name, xsd_required, class_obj)
-
-    def _export_float_monetary(self, field_name, member_spec, class_obj, xsd_required):
-        if field_name == "nfe40_vProd" and class_obj._name == "nfe.40.icmstot":
-            self[field_name] = sum(self["nfe40_det"].mapped("nfe40_vProd"))
-        return super(NFe, self)._export_float_monetary(
-            field_name, member_spec, class_obj, xsd_required
-        )
+        return super()._export_many2one(field_name, xsd_required, class_obj)
 
     def _export_one2many(self, field_name, class_obj=None):
-        res = super(NFe, self)._export_one2many(field_name, class_obj)
+        res = super()._export_one2many(field_name, class_obj)
         i = 0
         for field_data in res:
             i += 1
@@ -621,7 +474,7 @@ class NFe(spec_models.StackedModel):
                 .id
             )
 
-        return super(NFe, self)._build_attr(node, fields, vals, path, attr)
+        return super()._build_attr(node, fields, vals, path, attr)
 
     def _build_many2one(self, comodel, vals, new_value, key, value, path):
         if key == "nfe40_emit" and self.env.context.get("edoc_type") == "in":
@@ -649,177 +502,4 @@ class NFe(spec_models.StackedModel):
             # stacked m2o
             vals.update(new_value)
         else:
-            super(NFe, self)._build_many2one(comodel, vals, new_value, key, value, path)
-
-    def view_pdf(self):
-        if not self.filtered(filter_processador_edoc_nfe):
-            return super().view_pdf()
-        if not self.authorization_file_id or not self.file_report_id:
-            self.make_pdf()
-        return self._target_new_tab(self.file_report_id)
-
-    def make_pdf(self):
-        if not self.filtered(filter_processador_edoc_nfe):
-            return super().make_pdf()
-
-        file_pdf = self.file_report_id
-        self.file_report_id = False
-        file_pdf.unlink()
-
-        if self.authorization_file_id:
-            arquivo = self.authorization_file_id
-            xml_string = base64.b64decode(arquivo.datas).decode()
-        else:
-            arquivo = self.send_file_id
-            xml_string = base64.b64decode(arquivo.datas).decode()
-            xml_string = self.temp_xml_autorizacao(xml_string)
-
-        pdf = base.ImprimirXml.imprimir(
-            string_xml=xml_string,
-            # output_dir=self.authorization_event_id.file_path
-        )
-        # TODO: Alterar a opção output_dir para devolter também o arquivo do XML
-        # no retorno, evitando a releitura do arquivo.
-
-        self.file_report_id = self.env["ir.attachment"].create(
-            {
-                "name": self.document_key + ".pdf",
-                "datas_fname": self.document_key + ".pdf",
-                "res_model": self._name,
-                "res_id": self.id,
-                "datas": base64.b64encode(pdf),
-                "mimetype": "application/pdf",
-                "type": "binary",
-            }
-        )
-
-    def temp_xml_autorizacao(self, xml_string):
-        """ TODO: Migrate-me to erpbrasil.edoc.pdf ASAP"""
-        root = etree.fromstring(xml_string)
-        ns = {None: "http://www.portalfiscal.inf.br/nfe"}
-        new_root = etree.Element("nfeProc", nsmap=ns)
-
-        protNFe_node = etree.Element("protNFe")
-        infProt = etree.SubElement(protNFe_node, "infProt")
-        etree.SubElement(infProt, "tpAmb").text = "2"
-        etree.SubElement(infProt, "verAplic").text = ""
-        etree.SubElement(infProt, "dhRecbto").text = None
-        etree.SubElement(infProt, "nProt").text = ""
-        etree.SubElement(infProt, "digVal").text = ""
-        etree.SubElement(infProt, "cStat").text = ""
-        etree.SubElement(infProt, "xMotivo").text = ""
-
-        new_root.append(root)
-        new_root.append(protNFe_node)
-        return etree.tostring(new_root)
-
-    def _document_cancel(self, justificative):
-        super(NFe, self)._document_cancel(justificative)
-        online_event = self.filtered(filter_processador_edoc_nfe)
-        if online_event:
-            online_event._nfe_cancel()
-
-    def _nfe_cancel(self):
-        self.ensure_one()
-        processador = self._processador()
-
-        if not self.authorization_protocol:
-            raise UserError(_("Authorization Protocol Not Found!"))
-
-        evento = processador.cancela_documento(
-            chave=self.document_key,
-            protocolo_autorizacao=self.authorization_protocol,
-            justificativa=self.cancel_reason.replace("\n", "\\n"),
-        )
-        processo = processador.enviar_lote_evento(lista_eventos=[evento])
-        # Gravamos o arquivo no disco e no filestore ASAP.
-
-        self.cancel_event_id = self.event_ids.create_event_save_xml(
-            company_id=self.company_id,
-            environment=(
-                EVENT_ENV_PROD if self.nfe_environment == "1" else EVENT_ENV_HML
-            ),
-            event_type="2",
-            xml_file=processo.envio_xml.decode("utf-8"),
-            document_id=self,
-        )
-
-        for retevento in processo.resposta.retEvento:
-            if not retevento.infEvento.chNFe == self.document_key:
-                continue
-
-            if retevento.infEvento.cStat not in CANCELADO:
-                mensagem = "Erro no cancelamento"
-                mensagem += "\nCódigo: " + retevento.infEvento.cStat
-                mensagem += "\nMotivo: " + retevento.infEvento.xMotivo
-                raise UserError(mensagem)
-
-            if retevento.infEvento.cStat == CANCELADO_FORA_PRAZO:
-                self.state_fiscal = SITUACAO_FISCAL_CANCELADO_EXTEMPORANEO
-            elif retevento.infEvento.cStat == CANCELADO_DENTRO_PRAZO:
-                self.state_fiscal = SITUACAO_FISCAL_CANCELADO
-
-            self.state_edoc = SITUACAO_EDOC_CANCELADA
-            self.cancel_event_id.set_done(
-                status_code=retevento.infEvento.cStat,
-                response=retevento.infEvento.xMotivo,
-                protocol_date=fields.Datetime.to_string(
-                    datetime.fromisoformat(retevento.infEvento.dhRegEvento)
-                ),
-                protocol_number=retevento.infEvento.nProt,
-                file_response_xml=processo.retorno.content.decode("utf-8"),
-            )
-
-    def _document_correction(self, justificative):
-        super(NFe, self)._document_correction(justificative)
-        online_event = self.filtered(filter_processador_edoc_nfe)
-        if online_event:
-            online_event._nfe_correction(justificative)
-
-    def _nfe_correction(self, justificative):
-        self.ensure_one()
-        processador = self._processador()
-
-        numeros = self.event_ids.filtered(
-            lambda e: e.type == "14" and e.state == "done"
-        ).mapped("sequence")
-
-        sequence = str(int(max(numeros)) + 1) if numeros else "1"
-
-        evento = processador.carta_correcao(
-            chave=self.document_key,
-            sequencia=sequence,
-            justificativa=justificative.replace("\n", "\\n"),
-        )
-        processo = processador.enviar_lote_evento(lista_eventos=[evento])
-        # Gravamos o arquivo no disco e no filestore ASAP.
-        event_id = self.event_ids.create_event_save_xml(
-            company_id=self.company_id,
-            environment=(
-                EVENT_ENV_PROD if self.nfe_environment == "1" else EVENT_ENV_HML
-            ),
-            event_type="14",
-            xml_file=processo.envio_xml.decode("utf-8"),
-            document_id=self,
-            sequence=sequence,
-            justification=justificative,
-        )
-        for retevento in processo.resposta.retEvento:
-            if not retevento.infEvento.chNFe == self.document_key:
-                continue
-
-            if retevento.infEvento.cStat not in EVENTO_RECEBIDO:
-                mensagem = "Erro na carta de correção"
-                mensagem += "\nCódigo: " + retevento.infEvento.cStat
-                mensagem += "\nMotivo: " + retevento.infEvento.xMotivo
-                raise UserError(mensagem)
-
-            event_id.set_done(
-                status_code=retevento.infEvento.cStat,
-                response=retevento.infEvento.xMotivo,
-                protocol_date=fields.Datetime.to_string(
-                    datetime.fromisoformat(retevento.infEvento.dhRegEvento)
-                ),
-                protocol_number=retevento.infEvento.nProt,
-                file_response_xml=processo.retorno.content.decode("utf-8"),
-            )
+            super()._build_many2one(comodel, vals, new_value, key, value, path)
