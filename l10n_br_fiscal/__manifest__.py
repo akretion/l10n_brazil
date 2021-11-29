@@ -94,6 +94,7 @@
         "views/dfe/dfe_views.xml",
         "views/operation_dashboard_view.xml",
         "views/event_view.xml",
+        "views/event_transmission_view.xml",
         # Wizards
         "wizards/document_cancel_wizard.xml",
         "wizards/document_correction_wizard.xml",
