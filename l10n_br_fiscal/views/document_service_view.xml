@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="document_service_search" model="ir.ui.view">
+        <field name="name">l10n_br_fiscal.document.service.search</field>
+        <field name="model">l10n_br_fiscal.document.service</field>
+        <field name="arch" type="xml">
+            <search string="Fiscal Document Service">
+                <field name="code" />
+                <field name="document_type_id" />
+            </search>
+        </field>
+    </record>
+
+    <record id="document_service_tree" model="ir.ui.view">
+        <field name="name">l10n_br_fiscal.document.service.tree</field>
+        <field name="model">l10n_br_fiscal.document.service</field>
+        <field name="arch" type="xml">
+            <tree edit="false" create="false">
+                <field name="code" />
+                <field name="name" />
+                <field name="document_type_id" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="document_service_form" model="ir.ui.view">
+        <field name="name">l10n_br_fiscal.document.service.form</field>
+        <field name="model">l10n_br_fiscal.document.service</field>
+        <field name="arch" type="xml">
+            <form string="Fiscal Document Service" edit="false" create="false">
+                <sheet>
+                    <group>
+                        <field name="code" />
+                        <field name="name" />
+                        <field name="document_type_id" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>
