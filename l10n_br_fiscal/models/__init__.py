@@ -11,6 +11,7 @@ from . import document_fiscal_line_mixin_methods
 from . import document_fiscal_line_mixin
 from . import document_event
 from . import document_service
+from . import document_service_message
 from . import event
 from . import event_transmission
 from . import document_eletronic
