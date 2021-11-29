@@ -598,6 +598,30 @@
         sequence="40"
     />
 
+    <menuitem
+        id="document_service_menu"
+        action="document_service_action"
+        groups="l10n_br_fiscal.group_manager"
+        parent="fiscal_document_config_menu"
+        sequence="50"
+    />
+
+    <menuitem
+        id="document_service_message_menu"
+        action="document_service_message_action"
+        groups="l10n_br_fiscal.group_manager"
+        parent="fiscal_document_config_menu"
+        sequence="60"
+    />
+
+    <menuitem
+        id="document_event_menu"
+        action="document_event_action"
+        groups="l10n_br_fiscal.group_manager"
+        parent="fiscal_document_config_menu"
+        sequence="70"
+    />
+
     <!-- Others Settings -->
     <menuitem
         id="others_config_menu"

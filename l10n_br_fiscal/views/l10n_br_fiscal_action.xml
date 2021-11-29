@@ -600,6 +600,57 @@
         </field>
     </record>
 
+    <!-- Document Service -->
+    <record id="document_service_action" model="ir.actions.act_window">
+        <field name="name">Document Service</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">l10n_br_fiscal.document.service</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="document_service_tree" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+              Add a new Fiscal Document Service
+            </p><p>
+              A Fiscal Document Service is necessary for eletronic documents.
+            </p>
+        </field>
+    </record>
+
+    <!-- Document Service Message -->
+    <record id="document_service_message_action" model="ir.actions.act_window">
+        <field name="name">Document Service Message</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">l10n_br_fiscal.document.service.message</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="document_service_message_tree" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+              Add a new Fiscal Document Service Message
+            </p><p>
+              A Fiscal Document Service Message is necessary for eletronic documents.
+            </p>
+        </field>
+    </record>
+
+    <!-- Document Service Message -->
+    <record id="document_event_action" model="ir.actions.act_window">
+        <field name="name">Document Event</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">l10n_br_fiscal.document.event</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="document_event_tree" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+              Add a new Fiscal Document Event
+            </p><p>
+              A Fiscal Document Event is necessary for eletronic documents.
+            </p>
+        </field>
+    </record>
+
     <!-- NF-e Document -->
     <record id="nfe_document_action" model="ir.actions.act_window">
         <field name="name">NF-e</field>
