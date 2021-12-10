@@ -369,7 +369,7 @@
                                 />
                 </group>
                 <group>
-                    <group name="authorization" string="Authorization" colspan="4">
+                    <!-- <group name="authorization" string="Authorization" colspan="4">
                         <field name="authorization_event_id" />
                         <field name="authorization_date" />
                         <field name="authorization_protocol" />
@@ -403,12 +403,12 @@
                                 <field name="state" />
                             </tree>
                         </field>
-                    </group>
+                    </group> -->
                     <group name="events" string="Events" colspan="4">
                         <field name="event_ids" nolabel="1">
                             <tree>
                                 <field name="id" />
-                                <field name="type" />
+                                <field name="document_event_id" />
                                 <field name="origin" />
                                 <field name="create_date" />
                                 <field name="state" />
