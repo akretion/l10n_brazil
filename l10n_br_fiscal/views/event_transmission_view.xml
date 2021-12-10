@@ -7,6 +7,7 @@
         <field name="arch" type="xml">
             <search string="Fiscal Event Transmission">
                 <field name="event_id" />
+                <field name="document_service_id" />
             </search>
         </field>
     </record>
@@ -18,6 +19,10 @@
             <tree edit="false" create="false">
                 <field name="event_id" />
                 <field name="create_date" />
+                <field name="document_service_id" />
+                <field name="message_request_id" />
+                <field name="message_response_id" />
+                <field name="state" />
             </tree>
         </field>
     </record>
@@ -32,7 +37,20 @@
                 </header>
                 <sheet>
                     <group>
-                        <field name="event_id" />
+                        <field name="event_id" invisible="1" />
+                        <field name="document_type_id" invisible="1" />
+                        <field name="create_date" />
+                        <field name="document_service_id" />
+                    </group>
+                    <group name="request" string="Request">
+                        <field name="message_request_id" />
+                        <field name="service_request" widget="ace" options="{'mode': 'xml'}" />
+                        <field name="file_request_id" />
+                    </group>
+                    <group name="response" string="Response">
+                        <field name="message_response_id" />
+                        <field name="service_response" widget="ace" options="{'mode': 'xml'}" />
+                        <field name="file_response_id" />
                     </group>
                 </sheet>
             </form>

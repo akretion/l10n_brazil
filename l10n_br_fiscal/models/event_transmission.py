@@ -20,7 +20,7 @@ class EventTransmission(models.Model):
 
     document_service_id = fields.Many2one(
         comodel_name="l10n_br_fiscal.document.service",
-        string="Document Event",
+        string="Document Service",
     )
 
     create_date = fields.Datetime(
@@ -33,7 +33,8 @@ class EventTransmission(models.Model):
     message_request_id = fields.Many2one(
         comodel_name="l10n_br_fiscal.document.service.message",
         string="Message Request",
-        domain="[('document_service_id', '=', document_service_id)]",
+        domain="[('document_service_id', '=', document_service_id),"
+               "('message_type', '=', 'request')]",
     )
 
     service_request = fields.Text(string="Service Request")
@@ -49,10 +50,11 @@ class EventTransmission(models.Model):
     message_response_id = fields.Many2one(
         comodel_name="l10n_br_fiscal.document.service.message",
         string="Message Response",
-        domain="[('document_service_id', '=', document_service_id)]",
+        domain="[('document_service_id', '=', document_service_id),"
+               "('message_type', '=', 'response')]",
     )
 
-    service_response = fields.Text(string="Service Request")
+    service_response = fields.Text(string="Service Response")
 
     # TODO remove this fields
     file_response_id = fields.Many2one(
@@ -62,10 +64,15 @@ class EventTransmission(models.Model):
         readonly=True,
     )
 
+    response_status_code = fields.Char(string="Response Status Code")
+
+    response_status_name = fields.Char(string="Response Status Name")
+
     state = fields.Selection(
         selection=[
             ('todo', 'To Do'),
             ('done', 'Done')
         ],
         string="State",
+        default="todo",
     )
