@@ -48,94 +48,94 @@ class DocumentEletronic(models.AbstractModel):
     )
 
     # Authorization Event Related Fields
-    authorization_event_id = fields.Many2one(
-        comodel_name="l10n_br_fiscal.event",
-        string="Authorization Event",
-        readonly=True,
-        copy=False,
-    )
-
-    authorization_date = fields.Datetime(
-        string="Authorization Date",
-        readonly=True,
-        related="authorization_event_id.protocol_date",
-    )
-
-    authorization_protocol = fields.Char(
-        string="Authorization Protocol",
-        related="authorization_event_id.protocol_number",
-        readonly=True,
-    )
-
-    send_file_id = fields.Many2one(
-        comodel_name="ir.attachment",
-        related="authorization_event_id.file_request_id",
-        string="Send Document File XML",
-        ondelete="restrict",
-        readonly=True,
-    )
-
-    authorization_file_id = fields.Many2one(
-        comodel_name="ir.attachment",
-        related="authorization_event_id.file_response_id",
-        string="Authorization File XML",
-        ondelete="restrict",
-        readonly=True,
-    )
-
-    # Cancel Event Related Fields
-    cancel_event_id = fields.Many2one(
-        comodel_name="l10n_br_fiscal.event",
-        string="Cancel Event",
-        copy=False,
-    )
-
-    cancel_date = fields.Datetime(
-        string="Cancel Date",
-        readonly=True,
-        related="cancel_event_id.protocol_date",
-    )
-
-    cancel_protocol_number = fields.Char(
-        string="Cancel Protocol Number",
-        related="cancel_event_id.protocol_number",
-        readonly=True,
-    )
-
-    cancel_file_id = fields.Many2one(
-        comodel_name="ir.attachment",
-        related="cancel_event_id.file_response_id",
-        string="Cancel File XML",
-        ondelete="restrict",
-        readonly=True,
-    )
-
-    # Invalidate Event Related Fields
-    invalidate_event_id = fields.Many2one(
-        comodel_name="l10n_br_fiscal.event",
-        string="Invalidate Event",
-        copy=False,
-    )
-
-    invalidate_date = fields.Datetime(
-        string="Invalidate Date",
-        readonly=True,
-        related="invalidate_event_id.protocol_date",
-    )
-
-    invalidate_protocol_number = fields.Char(
-        string="Invalidate Protocol Number",
-        related="invalidate_event_id.protocol_number",
-        readonly=True,
-    )
-
-    invalidate_file_id = fields.Many2one(
-        comodel_name="ir.attachment",
-        related="invalidate_event_id.file_response_id",
-        string="Invalidate File XML",
-        ondelete="restrict",
-        readonly=True,
-    )
+    # authorization_event_id = fields.Many2one(
+    #     comodel_name="l10n_br_fiscal.event",
+    #     string="Authorization Event",
+    #     readonly=True,
+    #     copy=False,
+    # )
+    #
+    # authorization_date = fields.Datetime(
+    #     string="Authorization Date",
+    #     readonly=True,
+    #     related="authorization_event_id.protocol_date",
+    # )
+    #
+    # authorization_protocol = fields.Char(
+    #     string="Authorization Protocol",
+    #     related="authorization_event_id.protocol_number",
+    #     readonly=True,
+    # )
+    #
+    # send_file_id = fields.Many2one(
+    #     comodel_name="ir.attachment",
+    #     related="authorization_event_id.file_request_id",
+    #     string="Send Document File XML",
+    #     ondelete="restrict",
+    #     readonly=True,
+    # )
+    #
+    # authorization_file_id = fields.Many2one(
+    #     comodel_name="ir.attachment",
+    #     related="authorization_event_id.file_response_id",
+    #     string="Authorization File XML",
+    #     ondelete="restrict",
+    #     readonly=True,
+    # )
+    #
+    # # Cancel Event Related Fields
+    # cancel_event_id = fields.Many2one(
+    #     comodel_name="l10n_br_fiscal.event",
+    #     string="Cancel Event",
+    #     copy=False,
+    # )
+    #
+    # cancel_date = fields.Datetime(
+    #     string="Cancel Date",
+    #     readonly=True,
+    #     related="cancel_event_id.protocol_date",
+    # )
+    #
+    # cancel_protocol_number = fields.Char(
+    #     string="Cancel Protocol Number",
+    #     related="cancel_event_id.protocol_number",
+    #     readonly=True,
+    # )
+    #
+    # cancel_file_id = fields.Many2one(
+    #     comodel_name="ir.attachment",
+    #     related="cancel_event_id.file_response_id",
+    #     string="Cancel File XML",
+    #     ondelete="restrict",
+    #     readonly=True,
+    # )
+    #
+    # # Invalidate Event Related Fields
+    # invalidate_event_id = fields.Many2one(
+    #     comodel_name="l10n_br_fiscal.event",
+    #     string="Invalidate Event",
+    #     copy=False,
+    # )
+    #
+    # invalidate_date = fields.Datetime(
+    #     string="Invalidate Date",
+    #     readonly=True,
+    #     related="invalidate_event_id.protocol_date",
+    # )
+    #
+    # invalidate_protocol_number = fields.Char(
+    #     string="Invalidate Protocol Number",
+    #     related="invalidate_event_id.protocol_number",
+    #     readonly=True,
+    # )
+    #
+    # invalidate_file_id = fields.Many2one(
+    #     comodel_name="ir.attachment",
+    #     related="invalidate_event_id.file_response_id",
+    #     string="Invalidate File XML",
+    #     ondelete="restrict",
+    #     readonly=True,
+    # )
 
     document_version = fields.Char(string="Version", default="4.00", readonly=True)
 
