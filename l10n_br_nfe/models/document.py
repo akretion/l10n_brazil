@@ -29,8 +29,8 @@ class NFe(models.Model):
     _name = "l10n_br_fiscal.document"
     _inherit = [
         "l10n_br_fiscal.document",
-        "l10n_br_nfe.document.workflow",
-        "l10n_br_nfe.document.electronic",
+        # "l10n_br_nfe.document.workflow",
+        # "l10n_br_nfe.document.electronic",
     ]
 
 
