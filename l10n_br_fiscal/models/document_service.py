@@ -6,7 +6,11 @@ from odoo import fields, models
 
 class DocumentService(models.Model):
     _name = "l10n_br_fiscal.document.service"
-    _inherit = "l10n_br_fiscal.data.abstract"
+    _inherit = [
+        "l10n_br_fiscal.data.abstract",
+        "mail.thread",
+        "mail.activity.mixin",
+    ]
     _description = "Generic Document Service"
 
     name = fields.Char(string="Name", required=True, index=True)
@@ -15,5 +19,11 @@ class DocumentService(models.Model):
 
     document_type_id = fields.Many2one(
         comodel_name="l10n_br_fiscal.document.type",
-        string="Fiscal Document Type",
+        string="Document Type",
+    )
+
+    document_service_message_ids = fields.One2many(
+        comodel_name="l10n_br_fiscal.document.service.message",
+        inverse_name="document_service_id",
+        string="Document Service Message"
     )

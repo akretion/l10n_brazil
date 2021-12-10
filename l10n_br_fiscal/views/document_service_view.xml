@@ -33,9 +33,16 @@
                     <group>
                         <field name="code" />
                         <field name="name" />
+                        <field name="description" />
                         <field name="document_type_id" />
                     </group>
+                    <field name="document_service_message_ids" nolabel="1" />
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" />
+                    <field name="activity_ids" widget="mail_activity" />
+                    <field name="message_ids" widget="mail_thread" />
+                </div>
             </form>
         </field>
     </record>
