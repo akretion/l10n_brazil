@@ -13,12 +13,21 @@ class DocumentServiceMessage(models.Model):
 
     description = fields.Text(string="Description", required=True, index=True)
 
-    document_type_id = fields.Many2one(
-        comodel_name="l10n_br_fiscal.document.type",
-        string="Fiscal Document Type",
-    )
-
     document_service_id = fields.Many2one(
         comodel_name="l10n_br_fiscal.document.service",
         string="Fiscal Document Service",
+    )
+
+    document_type_id = fields.Many2one(
+        comodel_name="l10n_br_fiscal.document.type",
+        related="document_service_id.document_type_id",
+        string="Document Type",
+    )
+
+    message_type = fields.Selection(
+        selection=[
+            ('request', 'Request'),
+            ('response', 'Response')
+        ],
+        string="Message Type",
     )

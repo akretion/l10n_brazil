@@ -19,7 +19,9 @@
             <tree edit="false" create="false">
                 <field name="code" />
                 <field name="name" />
-                <field name="document_type_id" />
+                <field name="document_type_id" invisible="1" />
+                <field name="document_service_id" invisible="1" />
+                <field name="message_type" />
             </tree>
         </field>
     </record>
@@ -33,7 +35,10 @@
                     <group>
                         <field name="code" />
                         <field name="name" />
+                        <field name="description" />
                         <field name="document_type_id" />
+                        <field name="document_service_id" />
+                        <field name="message_type" />
                     </group>
                 </sheet>
             </form>
