@@ -50,6 +50,18 @@ class DocumentType(models.Model):
         string="Document Series",
     )
 
+    document_service_ids = fields.One2many(
+        comodel_name="l10n_br_fiscal.document.service",
+        inverse_name="document_type_id",
+        string="Document Service",
+    )
+
+    document_event_ids = fields.One2many(
+        comodel_name="l10n_br_fiscal.document.event",
+        inverse_name="document_type_id",
+        string="Document Event",
+    )
+
     def _get_default_document_serie(self, company):
         """Overwrite this method in a custom fiscal document
         modules like l10n_br_nfe, l10n_br_nfse and etc, to
