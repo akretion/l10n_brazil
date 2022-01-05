@@ -681,10 +681,11 @@ class Tax(models.Model):
             ind_final,
         return
             {
-                'amount_included': float
-                'amount_not_included': float
-                'amount_withholding': float
-                'taxes': dict
+                "amount_included": float,
+                "amount_not_included": float,
+                "amount_withholding": float,
+                "estimate_tax": float,
+                "taxes": dict,
             }
         """
         result_amounts = {
