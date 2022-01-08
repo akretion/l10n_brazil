@@ -29,10 +29,9 @@ class TestUi(HttpCase):
             _provider_class + "._consultar_cep",
             return_value=mocked_response,
         ):
-            self.phantom_js(
-                url_path="/my/account",
-                code="%s.run('%s')" % tour,
-                ready="%s.tours['%s'].ready" % tour,
+            self.start_tour(
+                "/my/account"
+                "%s.run('%s')" % tour,
                 login="admin",
                 timeout=180,
             )
