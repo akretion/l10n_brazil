@@ -193,6 +193,12 @@ class AccountMoveLine(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        # Super Hack Porco - Marcel Savegnago
+        move = self.env['account.move'].browse(vals_list[0].get('move_id'))
+        if move.is_invoice(include_receipts=True):
+            if vals_list[0].get('exclude_from_invoice_tab') or not vals_list[0].get("amount_currency"):
+                return
+
         dummy_doc = self.env.company.fiscal_dummy_id
         for values in vals_list:
             fiscal_doc_id = (
