@@ -204,11 +204,12 @@ class AccountMove(models.Model):
     def default_get(self, fields_list):
         defaults = super().default_get(fields_list)
         move_type = self.env.context.get("default_move_type", "out_invoice")
-        defaults["fiscal_operation_type"] = MOVE_TO_OPERATION[move_type]
-        if defaults["fiscal_operation_type"] == FISCAL_OUT:
-            defaults["issuer"] = DOCUMENT_ISSUER_COMPANY
-        else:
-            defaults["issuer"] = DOCUMENT_ISSUER_PARTNER
+        if move_type != 'entry':
+            defaults["fiscal_operation_type"] = MOVE_TO_OPERATION[move_type]
+            if defaults["fiscal_operation_type"] == FISCAL_OUT:
+                defaults["issuer"] = DOCUMENT_ISSUER_COMPANY
+            else:
+                defaults["issuer"] = DOCUMENT_ISSUER_PARTNER
         return defaults
 
     @api.model_create_multi
