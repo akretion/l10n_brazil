@@ -12,14 +12,30 @@
                     attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund'))]}"
                     name="receivable_move_line_tab"
                 >
-                    <field name="financial_move_line_ids" />
+                    <field name="financial_move_line_ids" >
+                        <tree>
+                            <field name="date_maturity" />
+                            <field name="partner_id" />
+                            <field name="account_id" />
+                            <field name="balance" />
+                            <field name="matching_number" />
+                        </tree>
+                    </field>
                 </page>
                 <page
                     string="Payables"
                     attrs="{'invisible': [('move_type', 'not in', ('in_invoice', 'in_refund'))]}"
                     name="payable_move_line_tab"
                 >
-                    <field name="financial_move_line_ids" />
+                    <field name="financial_move_line_ids" >
+                        <tree>
+                            <field name="date_maturity" />
+                            <field name="partner_id" />
+                            <field name="account_id" />
+                            <field name="balance" />
+                            <field name="matching_number" />
+                        </tree>
+                    </field>
                 </page>
                 <page string="Payments" name="payment_move_line_tab">
                     <field name="payment_move_line_ids" />
