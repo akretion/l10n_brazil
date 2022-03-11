@@ -10,6 +10,7 @@ class AccountMove(models.Model):
     financial_move_line_ids = fields.One2many(
         comodel_name="account.move.line",
         inverse_name="move_id",
+        compute="_compute_financial",
         string="Financial Move Lines",
         domain="[('account_id.user_type_id.type', 'in', ('receivable', 'payable'))]",
     )
@@ -27,7 +28,7 @@ class AccountMove(models.Model):
             lines = move.line_ids.filtered(
                 lambda l: l.account_id.internal_type in ("receivable", "payable")
             )
-            move.financial_move_line_ids = lines.sorted()
+            move.financial_move_line_ids = lines.sorted(key="date_maturity", reverse=False)
 
     @api.depends("line_ids.amount_residual")
     def _compute_payments(self):
