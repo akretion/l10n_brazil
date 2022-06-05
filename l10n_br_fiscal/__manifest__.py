@@ -63,6 +63,7 @@
         "views/product_genre_view.xml",
         "views/document_type_view.xml",
         "views/document_service_view.xml",
+        "views/document_service_message_view.xml",
         "views/document_serie_view.xml",
         "views/document_email_view.xml",
         "views/certificate_view.xml",
