@@ -553,6 +553,75 @@
         sequence="30"
     />
 
+    <!-- Fiscal Document Settings -->
+    <menuitem
+        id="fiscal_document_config_menu"
+        name="Fiscal Document"
+        groups="l10n_br_fiscal.group_manager"
+        parent="configuration_menu"
+        sequence="50"
+    />
+
+    <!-- Fiscal Document -->
+    <menuitem
+        id="document_type_menu"
+        action="document_type_action"
+        groups="l10n_br_fiscal.group_manager"
+        parent="fiscal_document_config_menu"
+        sequence="10"
+    />
+
+    <!-- Fiscal Document Serie -->
+    <menuitem
+        id="document_serie_menu"
+        action="document_serie_action"
+        groups="l10n_br_fiscal.group_manager"
+        parent="fiscal_document_config_menu"
+        sequence="20"
+    />
+
+    <!-- Fiscal Document Email -->
+    <menuitem
+        id="document_email_menu"
+        action="document_email_action"
+        groups="l10n_br_fiscal.group_manager"
+        parent="fiscal_document_config_menu"
+        sequence="30"
+    />
+
+    <!-- Subsequent Document -->
+    <menuitem
+        id="subsequent_document_menu"
+        action="subsequent_document_action"
+        groups="base.group_no_one"
+        parent="fiscal_document_config_menu"
+        sequence="40"
+    />
+
+    <menuitem
+        id="document_service_menu"
+        action="document_service_action"
+        groups="l10n_br_fiscal.group_manager"
+        parent="fiscal_document_config_menu"
+        sequence="50"
+    />
+
+    <menuitem
+        id="document_service_message_menu"
+        action="document_service_message_action"
+        groups="l10n_br_fiscal.group_manager"
+        parent="fiscal_document_config_menu"
+        sequence="60"
+    />
+
+    <menuitem
+        id="document_event_menu"
+        action="document_event_action"
+        groups="l10n_br_fiscal.group_manager"
+        parent="fiscal_document_config_menu"
+        sequence="70"
+    />
+
     <!-- Others Settings -->
     <menuitem
         id="others_config_menu"
@@ -562,40 +631,13 @@
         sequence="999"
     />
 
-    <!-- Fiscal Document -->
-    <menuitem
-        id="document_type_menu"
-        action="document_type_action"
-        groups="l10n_br_fiscal.group_manager"
-        parent="others_config_menu"
-        sequence="10"
-    />
-
-    <!-- Fiscal Document Serie -->
-    <menuitem
-        id="document_serie_menu"
-        action="document_serie_action"
-        groups="l10n_br_fiscal.group_manager"
-        parent="others_config_menu"
-        sequence="20"
-    />
-
-    <!-- Fiscal Document Email -->
-    <menuitem
-        id="document_email_menu"
-        action="document_email_action"
-        groups="l10n_br_fiscal.group_manager"
-        parent="others_config_menu"
-        sequence="30"
-    />
-
     <!-- Fiscal Document Certificate -->
     <menuitem
         id="certificate_menu"
         action="certificate_action"
         groups="l10n_br_fiscal.group_manager"
         parent="others_config_menu"
-        sequence="40"
+        sequence="10"
     />
 
     <!-- Comment -->
@@ -604,16 +646,7 @@
         action="comment_action"
         groups="l10n_br_fiscal.group_manager"
         parent="others_config_menu"
-        sequence="50"
-    />
-
-    <!-- Subsequent Document -->
-    <menuitem
-        id="subsequent_document_menu"
-        action="subsequent_document_action"
-        groups="base.group_no_one"
-        parent="others_config_menu"
-        sequence="60"
+        sequence="20"
     />
 
 </odoo>
