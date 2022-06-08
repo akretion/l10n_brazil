@@ -60,8 +60,10 @@
         "views/cest_view.xml",
         "views/product_genre_view.xml",
         "views/document_type_view.xml",
+        "views/document_event_view.xml",
         "views/document_service_view.xml",
         "views/document_service_message_view.xml",
+        "views/event_view.xml",
         "views/document_serie_view.xml",
         "views/document_email_view.xml",
         "views/certificate_view.xml",
@@ -88,7 +90,6 @@
         #        "views/mdfe/mdfe_views.xml",
         #        "views/dfe/dfe_views.xml",
         "views/operation_dashboard_view.xml",
-        "views/document_event_view.xml",
         # Reports
         "views/document_event_report.xml",
         "views/document_event_template.xml",
