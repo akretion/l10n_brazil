@@ -178,13 +178,13 @@ class Document(models.Model):
         inverse_name="document_id",
         string="Events",
         copy=False,
-        readonly=True,
+        # readonly=False, TODO move to view?
     )
 
     correction_event_ids = fields.One2many(
         comodel_name="l10n_br_fiscal.event",
         inverse_name="document_id",
-        domain=[("type", "=", "14")],
+        # domain=[("type", "=", "14")], TODO
         string="Correction Events",
         copy=False,
         readonly=True,
