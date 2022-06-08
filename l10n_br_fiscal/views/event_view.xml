@@ -5,7 +5,7 @@
         <field name="name">l10n_br_fiscal.event.search</field>
         <field name="model">l10n_br_fiscal.event</field>
         <field name="arch" type="xml">
-            <search string="Fiscal Document Event">
+            <search string="Fiscal Event">
                 <field name="origin" />
             </search>
         </field>
@@ -16,14 +16,13 @@
         <field name="model">l10n_br_fiscal.event</field>
         <field name="arch" type="xml">
             <tree edit="false" create="false">
-                <field name="type" />
-                <field name="company_id" />
-                <field name="response" />
+                <field name="document_event_id" />
+                <field name="create_date" />
                 <field name="origin" />
-                <field name="write_date" />
                 <field name="protocol_date" />
                 <field name="status_code" />
                 <field name="message" />
+                <field name="company_id" />
                 <field name="state" />
             </tree>
         </field>
@@ -33,31 +32,34 @@
         <field name="name">l10n_br_fiscal.event.form</field>
         <field name="model">l10n_br_fiscal.event</field>
         <field name="arch" type="xml">
-            <form string="Eventos Eletronicos" edit="false" create="false">
+            <form string="Fiscal Event" edit="false" create="false">
                 <header>
                     <field name="state" widget="statusbar" />
                 </header>
                 <sheet>
                     <group>
-                        <field name="type" />
+                        <field name="document_event_id" />
                         <field name="company_id" />
                         <field name="document_id" />
                         <field name="document_type_id" />
                         <field name="invalidate_number_id" />
+                        <field name="document_serie_id" />
                         <field name="sequence" />
-                        <field name="justification" />
                         <field name="partner_id" />
-                        <field name="file_request_id" />
-                        <field name="file_response_id" />
                         <field name="protocol_number" />
-                        <field name="response" />
-                        <field name="origin" />
-                        <field name="write_date" />
-                        <field name="file_path" />
                         <field name="protocol_date" />
-                        <field name="status_code" />
-                        <field name="message" />
-                        <field name="state" />
+                        <field name="write_date" />
+                        <field name="justification" />
+                        <!-- TODO DELETE <field name="status_code" />
+                        <field name="message" /> -->
+                        <field name="event_transmission_ids" >
+                            <tree>
+                                <field name="create_date" />
+                                <field name="message_request_id" />
+                                <field name="message_response_id" />
+                                <field name="state" />
+                            </tree>
+                        </field>
                     </group>
                 </sheet>
             </form>
