@@ -60,21 +60,22 @@ class DocumentEletronic(models.AbstractModel):
         readonly=True,
     )
 
-    send_file_id = fields.Many2one(
-        comodel_name="ir.attachment",
-        related="authorization_event_id.file_request_id",
-        string="Send Document File XML",
-        ondelete="restrict",
-        readonly=True,
-    )
-
-    authorization_file_id = fields.Many2one(
-        comodel_name="ir.attachment",
-        related="authorization_event_id.file_response_id",
-        string="Authorization File XML",
-        ondelete="restrict",
-        readonly=True,
-    )
+    # TODO
+    # send_file_id = fields.Many2one(
+    #     comodel_name="ir.attachment",
+    #     related="authorization_event_id.file_request_id",
+    #     string="Send Document File XML",
+    #     ondelete="restrict",
+    #     readonly=True,
+    # )
+    #
+    # authorization_file_id = fields.Many2one(
+    #     comodel_name="ir.attachment",
+    #     related="authorization_event_id.file_response_id",
+    #     string="Authorization File XML",
+    #     ondelete="restrict",
+    #     readonly=True,
+    # )
 
     # Cancel Event Related Fields
     cancel_event_id = fields.Many2one(
@@ -93,13 +94,13 @@ class DocumentEletronic(models.AbstractModel):
         readonly=True,
     )
 
-    cancel_file_id = fields.Many2one(
-        comodel_name="ir.attachment",
-        related="cancel_event_id.file_response_id",
-        string="Cancel File XML",
-        ondelete="restrict",
-        readonly=True,
-    )
+    # cancel_file_id = fields.Many2one(
+    #     comodel_name="ir.attachment",
+    #     related="cancel_event_id.file_response_id",
+    #     string="Cancel File XML",
+    #     ondelete="restrict",
+    #     readonly=True,
+    # )
 
     # Invalidate Event Related Fields
     invalidate_event_id = fields.Many2one(
@@ -118,13 +119,13 @@ class DocumentEletronic(models.AbstractModel):
         readonly=True,
     )
 
-    invalidate_file_id = fields.Many2one(
-        comodel_name="ir.attachment",
-        related="invalidate_event_id.file_response_id",
-        string="Invalidate File XML",
-        ondelete="restrict",
-        readonly=True,
-    )
+    # invalidate_file_id = fields.Many2one(
+    #     comodel_name="ir.attachment",
+    #     related="invalidate_event_id.file_response_id",
+    #     string="Invalidate File XML",
+    #     ondelete="restrict",
+    #     readonly=True,
+    # )
 
     document_version = fields.Char(string="Version", default="4.00", readonly=True)
 
