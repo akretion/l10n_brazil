@@ -114,9 +114,7 @@
 "l10n_br_fiscal_document_service_message_user","Fiscal Document Service Message for User","model_l10n_br_fiscal_document_service_message","l10n_br_fiscal.group_user",1,0,0,0
 "l10n_br_fiscal_document_service_message_manager","Fiscal Document Service Message for Manager","model_l10n_br_fiscal_document_service_message","l10n_br_fiscal.group_manager",1,0,0,0
 "l10n_br_fiscal_document_service_message_maintenance","Fiscal Document Service Message for Maintenance","model_l10n_br_fiscal_document_service_message","l10n_br_fiscal.group_data_maintenance",1,1,1,1
-"l10n_br_fiscal_event_user","Fiscal Event for User","model_l10n_br_fiscal_event","l10n_br_fiscal.group_user",1,0,0,0
-"l10n_br_fiscal_event_manager","Fiscal Event for Manager","model_l10n_br_fiscal_event","l10n_br_fiscal.group_manager",1,0,0,0
-"l10n_br_fiscal_event_maintenance","Fiscal Event for Maintenance","model_l10n_br_fiscal_event","l10n_br_fiscal.group_data_maintenance",1,1,1,1
-"l10n_br_fiscal_event_transmission_user","Fiscal Event for User","model_l10n_br_fiscal_event_transmission","l10n_br_fiscal.group_user",1,0,0,0
-"l10n_br_fiscal_event_transmission_manager","Fiscal Event for Manager","model_l10n_br_fiscal_event_transmission","l10n_br_fiscal.group_manager",1,0,0,0
-"l10n_br_fiscal_event_transmission_maintenance","Fiscal Event for Maintenance","model_l10n_br_fiscal_event_transmission","l10n_br_fiscal.group_data_maintenance",1,1,1,1
+"l10n_br_fiscal_event_user","Fiscal Event for User","model_l10n_br_fiscal_event","l10n_br_fiscal.group_user",1,1,1,1
+"l10n_br_fiscal_event_manager","Fiscal Event for Manager","model_l10n_br_fiscal_event","l10n_br_fiscal.group_manager",1,1,1,1
+"l10n_br_fiscal_event_transmission_user","Fiscal Event for User","model_l10n_br_fiscal_event_transmission","l10n_br_fiscal.group_user",1,1,1,1
+"l10n_br_fiscal_event_transmission_manager","Fiscal Event for Manager","model_l10n_br_fiscal_event_transmission","l10n_br_fiscal.group_manager",1,1,1,1
