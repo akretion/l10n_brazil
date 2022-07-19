@@ -6,7 +6,9 @@ import logging
 import sys
 from inspect import getmembers, isclass
 
-from odoo import SUPERUSER_ID, _, api, models
+from odoo import SUPERUSER_ID, _, api, models, fields
+
+from .field_decorator import FieldDecorator
 
 _logger = logging.getLogger(__name__)
 
@@ -109,6 +111,10 @@ class SpecModel(models.AbstractModel):
 
         stacked_parents = [getattr(x, "_name", None) for x in cls.mro()]
         for name, field in cls._fields.items():
+#            if hasattr(field, "selection") and hasattr(field, "related") and field.selection and field.related:
+#                print("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", name, field, field.related, field.selection)
+#                field.selection = object()
+#                delattr(field, "selection")
             if hasattr(field, "comodel_name") and field.comodel_name:
                 comodel_name = field.comodel_name
                 comodel = self.env[comodel_name]
@@ -154,6 +160,22 @@ class SpecModel(models.AbstractModel):
                             f.args["comodel_name"] = self._name
 
         return super()._setup_fields()
+
+    @api.model
+    def _add_field(self, name, field):
+        """ Add the given ``field`` under the given ``name`` in the class """
+        cls = type(self)
+        # add field as an attribute and in cls._fields (for reflection)
+        if not isinstance(getattr(cls, name, field), fields.Field):
+            _logger.warning("In model %r, field %r overriding existing value", cls._name, name)
+        setattr(cls, name, field)
+        cls._fields[name] = field
+                
+        # basic setup of field
+        attrs = field._get_attrs(self, name)
+        if isinstance(getattr(cls, name, field), fields.Selection):
+            field = FieldDecorator(field)
+        field.setup_base(self, name) 
 
     @classmethod
     def _map_concrete(cls, key, target, quiet=False):

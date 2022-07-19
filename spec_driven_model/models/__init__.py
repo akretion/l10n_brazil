@@ -1,3 +1,4 @@
+from . import field_decorator
 from . import spec_mixin
 
 # from . import spec_view
