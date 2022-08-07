@@ -30,11 +30,14 @@ class NFeLine(spec_models.StackedModel):
     # all m2o below this level will be stacked even if not required:
     _force_stack_paths = ("det.imposto",)
 
-    # The generateDS prod mixin (prod XML tag) cannot be inject in
-    # the product.product object because the tag embeded values from the
-    # fiscal document line. So the mapping is done:
+    # The nfe.40.prod mixin (prod XML tag) cannot be injected in
+    # the product.product object because the tag includes attributes from the
+    # Odoo fiscal document line and because we may have an Nfe with
+    # lines decsriptions instead of full blown products.
+    # So a part of the mapping is done
+    # in the fiscal document line:
     # from Odoo -> XML by using related fields/_compute
-    # from XML -> Odoo by overriding the product create method
+    # from XML -> Odoo by overriding the product default_get method
     nfe40_cProd = fields.Char(
         related="product_id.default_code",
     )
@@ -327,8 +330,8 @@ class NFeLine(spec_models.StackedModel):
                 record.nfe40_choice10 = "nfe40_ISSQN"
 
     @api.model
-    def _prepare_import_dict(self, values, model=None):
-        values = super()._prepare_import_dict(values, model)
+    def _prepare_import_dict(self, values, model=None, parent_dict=None):
+        values = super()._prepare_import_dict(values, model, parent_dict)
         if not values.get("name"):
             values["name"] = values.get("nfe40_xProd")
             if values.get("product_id"):
