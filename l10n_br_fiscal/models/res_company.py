@@ -380,6 +380,17 @@ class ResCompany(models.Model):
         ondelete="restrict",
     )
 
+    force_commercial_partner = fields.Boolean(
+        string="Force Commercial Partner",
+        default=True,
+        help=(
+            "se escolher Sim, quando você vender para uma Pessoa Fisica"
+            "ligada a uma empresa, a Nota Fiscal sera relacionada à Empresa,"
+            "assumindo que võce apenas escolheu um contato da empresa."
+            "Se for Não, a Nota Fiscal sera relacionada à Pessoa Fisica."
+        ),
+    )
+
     def _del_tax_definition(self, tax_domain):
         tax_def = self.tax_definition_ids.filtered(
             lambda d: d.tax_group_id.tax_domain != tax_domain

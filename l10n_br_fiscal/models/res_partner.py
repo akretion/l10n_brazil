@@ -88,6 +88,11 @@ class ResPartner(models.Model):
         tracking=True,
     )
 
+    opt_commercial_partner_id = fields.Many2one(
+        "res.partner",
+        compute="_opt_compute_commercial_partner",
+    )
+
     def _inverse_fiscal_profile(self):
         for p in self:
             p._onchange_fiscal_profile_id()
@@ -122,3 +127,15 @@ class ResPartner(models.Model):
             "inscr_est",
             "inscr_mun",
         ]
+
+    @api.depends("is_company", "parent_id.commercial_partner_id")
+    def _compute_opt_commercial_partner_id(self):
+        for partner in self:
+            if (
+                partner.is_company
+                or not partner.parent_id
+                or not self.env.company_id.force_commercial_partner
+            ):
+                partner.opt_commercial_partner_id = partner
+            else:
+                partner.opt_commercial_partner_id = partner.commercial_partner_id
