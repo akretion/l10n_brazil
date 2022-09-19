@@ -1,7 +1,3 @@
-# Copyright (C) 2022-Today - Engenere (<https://engenere.one>).
-# @author Antônio S. Pereira Neto <neto@engenere.one>
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-
 from psycopg2 import IntegrityError
 
 from odoo.exceptions import ValidationError
@@ -116,3 +112,4 @@ class ValidCreatePIXTest(TransactionCase):
                 self.res_partner_pix_model.with_context(tracking_disable=True).create(
                     pix_vals
                 )
+

@@ -1,7 +1,3 @@
-# Copyright (C) 2022-Today - Engenere (<https://engenere.one>).
-# @author Antônio S. Pereira Neto <neto@engenere.one>
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-
 import phonenumbers
 from email_validator import EmailSyntaxError, validate_email
 from erpbrasil.base.fiscal import cnpj_cpf
@@ -57,34 +53,34 @@ class PartnerPix(models.Model):
     def _normalize_email(self, email):
         try:
             result = validate_email(
-                email.lower(),
+                email,
                 check_deliverability=False,
             )
-        except EmailSyntaxError as e:
-            raise ValidationError(_(f"{email.strip()} is an invalid email")) from e
-        normalized_email = result.local_part + "@" + result.domain
+        except EmailSyntaxError:
+            raise ValidationError(_(f"{email.strip()} is an invalid email"))
+        normalized_email = result["local"].lower() + "@" + result["domain_i18n"]
         if len(normalized_email) > 77:
             raise ValidationError(
                 _(
                     f"The email is too long, "
                     f"a maximum of 77 characters is allowed: \n{email.strip()}"
                 )
-            ) from None
+            )
         return normalized_email
 
     def _normalize_phone(self, phone):
         try:
             phonenumber = phonenumbers.parse(phone, "BR")
         except phonenumbers.phonenumberutil.NumberParseException as e:
-            raise ValidationError(_(f"Unable to parse {phone}: {str(e)}")) from e
+            raise ValidationError(_(f"Unable to parse {phone}: {str(e)}"))
         if not phonenumbers.is_possible_number(phonenumber):
             raise ValidationError(
                 _(f"Impossible number {phone}: probably invalid number of digits.")
-            ) from None
+            )
         if not phonenumbers.is_valid_number(phonenumber):
             raise ValidationError(
                 _(f"Invalid number {phone}: probably incorrect prefix.")
-            ) from None
+            )
         phone = phonenumbers.format_number(
             phonenumber, phonenumbers.PhoneNumberFormat.E164
         )
@@ -120,24 +116,23 @@ class PartnerPix(models.Model):
         for block in blocks:
             try:
                 int(block, 16)
-            except ValueError as e:
+            except ValueError:
                 raise ValidationError(
                     _(
                         f"Invalid Random Key: {key} \nthe block {block} "
                         f"is not a valid hexadecimal format."
                     )
-                ) from e
+                )
         return key
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        for vals in vals_list:
-            self.check_vals(vals)
-        return super().create(vals_list)
+    @api.model
+    def create(self, vals):
+        self.check_vals(vals)
+        return super(PartnerPix, self).create(vals)
 
     def write(self, vals):
         self.check_vals(vals)
-        return super().write(vals)
+        return super(PartnerPix, self).write(vals)
 
     def check_vals(self, vals):
         key_type = vals.get("key_type") or self.key_type
@@ -153,3 +148,4 @@ class PartnerPix(models.Model):
         elif key_type == "evp":
             key = self._normalize_evp(key)
         vals["key"] = key
+
