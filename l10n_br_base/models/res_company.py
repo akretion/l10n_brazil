@@ -26,7 +26,6 @@ class Company(models.Model):
             "suframa",
             "state_tax_number_ids",
             "street_number",
-            "street_name",
         ]
 
     def _inverse_legal_name(self):
@@ -38,11 +37,6 @@ class Company(models.Model):
         """Write the l10n_br specific functional fields."""
         for company in self:
             company.partner_id.district = company.district
-
-    def _inverse_street_name(self):
-        """Write the l10n_br specific functional fields."""
-        for company in self:
-            company.partner_id.street_name = company.street_name
 
     def _inverse_street_number(self):
         """Write the l10n_br specific functional fields."""
@@ -92,11 +86,6 @@ class Company(models.Model):
     district = fields.Char(
         compute="_compute_address",
         inverse="_inverse_district",
-    )
-
-    street_name = fields.Char(
-        compute="_compute_address",
-        inverse="_inverse_street_name",
     )
 
     street_number = fields.Char(
