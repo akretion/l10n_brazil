@@ -57,12 +57,12 @@ class PartnerPix(models.Model):
     def _normalize_email(self, email):
         try:
             result = validate_email(
-                email.lower(),
+                email,
                 check_deliverability=False,
             )
         except EmailSyntaxError as e:
             raise ValidationError(_(f"{email.strip()} is an invalid email")) from e
-        normalized_email = result.local_part + "@" + result.domain
+        normalized_email = result["local"].lower() + "@" + result["domain_i18n"]
         if len(normalized_email) > 77:
             raise ValidationError(
                 _(
@@ -129,15 +129,14 @@ class PartnerPix(models.Model):
                 ) from e
         return key
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        for vals in vals_list:
-            self.check_vals(vals)
-        return super().create(vals_list)
+    @api.model
+    def create(self, vals):
+        self.check_vals(vals)
+        return super(PartnerPix, self).create(vals)
 
     def write(self, vals):
         self.check_vals(vals)
-        return super().write(vals)
+        return super(PartnerPix, self).write(vals)
 
     def check_vals(self, vals):
         key_type = vals.get("key_type") or self.key_type
@@ -153,4 +152,3 @@ class PartnerPix(models.Model):
         elif key_type == "evp":
             key = self._normalize_evp(key)
         vals["key"] = key
-
