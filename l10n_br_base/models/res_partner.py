@@ -3,7 +3,6 @@
 # Copyright (C) 2012 Raphaël Valyi (Akretion)
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
-
 from erpbrasil.base.fiscal import cnpj_cpf
 
 from odoo import _, api, fields, models
@@ -17,14 +16,18 @@ class Partner(models.Model):
     _inherit = [_name, "l10n_br_base.party.mixin"]
 
     def _inverse_street_data(self):
-        """update self.street based on street_name, street_number and street_number2"""
-        for partner in self:
+        """In Brazil the address format is street_name, street_number
+        (comma instead of space)"""
+        br_partner_ids = self.filtered(lambda l: l._is_br_partner())
+        not_br_partner = self - br_partner_ids
+        for partner in br_partner_ids:
             street = (
                 (partner.street_name or "") + ", " + (partner.street_number or "")
             ).strip()
             if partner.street_number2:
                 street = street + " - " + partner.street_number2
             partner.street = street
+        return super(Partner, not_br_partner)._inverse_street_data()
 
     vat = fields.Char(compute="_compute_vat_from_cnpj_cpf", store=True)
 
@@ -50,6 +53,11 @@ class Partner(models.Model):
     show_l10n_br = fields.Boolean(
         compute="_compute_show_l10n_br",
         help="Indicates if Brazilian localization fields should be displayed.",
+    )
+
+    is_br_partner = fields.Boolean(
+        compute="_compute_br_partner",
+        help="Indicate if is a Brazilian partner",
     )
 
     @api.constrains("cnpj_cpf", "inscr_est")
@@ -204,3 +212,14 @@ class Partner(models.Model):
                 parent.inscr_est = inscr_est
                 parent.inscr_mun = inscr_mun
         return res
+
+    def _is_br_partner(self):
+        """Check if is a Brazilian Partner."""
+        if self.country_id and self.country_id == self.env.ref("base.br"):
+            return True
+        return False
+
+    def _compute_br_partner(self):
+        """Check if is a Brazilian Partner."""
+        for record in self:
+            record.is_br_partner = record._is_br_partner()
