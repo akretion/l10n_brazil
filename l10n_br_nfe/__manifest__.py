@@ -42,7 +42,7 @@
             "erpbrasil.transmissao",
             "erpbrasil.edoc",
             "erpbrasil.edoc.pdf",
-            "xmldiff",
+            "xmlschema",
         ],
     },
 }
