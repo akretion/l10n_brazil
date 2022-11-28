@@ -52,7 +52,6 @@ class NFeStructure(SavepointCase):
                 line = "\n%s    - <%s> %s" % (indent, field_path, child_concrete or "")
             tree.write(line.rstrip())
         tree_txt = tree.getvalue()
-        # print(tree_txt)
         return tree_txt, visited
 
     def test_inherited_fields(self):
@@ -130,6 +129,8 @@ class NFeStructure(SavepointCase):
     def test_doc_tree(self):
         base_class = self.env["l10n_br_fiscal.document"]
         tree, visited = self.get_stacked_tree(base_class)
+        # if tree != NFe.INFNFE_TREE:
+        #    print(NFe.INFNFE_TREE)
         self.assertEqual(tree, NFe.INFNFE_TREE)
         self.assertEqual(len(visited), 12)  # all stacked classes
 
@@ -167,6 +168,8 @@ class NFeStructure(SavepointCase):
     def test_doc_line_tree(self):
         base_class = self.env["l10n_br_fiscal.document.line"]
         tree, visited = self.get_stacked_tree(base_class)
+        # if tree != NFeLine.DET_TREE:
+        #    print(tree)
         self.assertEqual(tree, NFeLine.DET_TREE)
         self.assertEqual(len(visited), 24)
 
