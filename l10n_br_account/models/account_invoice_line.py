@@ -268,6 +268,7 @@ class AccountMoveLine(models.Model):
         ):
             # incrementing the counter will discriminate next method calls
             type(self)._should_increment_line_counter = True
+
         if self.move_id.fiscal_document_id:
             return {}
         else:
@@ -572,35 +573,7 @@ class AccountMoveLine(models.Model):
                     is_stock_only = True
 
         if not is_stock_only:
-            if self.price_total:  # recordset with one line
-                amount_currency = self.price_total * sign
-
-            elif self._context.get("create_vals_list") and hasattr(
-                type(self), "_create_vals_line_counter"
-            ):
-                vals = self._context["create_vals_list"][
-                    type(self)._create_vals_line_counter
-                ]
-                partner = self.env["res.partner"].browse(vals.get("partner_id"))
-                taxes = self.new({"tax_ids": vals.get("tax_ids", [])}).tax_ids
-                tax_ids = set(taxes.ids)
-                taxes = self.env["account.tax"].browse(tax_ids)
-                result = self._get_price_total_and_subtotal_model(
-                    vals.get("price_unit", 0.0),
-                    vals.get("quantity", 0.0),
-                    vals.get("discount", 0.0),
-                    currency,
-                    self.env["product.product"].browse(vals.get("product_id")),
-                    partner,
-                    taxes,
-                    move_type,
-                )
-                price_total = result["price_total"]
-                amount_currency = price_total * sign
-                # NOTE this is different from the native:
-                # price_subtotal * sign
-                # to properly account for the tax included price we have in Brazil,
-                # see https://github.com/OCA/l10n-brazil/pull/2303
+            amount_currency = price_subtotal * sign
 
         balance = currency._convert(
             amount_currency,
