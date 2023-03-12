@@ -17,6 +17,7 @@ from ..models.v4_0 import (
     leiaute_cons_sit_nfe_v4_00,
     leiaute_cons_stat_serv_v4_00,
     leiaute_inut_nfe_v4_00,
+    leiaute_nfe_v4_00,
 )
 
 tz_datetime = re.compile(r".*[-+]0[0-9]:00$")
@@ -158,11 +159,28 @@ class NFeImportTest(SavepointCase):
 
     def test_init_all(self):
         for mod in [
-            leiaute_cons_sit_nfe_v4_00,
-            leiaute_cons_stat_serv_v4_00,
-            leiaute_inut_nfe_v4_00,
+#            leiaute_cons_sit_nfe_v4_00,
+#            leiaute_cons_stat_serv_v4_00,
+#            leiaute_inut_nfe_v4_00,
+            leiaute_nfe_v4_00,
         ]:
-            for _klass_name, klass in mod.__dict__.items():
+            for klass in sorted([klass for _klass_name, klass in mod.__dict__.items() if isinstance(klass, type)], key=lambda k: k._name):
                 if isinstance(klass, type):
+                    print("\n" + klass._name)
+                    for k, v in self.env[klass._name].fields_get().items():
+                        if k in ("id", "__last_update", "display_name", "brl_currency_id"):
+                            continue
+                        field = self.env[klass._name]._fields.get(k)
+                        if hasattr(field, "xsd_required"):
+                            xsd_required = field.xsd_required
+                        else:
+                            xsd_required = ""
+                        if hasattr(field, "xsd_type"):
+                            xsd_type = field.xsd_type
+                        else:
+                            xsd_type = ""
+                        print("    ", k, v.get("type"), v.get("digits", ""), v.get("relation", ""), xsd_required and "required" or "", xsd_type)
+ 
+
                     self.assertTrue(issubclass(klass, models.AbstractModel))
                     klass()
