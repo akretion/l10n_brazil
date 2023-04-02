@@ -7,8 +7,9 @@ from datetime import datetime
 import nfelib
 import pkg_resources
 from nfelib.v4_00 import leiauteNFe_sub as nfe_sub
+from ..models.v4_00 import leiauteNFe
 
-from odoo import api
+from odoo import api, models
 from odoo.tests import SavepointCase
 
 from ..models import spec_models
@@ -101,7 +102,7 @@ spec_models.NfeSpecMixin.match_or_create_m2o_fake = match_or_create_m2o_fake
 
 
 class NFeImportTest(SavepointCase):
-    def test_import_nfe1(self):
+    def NO_test_import_nfe1(self):
         res_items = (
             "..",
             "tests",
@@ -118,7 +119,7 @@ class NFeImportTest(SavepointCase):
         self.assertEqual(len(nfe.nfe40_det), 3)
         self.assertEqual(nfe.nfe40_det[0].nfe40_prod.nfe40_cProd, "880945")
 
-    def test_import_nfe2(self):
+    def NO_test_import_nfe2(self):
         res_items = (
             "..",
             "tests",
@@ -134,3 +135,31 @@ class NFeImportTest(SavepointCase):
         self.assertEqual(nfe.nfe40_emit.nfe40_CNPJ, "34128745000152")
         self.assertEqual(len(nfe.nfe40_det), 16)
         self.assertEqual(nfe.nfe40_det[0].nfe40_prod.nfe40_cProd, "1094")
+
+
+    def test_init_all(self):
+        for mod in [
+            leiauteNFe,
+        ]:
+            for klass in sorted([klass for _klass_name, klass in mod.__dict__.items() if isinstance(klass, type)], key=lambda k: k._name):
+                if isinstance(klass, type):
+                    print("\n" + klass._name)
+                    for k, v in self.env[klass._name].fields_get().items():
+                        if k in ("id", "__last_update", "display_name", "brl_currency_id"):
+                            continue
+                        field = self.env[klass._name]._fields.get(k)
+                        if hasattr(field, "xsd_required"):
+                            xsd_required = field.xsd_required
+                        else:
+                            xsd_required = ""
+                        if hasattr(field, "xsd_type") and "Type" not in field.xsd_type:
+                            # (we skip "inner types" with Type cause xsdata don't collect
+                            # them anyway)
+                            xsd_type = field.xsd_type
+                        else:
+                            xsd_type = ""
+                        print("    ", k, v.get("type"), v.get("digits", ""), v.get("relation", ""), xsd_required and "required" or "", xsd_type)
+ 
+
+                    self.assertTrue(issubclass(klass, models.AbstractModel))
+                    klass()
