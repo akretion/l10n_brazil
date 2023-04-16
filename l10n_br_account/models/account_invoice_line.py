@@ -150,6 +150,7 @@ class AccountMoveLine(models.Model):
     def create(self, vals_list):
         dummy_doc = self.env.company.fiscal_dummy_id
         dummy_line = fields.first(dummy_doc.fiscal_line_ids)
+        print("**************** create AML", vals_list)
         for values in vals_list:
             fiscal_doc_id = (
                 self.env["account.move"].browse(values["move_id"]).fiscal_document_id.id
@@ -173,6 +174,7 @@ class AccountMoveLine(models.Model):
                     values.get("uot_id"),
                 )
             )
+            values["account_id"] = 42  # FIXME
 
         recompute_line_after_id = self.search([], order="id DESC", limit=1).id
         lines = super(

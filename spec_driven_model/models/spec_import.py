@@ -60,6 +60,7 @@ class AbstractSpecMixin(models.AbstractModel):
         vals = {}
         for fname, fspec in node.__dataclass_fields__.items():
             self._build_attr(node, self._fields, vals, path, (fname, fspec))
+#        print("yyyyyyyyyyyyy", vals)
         vals = self._prepare_import_dict(vals, defaults_model=defaults_model)
         return vals
 
@@ -139,6 +140,7 @@ class AbstractSpecMixin(models.AbstractModel):
                         line, path=child_path, defaults_model=comodel
                     )
                     lines.append((0, 0, line_vals))
+#                print("    LINES", lines)
                 vals[key] = lines
 
     @api.model
@@ -190,19 +192,25 @@ class AbstractSpecMixin(models.AbstractModel):
         Set non computed field values based on XML values if required.
         NOTE: this is debatable if we could use an api multi with values in
         self instead of the vals dict. Then that would be like when new()
-        is used in account_invoice or sale_order before playing some onchanges
+        is used in account_invoice
+        or sale_order before playing some onchanges
         """
         if model is None:
             model = self
 
         vals = {k: v for k, v in vals.items() if k in self._fields.keys()}
-
         related_many2ones = {}
         fields = model._fields
         for k, v in fields.items():
             # select schema choices for a friendly UI:
             if k.startswith("%schoice" % (self._field_prefix,)):
-                for item in v.selection or []:
+                if hasattr(v.selection, '__iter__'):
+                    choices = v.selection
+                else:
+                    # means selection field is defined in a related model
+                    # likely from _inherits, so it needs to be computed:
+                    choices = v.selection(self)
+                for item in choices or []:
                     if vals.get(item[0]) not in [None, []]:
                         vals[k] = item[0]
                         break
@@ -213,11 +221,32 @@ class AbstractSpecMixin(models.AbstractModel):
                     vals[v.related[0]] = vals.get(k)
                 elif len(v.related) == 2 and k.startswith(self._field_prefix):
                     related_m2o = v.related[0]
+#                    print("111", self, k, v, related_m2o, [i[1] for i in model._inherits.items()])
+#                    print("222", any(related_m2o == i[1] for i in model._inherits.items()))
                     # don't mess with _inherits write system
                     if not any(related_m2o == i[1] for i in model._inherits.items()):
                         key_vals = related_many2ones.get(related_m2o, {})
                         key_vals[v.related[1]] = vals.get(k)
                         related_many2ones[related_m2o] = key_vals
+                    else:
+                        # ... well, we do, but properly...
+                        key_vals = related_many2ones.get(related_m2o, {})
+                        key_vals[v.related[1]] = vals.get(k)
+                        comodel_name = fields[related_m2o].comodel_name
+                        comodel = model.get_concrete_model(comodel_name)
+                        if self.env[comodel_name]._fields[k].related and len(self.env[comodel_name]._fields[k].related) == 1:
+                            vals[self.env[comodel_name]._fields[k].related[0]] = vals.get(k)
+                        elif self.env[comodel_name]._fields[k].related and len(self.env[comodel_name]._fields[k].related) == 2:
+#                            print("cccccccc", self, k, vals.get(k), self.env[comodel_name]._fields[k].related)
+                            related_m2o = self.env[comodel_name]._fields[k].related[0]
+                            sub_val = {self.env[comodel_name]._fields[k].related[1]: vals.get(k)}
+                            comodel_name = fields[related_m2o].comodel_name
+                            comodel = model.get_concrete_model(comodel_name)
+                            related_many2ones = model._verify_related_many2ones(related_many2ones)
+                            if hasattr(comodel, "match_or_create_m2o"):
+                                vals[related_m2o] = comodel.match_or_create_m2o(sub_val, vals)
+                            else:  # search res.country with Brasil for instance
+                                vals[related_m2o] = model.match_or_create_m2o(sub_val, vals, comodel)
 
         # now we deal with the related m2o with compound related
         # (example: create Nfe lines product)
