@@ -1,0 +1,806 @@
+nfe.40.adi - adiType
+     nfe40_adi_DI_id many2one  nfe.40.di  
+     nfe40_nAdicao char    
+     nfe40_nSeqAdic char   required 
+     nfe40_cFabricante char   required 
+     nfe40_vDescDI monetary    TDec_1302Opc
+     nfe40_nDraw char    
+
+nfe.40.arma - armaType
+     nfe40_arma_prod_id many2one  nfe.40.prod  
+     nfe40_tpArma selection   required 
+     nfe40_nSerie char   required 
+     nfe40_nCano char   required 
+     nfe40_descr char   required 
+
+nfe.40.autxml - autXMLType
+     nfe40_autXML_infNFe_id many2one  nfe.40.infnfe  
+     nfe40_choice8 selection    
+     nfe40_CNPJ char   required TCnpj
+     nfe40_CPF char   required TCpf
+
+nfe.40.avulsa - avulsaType
+     nfe40_CNPJ char   required TCnpj
+     nfe40_xOrgao char   required 
+     nfe40_matr char   required 
+     nfe40_xAgente char   required 
+     nfe40_fone char    
+     nfe40_UF selection   required TUfEmi
+     nfe40_nDAR char    
+     nfe40_dEmi date    TData
+     nfe40_vDAR monetary    TDec_1302
+     nfe40_repEmi char   required 
+     nfe40_dPag date    TData
+
+nfe.40.cana - canaType
+     nfe40_safra char   required 
+     nfe40_ref char   required 
+     nfe40_forDia one2many  nfe.40.fordia required 
+     nfe40_qTotMes float (11, 10)  required TDec_1110v
+     nfe40_qTotAnt float (11, 10)  required TDec_1110v
+     nfe40_qTotGer float (11, 10)  required TDec_1110v
+     nfe40_deduc one2many  nfe.40.deduc  
+     nfe40_vFor monetary   required TDec_1302
+     nfe40_vTotDed monetary   required TDec_1302
+     nfe40_vLiqFor monetary   required TDec_1302
+
+nfe.40.card - cardType
+     nfe40_tpIntegra selection   required 
+     nfe40_CNPJ char    TCnpj
+     nfe40_tBand char    
+     nfe40_cAut char    
+
+nfe.40.cide - CIDEType
+     nfe40_qBCProd float (12, 4)  required TDec_1204v
+     nfe40_vAliqProd float (11, 4)  required TDec_1104
+     nfe40_vCIDE monetary   required TDec_1302
+
+nfe.40.cobr - cobrType
+     nfe40_fat many2one  nfe.40.fat  
+     nfe40_dup one2many  nfe.40.dup  
+
+nfe.40.cofins - COFINSType
+     nfe40_choice15 selection    
+     nfe40_COFINSAliq many2one  nfe.40.cofinsaliq required 
+     nfe40_COFINSQtde many2one  nfe.40.cofinsqtde required 
+     nfe40_COFINSNT many2one  nfe.40.cofinsnt required 
+     nfe40_COFINSOutr many2one  nfe.40.cofinsoutr required 
+
+nfe.40.cofinsaliq - COFINSAliqType
+     nfe40_CST selection   required 
+     nfe40_vBC monetary   required TDec_1302
+     nfe40_pCOFINS monetary   required TDec_0302a04
+     nfe40_vCOFINS monetary   required TDec_1302
+
+nfe.40.cofinsnt - COFINSNTType
+     nfe40_CST selection   required 
+
+nfe.40.cofinsoutr - COFINSOutrType
+     nfe40_choice16 selection    
+     nfe40_CST selection   required 
+     nfe40_vBC monetary   required TDec_1302
+     nfe40_pCOFINS monetary   required TDec_0302a04
+     nfe40_qBCProd float (12, 4)  required TDec_1204v
+     nfe40_vAliqProd float (11, 4)  required TDec_1104v
+     nfe40_vCOFINS monetary   required TDec_1302
+
+nfe.40.cofinsqtde - COFINSQtdeType
+     nfe40_CST selection   required 
+     nfe40_qBCProd float (12, 4)  required TDec_1204v
+     nfe40_vAliqProd float (11, 4)  required TDec_1104v
+     nfe40_vCOFINS monetary   required TDec_1302
+
+nfe.40.cofinsst - COFINSSTType
+     nfe40_choice17 selection    
+     nfe40_vBC monetary   required TDec_1302
+     nfe40_pCOFINS monetary   required TDec_0302a04
+     nfe40_qBCProd float (12, 4)  required TDec_1204
+     nfe40_vAliqProd float (11, 4)  required TDec_1104
+     nfe40_vCOFINS monetary   required TDec_1302
+     nfe40_indSomaCOFINSST selection    
+
+nfe.40.comb - combType
+     nfe40_cProdANP char   required 
+     nfe40_descANP char   required 
+     nfe40_pGLP monetary    TDec_0302a04Max100
+     nfe40_pGNn monetary    TDec_0302a04Max100
+     nfe40_pGNi monetary    TDec_0302a04Max100
+     nfe40_vPart monetary    TDec_1302
+     nfe40_CODIF char    
+     nfe40_qTemp float (12, 4)   TDec_1204temperatura
+     nfe40_UFCons selection   required TUf
+     nfe40_CIDE many2one  nfe.40.cide  
+     nfe40_encerrante many2one  nfe.40.encerrante  
+
+nfe.40.compra - compraType
+     nfe40_xNEmp char    
+     nfe40_xPed char    
+     nfe40_xCont char    
+
+nfe.40.deduc - deducType
+     nfe40_deduc_cana_id many2one  nfe.40.cana  
+     nfe40_xDed char   required 
+     nfe40_vDed monetary   required TDec_1302
+
+nfe.40.dest - destType
+     nfe40_choice7 selection    
+     nfe40_CNPJ char   required TCnpj
+     nfe40_CPF char   required TCpf
+     nfe40_idEstrangeiro char   required 
+     nfe40_xNome char    
+     nfe40_enderDest many2one  nfe.40.tendereco  
+     nfe40_indIEDest selection   required 
+     nfe40_IE char    TIeDestNaoIsento
+     nfe40_ISUF char    
+     nfe40_IM char    
+     nfe40_email char    
+
+nfe.40.det - detType
+     nfe40_det_infNFe_id many2one  nfe.40.infnfe  
+     nfe40_nItem char   required string
+     nfe40_prod many2one  nfe.40.prod required 
+     nfe40_imposto many2one  nfe.40.imposto required 
+     nfe40_impostoDevol many2one  nfe.40.impostodevol  
+     nfe40_infAdProd char    
+
+nfe.40.detexport - detExportType
+     nfe40_detExport_prod_id many2one  nfe.40.prod  
+     nfe40_nDraw char    
+     nfe40_exportInd many2one  nfe.40.exportind  
+
+nfe.40.detpag - detPagType
+     nfe40_detPag_pag_id many2one  nfe.40.pag  
+     nfe40_indPag selection    
+     nfe40_tPag char   required 
+     nfe40_xPag char    
+     nfe40_vPag monetary   required TDec_1302
+     nfe40_card many2one  nfe.40.card  
+
+nfe.40.di - DIType
+     nfe40_DI_prod_id many2one  nfe.40.prod  
+     nfe40_nDI char   required 
+     nfe40_dDI date   required TData
+     nfe40_xLocDesemb char   required 
+     nfe40_UFDesemb selection   required TUfEmi
+     nfe40_dDesemb date   required TData
+     nfe40_tpViaTransp selection   required 
+     nfe40_vAFRMM monetary    TDec_1302
+     nfe40_tpIntermedio selection   required 
+     nfe40_CNPJ char    TCnpj
+     nfe40_UFTerceiro selection    TUfEmi
+     nfe40_cExportador char   required 
+     nfe40_adi one2many  nfe.40.adi required 
+
+nfe.40.dup - dupType
+     nfe40_dup_cobr_id many2one  nfe.40.cobr  
+     nfe40_nDup char    
+     nfe40_dVenc date    TData
+     nfe40_vDup monetary   required TDec_1302Opc
+
+nfe.40.emit - emitType
+     nfe40_choice6 selection    
+     nfe40_CNPJ char   required TCnpj
+     nfe40_CPF char   required TCpf
+     nfe40_xNome char   required 
+     nfe40_xFant char    
+     nfe40_enderEmit many2one  nfe.40.tenderemi required 
+     nfe40_IE char   required TIe
+     nfe40_IEST char    TIeST
+     nfe40_IM char    
+     nfe40_CNAE char    
+     nfe40_CRT selection   required 
+
+nfe.40.encerrante - encerranteType
+     nfe40_nBico char   required 
+     nfe40_nBomba char    
+     nfe40_nTanque char   required 
+     nfe40_vEncIni float (12, 3)  required TDec_1203
+     nfe40_vEncFin float (12, 3)  required TDec_1203
+
+nfe.40.exporta - exportaType
+     nfe40_UFSaidaPais selection   required TUfEmi
+     nfe40_xLocExporta char   required 
+     nfe40_xLocDespacho char    
+
+nfe.40.exportind - exportIndType
+     nfe40_nRE char   required 
+     nfe40_chNFe char   required TChNFe
+     nfe40_qExport float (11, 4)  required TDec_1104v
+
+nfe.40.fat - fatType
+     nfe40_nFat char    
+     nfe40_vOrig monetary    TDec_1302
+     nfe40_vDesc monetary    TDec_1302
+     nfe40_vLiq monetary    TDec_1302
+
+nfe.40.fordia - forDiaType
+     nfe40_forDia_cana_id many2one  nfe.40.cana  
+     nfe40_dia char   required string
+     nfe40_qtde float (11, 10)  required TDec_1110v
+
+nfe.40.icms - ICMSType
+     nfe40_choice11 selection    
+     nfe40_ICMSPart many2one  nfe.40.icmspart required 
+     nfe40_ICMSST many2one  nfe.40.icmsst required 
+
+nfe.40.icmspart - ICMSPartType
+     nfe40_orig selection   required 
+     nfe40_CST selection   required 
+     nfe40_modBC selection   required 
+     nfe40_vBC monetary   required TDec_1302
+     nfe40_pRedBC monetary    TDec_0302a04Opc
+     nfe40_pICMS monetary   required TDec_0302a04
+     nfe40_vICMS monetary   required TDec_1302
+     nfe40_modBCST selection   required 
+     nfe40_pMVAST monetary    TDec_0302a04Opc
+     nfe40_pRedBCST monetary    TDec_0302a04Opc
+     nfe40_vBCST monetary   required TDec_1302
+     nfe40_pICMSST monetary   required TDec_0302a04
+     nfe40_vICMSST monetary   required TDec_1302
+     nfe40_pBCOp monetary   required TDec_0302a04Opc
+     nfe40_UFST selection   required TUf
+
+nfe.40.icmsst - ICMSSTType
+     nfe40_orig selection   required 
+     nfe40_CST selection   required 
+     nfe40_vBCSTRet monetary   required TDec_1302
+     nfe40_pST monetary    TDec_0302a04Opc
+     nfe40_vICMSSubstituto monetary    TDec_1302
+     nfe40_vICMSSTRet monetary   required TDec_1302
+     nfe40_vBCFCPSTRet monetary    TDec_1302
+     nfe40_pFCPSTRet monetary    TDec_0302a04Opc
+     nfe40_vFCPSTRet monetary    TDec_1302
+     nfe40_vBCSTDest monetary   required TDec_1302
+     nfe40_vICMSSTDest monetary   required TDec_1302
+     nfe40_pRedBCEfet monetary    TDec_0302a04Opc
+     nfe40_vBCEfet monetary    TDec_1302
+     nfe40_pICMSEfet monetary    TDec_0302a04Opc
+     nfe40_vICMSEfet monetary    TDec_1302
+
+nfe.40.icmstot - ICMSTotType
+     nfe40_vBC monetary   required TDec_1302
+     nfe40_vICMS monetary   required TDec_1302
+     nfe40_vICMSDeson monetary   required TDec_1302
+     nfe40_vFCPUFDest monetary    TDec_1302
+     nfe40_vICMSUFDest monetary    TDec_1302
+     nfe40_vICMSUFRemet monetary    TDec_1302
+     nfe40_vFCP monetary   required TDec_1302
+     nfe40_vBCST monetary   required TDec_1302
+     nfe40_vST monetary   required TDec_1302
+     nfe40_vFCPST monetary   required TDec_1302
+     nfe40_vFCPSTRet monetary   required TDec_1302
+     nfe40_vProd monetary   required TDec_1302
+     nfe40_vFrete monetary   required TDec_1302
+     nfe40_vSeg monetary   required TDec_1302
+     nfe40_vDesc monetary   required TDec_1302
+     nfe40_vII monetary   required TDec_1302
+     nfe40_vIPI monetary   required TDec_1302
+     nfe40_vIPIDevol monetary   required TDec_1302
+     nfe40_vPIS monetary   required TDec_1302
+     nfe40_vCOFINS monetary   required TDec_1302
+     nfe40_vOutro monetary   required TDec_1302
+     nfe40_vNF monetary   required TDec_1302
+     nfe40_vTotTrib monetary    TDec_1302
+
+nfe.40.icmsufdest - ICMSUFDestType
+     nfe40_vBCUFDest monetary   required TDec_1302
+     nfe40_vBCFCPUFDest monetary    TDec_1302
+     nfe40_pFCPUFDest monetary    TDec_0302a04
+     nfe40_pICMSUFDest monetary   required TDec_0302a04
+     nfe40_pICMSInter selection   required 
+     nfe40_pICMSInterPart monetary   required TDec_0302a04
+     nfe40_vFCPUFDest monetary    TDec_1302
+     nfe40_vICMSUFDest monetary   required TDec_1302
+     nfe40_vICMSUFRemet monetary   required TDec_1302
+
+nfe.40.ide - ideType
+     nfe40_cUF selection   required TCodUfIBGE
+     nfe40_cNF char   required 
+     nfe40_natOp char   required 
+     nfe40_mod selection   required TMod
+     nfe40_serie char   required TSerie
+     nfe40_nNF char   required TNF
+     nfe40_dhEmi datetime   required TDateTimeUTC
+     nfe40_dhSaiEnt datetime    TDateTimeUTC
+     nfe40_tpNF selection   required 
+     nfe40_idDest selection   required 
+     nfe40_cMunFG char   required TCodMunIBGE
+     nfe40_tpImp selection   required 
+     nfe40_tpEmis selection   required 
+     nfe40_cDV char   required 
+     nfe40_tpAmb selection   required TAmb
+     nfe40_finNFe selection   required 
+     nfe40_indFinal selection   required 
+     nfe40_indPres selection   required 
+     nfe40_indIntermed selection    
+     nfe40_procEmi selection   required TProcEmi
+     nfe40_verProc char   required 
+     nfe40_dhCont datetime    TDateTimeUTC
+     nfe40_xJust char    
+     nfe40_NFref one2many  nfe.40.nfref  
+
+nfe.40.ii - IIType
+     nfe40_vBC monetary   required TDec_1302
+     nfe40_vDespAdu monetary   required TDec_1302
+     nfe40_vII monetary   required TDec_1302
+     nfe40_vIOF monetary   required TDec_1302
+
+nfe.40.imposto - impostoType
+     nfe40_choice10 selection    
+     nfe40_vTotTrib monetary    TDec_1302
+     nfe40_ICMS many2one  nfe.40.icms required 
+     nfe40_II many2one  nfe.40.ii  
+     nfe40_IPI many2one  nfe.40.tipi  
+     nfe40_ISSQN many2one  nfe.40.issqn required 
+     nfe40_PIS many2one  nfe.40.pis  
+     nfe40_PISST many2one  nfe.40.pisst  
+     nfe40_COFINS many2one  nfe.40.cofins  
+     nfe40_COFINSST many2one  nfe.40.cofinsst  
+     nfe40_ICMSUFDest many2one  nfe.40.icmsufdest  
+
+nfe.40.impostodevol - impostoDevolType
+     nfe40_pDevol monetary   required TDec_0302Max100
+     nfe40_IPI many2one  nfe.40.ipi required 
+
+nfe.40.infadic - infAdicType
+     nfe40_infAdFisco char    
+     nfe40_infCpl char    
+     nfe40_obsCont one2many  nfe.40.obscont  
+     nfe40_obsFisco one2many  nfe.40.obsfisco  
+     nfe40_procRef one2many  nfe.40.procref  
+
+nfe.40.infintermed - infIntermedType
+     nfe40_CNPJ char   required TCnpj
+     nfe40_idCadIntTran char   required 
+
+nfe.40.infnfe - infNFeType
+     nfe40_versao char   required string
+     nfe40_Id char   required ID
+     nfe40_ide many2one  nfe.40.ide required 
+     nfe40_emit many2one  nfe.40.emit required 
+     nfe40_avulsa many2one  nfe.40.avulsa  
+     nfe40_dest many2one  nfe.40.dest  
+     nfe40_retirada many2one  nfe.40.tlocal  
+     nfe40_entrega many2one  nfe.40.tlocal  
+     nfe40_autXML one2many  nfe.40.autxml  
+     nfe40_det one2many  nfe.40.det required 
+     nfe40_total many2one  nfe.40.total required 
+     nfe40_transp many2one  nfe.40.transp required 
+     nfe40_cobr many2one  nfe.40.cobr  
+     nfe40_pag many2one  nfe.40.pag required 
+     nfe40_infIntermed many2one  nfe.40.infintermed  
+     nfe40_infAdic many2one  nfe.40.infadic  
+     nfe40_exporta many2one  nfe.40.exporta  
+     nfe40_compra many2one  nfe.40.compra  
+     nfe40_cana many2one  nfe.40.cana  
+     nfe40_infRespTec many2one  nfe.40.tinfresptec  
+     nfe40_infSolicNFF many2one  nfe.40.infsolicnff  
+
+nfe.40.infnfesupl - infNFeSuplType
+     nfe40_qrCode char   required 
+     nfe40_urlChave char   required 
+
+nfe.40.infprodemb - infProdEmbType
+     nfe40_xEmb char   required 
+     nfe40_qVolEmb float (8, 3)  required TDec_0803v
+     nfe40_uEmb char   required 
+
+nfe.40.infprodnff - infProdNFFType
+     nfe40_cProdFisco char   required 
+     nfe40_cOperNFF char   required 
+
+nfe.40.infprot - infProtType
+     nfe40_Id char    string
+     nfe40_tpAmb selection   required TAmb
+     nfe40_verAplic char   required TVerAplic
+     nfe40_chNFe char   required TChNFe
+     nfe40_dhRecbto datetime   required TDateTimeUTC
+     nfe40_nProt char    TProt
+     nfe40_digVal char    
+     nfe40_cStat char   required TStat
+     nfe40_xMotivo char   required TMotivo
+     nfe40_cMsg char    
+     nfe40_xMsg char    
+
+nfe.40.infrec - infRecType
+     nfe40_nRec char   required TRec
+     nfe40_tMed char   required TMed
+
+nfe.40.infsolicnff - infSolicNFFType
+     nfe40_xSolic char   required 
+
+nfe.40.ipi - IPIType
+     nfe40_vIPIDevol monetary   required TDec_1302
+
+nfe.40.ipint - IPINTType
+     nfe40_CST selection   required 
+
+nfe.40.ipitrib - IPITribType
+     nfe40_choice20 selection    
+     nfe40_CST selection   required 
+     nfe40_vBC monetary   required TDec_1302
+     nfe40_pIPI monetary   required TDec_0302a04
+     nfe40_qUnid float (12, 4)  required TDec_1204v
+     nfe40_vUnid float (11, 4)  required TDec_1104
+     nfe40_vIPI monetary   required TDec_1302
+
+nfe.40.issqn - ISSQNType
+     nfe40_vBC monetary   required TDec_1302
+     nfe40_vAliq monetary   required TDec_0302a04
+     nfe40_vISSQN monetary   required TDec_1302
+     nfe40_cMunFG char   required TCodMunIBGE
+     nfe40_cListServ selection   required TCListServ
+     nfe40_vDeducao monetary    TDec_1302Opc
+     nfe40_vOutro monetary    TDec_1302Opc
+     nfe40_vDescIncond monetary    TDec_1302Opc
+     nfe40_vDescCond monetary    TDec_1302Opc
+     nfe40_vISSRet monetary    TDec_1302Opc
+     nfe40_indISS selection   required 
+     nfe40_cServico char    
+     nfe40_cMun char    TCodMunIBGE
+     nfe40_cPais char    
+     nfe40_nProcesso char    
+     nfe40_indIncentivo selection   required 
+
+nfe.40.issqntot - ISSQNtotType
+     nfe40_vServ monetary    TDec_1302Opc
+     nfe40_vBC monetary    TDec_1302Opc
+     nfe40_vISS monetary    TDec_1302Opc
+     nfe40_vPIS monetary    TDec_1302Opc
+     nfe40_vCOFINS monetary    TDec_1302Opc
+     nfe40_dCompet date   required TData
+     nfe40_vDeducao monetary    TDec_1302Opc
+     nfe40_vOutro monetary    TDec_1302Opc
+     nfe40_vDescIncond monetary    TDec_1302Opc
+     nfe40_vDescCond monetary    TDec_1302Opc
+     nfe40_vISSRet monetary    TDec_1302Opc
+     nfe40_cRegTrib selection    
+
+nfe.40.lacres - lacresType
+     nfe40_lacres_vol_id many2one  nfe.40.vol  
+     nfe40_nLacre char   required 
+
+nfe.40.med - medType
+     nfe40_cProdANVISA char   required 
+     nfe40_xMotivoIsencao char    
+     nfe40_vPMC monetary   required TDec_1302
+
+nfe.40.nfref - NFrefType
+     nfe40_NFref_ide_id many2one  nfe.40.ide  
+     nfe40_choice4 selection    
+     nfe40_refNFe char   required TChNFe
+     nfe40_refNF many2one  nfe.40.refnf required 
+     nfe40_refNFP many2one  nfe.40.refnfp required 
+     nfe40_refCTe char   required TChNFe
+     nfe40_refECF many2one  nfe.40.refecf required 
+
+nfe.40.obscont - obsContType
+     nfe40_obsCont_infAdic_id many2one  nfe.40.infadic  
+     nfe40_xCampo char   required string
+     nfe40_xTexto char   required 
+
+nfe.40.obsfisco - obsFiscoType
+     nfe40_obsFisco_infAdic_id many2one  nfe.40.infadic  
+     nfe40_xCampo char   required string
+     nfe40_xTexto char   required 
+
+nfe.40.pag - pagType
+     nfe40_detPag one2many  nfe.40.detpag required 
+     nfe40_vTroco monetary    TDec_1302
+
+nfe.40.pis - PISType
+     nfe40_choice12 selection    
+     nfe40_PISAliq many2one  nfe.40.pisaliq required 
+     nfe40_PISQtde many2one  nfe.40.pisqtde required 
+     nfe40_PISNT many2one  nfe.40.pisnt required 
+     nfe40_PISOutr many2one  nfe.40.pisoutr required 
+
+nfe.40.pisaliq - PISAliqType
+     nfe40_CST selection   required 
+     nfe40_vBC monetary   required TDec_1302
+     nfe40_pPIS monetary   required TDec_0302a04
+     nfe40_vPIS monetary   required TDec_1302
+
+nfe.40.pisnt - PISNTType
+     nfe40_CST selection   required 
+
+nfe.40.pisoutr - PISOutrType
+     nfe40_choice13 selection    
+     nfe40_CST selection   required 
+     nfe40_vBC monetary   required TDec_1302
+     nfe40_pPIS monetary   required TDec_0302a04
+     nfe40_qBCProd float (12, 4)  required TDec_1204v
+     nfe40_vAliqProd float (11, 4)  required TDec_1104v
+     nfe40_vPIS monetary   required TDec_1302
+
+nfe.40.pisqtde - PISQtdeType
+     nfe40_CST selection   required 
+     nfe40_qBCProd float (12, 4)  required TDec_1204v
+     nfe40_vAliqProd float (11, 4)  required TDec_1104v
+     nfe40_vPIS monetary   required TDec_1302
+
+nfe.40.pisst - PISSTType
+     nfe40_choice14 selection    
+     nfe40_vBC monetary   required TDec_1302Opc
+     nfe40_pPIS monetary   required TDec_0302a04
+     nfe40_qBCProd float (12, 4)  required TDec_1204
+     nfe40_vAliqProd float (11, 4)  required TDec_1104
+     nfe40_vPIS monetary   required TDec_1302
+     nfe40_indSomaPISST selection    
+
+nfe.40.procref - procRefType
+     nfe40_procRef_infAdic_id many2one  nfe.40.infadic  
+     nfe40_nProc char   required 
+     nfe40_indProc selection   required 
+
+nfe.40.prod - prodType
+     nfe40_choice9 selection    
+     nfe40_cProd char   required 
+     nfe40_cEAN char   required 
+     nfe40_cBarra char    
+     nfe40_xProd char   required 
+     nfe40_NCM char   required 
+     nfe40_NVE char    
+     nfe40_CEST char    
+     nfe40_indEscala selection    
+     nfe40_CNPJFab char    TCnpj
+     nfe40_cBenef char    
+     nfe40_EXTIPI char    
+     nfe40_CFOP char   required 
+     nfe40_uCom char   required 
+     nfe40_qCom float (11, 4)  required TDec_1104v
+     nfe40_vUnCom float (11, 10)  required TDec_1110v
+     nfe40_vProd monetary   required TDec_1302
+     nfe40_cEANTrib char   required 
+     nfe40_cBarraTrib char    
+     nfe40_uTrib char   required 
+     nfe40_qTrib float (11, 4)  required TDec_1104v
+     nfe40_vUnTrib float (11, 10)  required TDec_1110v
+     nfe40_vFrete monetary    TDec_1302Opc
+     nfe40_vSeg monetary    TDec_1302Opc
+     nfe40_vDesc monetary    TDec_1302Opc
+     nfe40_vOutro monetary    TDec_1302Opc
+     nfe40_indTot selection   required 
+     nfe40_DI one2many  nfe.40.di  
+     nfe40_detExport one2many  nfe.40.detexport  
+     nfe40_xPed char    
+     nfe40_nItemPed char    
+     nfe40_nFCI char    TGuid
+     nfe40_rastro one2many  nfe.40.rastro  
+     nfe40_infProdNFF many2one  nfe.40.infprodnff  
+     nfe40_infProdEmb many2one  nfe.40.infprodemb  
+     nfe40_veicProd many2one  nfe.40.veicprod  
+     nfe40_med many2one  nfe.40.med  
+     nfe40_arma one2many  nfe.40.arma  
+     nfe40_comb many2one  nfe.40.comb  
+     nfe40_nRECOPI char    
+
+nfe.40.rastro - rastroType
+     nfe40_rastro_prod_id many2one  nfe.40.prod  
+     nfe40_nLote char   required 
+     nfe40_qLote float (8, 3)  required TDec_0803v
+     nfe40_dFab date   required TData
+     nfe40_dVal date   required TData
+     nfe40_cAgreg char    
+
+nfe.40.refecf - refECFType
+     nfe40_mod selection   required 
+     nfe40_nECF char   required 
+     nfe40_nCOO char   required 
+
+nfe.40.refnf - refNFType
+     nfe40_cUF selection   required TCodUfIBGE
+     nfe40_AAMM char   required 
+     nfe40_CNPJ char   required TCnpj
+     nfe40_mod selection   required 
+     nfe40_serie char   required TSerie
+     nfe40_nNF char   required TNF
+
+nfe.40.refnfp - refNFPType
+     nfe40_choice5 selection    
+     nfe40_cUF selection   required TCodUfIBGE
+     nfe40_AAMM char   required 
+     nfe40_CNPJ char   required TCnpj
+     nfe40_CPF char   required TCpf
+     nfe40_IE char   required TIeDest
+     nfe40_mod selection   required 
+     nfe40_serie char   required TSerie
+     nfe40_nNF char   required TNF
+
+nfe.40.rettransp - retTranspType
+     nfe40_vServ monetary   required TDec_1302
+     nfe40_vBCRet monetary   required TDec_1302
+     nfe40_pICMSRet monetary   required TDec_0302a04
+     nfe40_vICMSRet monetary   required TDec_1302
+     nfe40_CFOP char   required 
+     nfe40_cMunFG char   required TCodMunIBGE
+
+nfe.40.rettrib - retTribType
+     nfe40_vRetPIS monetary    TDec_1302Opc
+     nfe40_vRetCOFINS monetary    TDec_1302Opc
+     nfe40_vRetCSLL monetary    TDec_1302Opc
+     nfe40_vBCIRRF monetary    TDec_1302Opc
+     nfe40_vIRRF monetary    TDec_1302Opc
+     nfe40_vBCRetPrev monetary    TDec_1302Opc
+     nfe40_vRetPrev monetary    TDec_1302Opc
+
+nfe.40.tconsrecinfe - TConsReciNFe
+     nfe40_versao char   required string
+     nfe40_tpAmb selection   required TAmb
+     nfe40_nRec char   required TRec
+
+nfe.40.tendereco - TEndereco
+     nfe40_xLgr char   required 
+     nfe40_nro char   required 
+     nfe40_xCpl char    
+     nfe40_xBairro char   required 
+     nfe40_cMun char   required TCodMunIBGE
+     nfe40_xMun char   required 
+     nfe40_UF selection   required TUf
+     nfe40_CEP char    
+     nfe40_cPais char    
+     nfe40_xPais char    
+     nfe40_fone char    
+
+nfe.40.tenderemi - TEnderEmi
+     nfe40_xLgr char   required 
+     nfe40_nro char   required 
+     nfe40_xCpl char    
+     nfe40_xBairro char   required 
+     nfe40_cMun char   required TCodMunIBGE
+     nfe40_xMun char   required 
+     nfe40_UF selection   required TUfEmi
+     nfe40_CEP char   required 
+     nfe40_cPais selection    
+     nfe40_xPais selection    
+     nfe40_fone char    
+
+nfe.40.tenvinfe - TEnviNFe
+     nfe40_versao char   required string
+     nfe40_idLote char   required TIdLote
+     nfe40_indSinc selection   required 
+     nfe40_NFe one2many  nfe.40.tnfe required 
+
+nfe.40.tinfresptec - TInfRespTec
+     nfe40_CNPJ char   required TCnpjOpc
+     nfe40_xContato char   required 
+     nfe40_email char   required 
+     nfe40_fone char   required 
+     nfe40_idCSRT char    
+     nfe40_hashCSRT char    
+
+nfe.40.tipi - TIpi
+     nfe40_choice3 selection    
+     nfe40_CNPJProd char    TCnpj
+     nfe40_cSelo char    
+     nfe40_qSelo char    
+     nfe40_cEnq char   required 
+     nfe40_IPITrib many2one  nfe.40.ipitrib required 
+     nfe40_IPINT many2one  nfe.40.ipint required 
+
+nfe.40.tlocal - TLocal
+     nfe40_choice2 selection    
+     nfe40_CNPJ char   required TCnpjOpc
+     nfe40_CPF char   required TCpf
+     nfe40_xNome char    
+     nfe40_xLgr char   required 
+     nfe40_nro char   required 
+     nfe40_xCpl char    
+     nfe40_xBairro char   required 
+     nfe40_cMun char   required TCodMunIBGE
+     nfe40_xMun char   required 
+     nfe40_UF selection   required TUf
+     nfe40_CEP char    
+     nfe40_cPais char    
+     nfe40_xPais char    
+     nfe40_fone char    
+     nfe40_email char    
+     nfe40_IE char    TIe
+
+nfe.40.tnfe - TNFe
+     nfe40_NFe_TEnviNFe_id many2one  nfe.40.tenvinfe  
+     nfe40_infNFe many2one  nfe.40.infnfe required 
+     nfe40_infNFeSupl many2one  nfe.40.infnfesupl  
+
+nfe.40.tnfeproc - TNfeProc
+     nfe40_versao char   required string
+     nfe40_NFe many2one  nfe.40.tnfe required 
+     nfe40_protNFe many2one  nfe.40.tprotnfe required 
+
+nfe.40.total - totalType
+     nfe40_ICMSTot many2one  nfe.40.icmstot required 
+     nfe40_ISSQNtot many2one  nfe.40.issqntot  
+     nfe40_retTrib many2one  nfe.40.rettrib  
+
+nfe.40.tprotnfe - TProtNFe
+     nfe40_protNFe_TRetConsReciNFe_id many2one  nfe.40.tretconsrecinfe  
+     nfe40_versao char   required string
+     nfe40_infProt many2one  nfe.40.infprot required 
+
+nfe.40.transp - transpType
+     nfe40_choice18 selection    
+     nfe40_modFrete selection   required 
+     nfe40_transporta many2one  nfe.40.transporta  
+     nfe40_retTransp many2one  nfe.40.rettransp  
+     nfe40_veicTransp many2one  nfe.40.tveiculo  
+     nfe40_reboque one2many  nfe.40.tveiculo  
+     nfe40_vagao char    
+     nfe40_balsa char    
+     nfe40_vol one2many  nfe.40.vol  
+
+nfe.40.transporta - transportaType
+     nfe40_choice19 selection    
+     nfe40_CNPJ char    TCnpj
+     nfe40_CPF char    TCpf
+     nfe40_xNome char    
+     nfe40_IE char    TIeDest
+     nfe40_xEnder char    
+     nfe40_xMun char    
+     nfe40_UF selection    TUf
+
+nfe.40.tretconsrecinfe - TRetConsReciNFe
+     nfe40_versao char   required string
+     nfe40_tpAmb selection   required TAmb
+     nfe40_verAplic char   required TVerAplic
+     nfe40_nRec char   required TRec
+     nfe40_cStat char   required TStat
+     nfe40_xMotivo char   required TMotivo
+     nfe40_cUF selection   required TCodUfIBGE
+     nfe40_dhRecbto datetime   required TDateTimeUTC
+     nfe40_cMsg char    
+     nfe40_xMsg char    
+     nfe40_protNFe one2many  nfe.40.tprotnfe  
+
+nfe.40.tretenvinfe - TRetEnviNFe
+     nfe40_choice1 selection    
+     nfe40_versao char   required string
+     nfe40_tpAmb selection   required TAmb
+     nfe40_verAplic char   required TVerAplic
+     nfe40_cStat char   required TStat
+     nfe40_xMotivo char   required TMotivo
+     nfe40_cUF selection   required TCodUfIBGE
+     nfe40_dhRecbto datetime   required TDateTimeUTC
+     nfe40_infRec many2one  nfe.40.infrec  
+     nfe40_protNFe many2one  nfe.40.tprotnfe  
+
+nfe.40.tveiculo - TVeiculo
+     nfe40_reboque_transp_id many2one  nfe.40.transp  
+     nfe40_placa char   required 
+     nfe40_UF selection    TUf
+     nfe40_RNTC char    
+
+nfe.40.veicprod - veicProdType
+     nfe40_tpOp selection   required 
+     nfe40_chassi char   required 
+     nfe40_cCor char   required 
+     nfe40_xCor char   required 
+     nfe40_pot char   required 
+     nfe40_cilin char   required 
+     nfe40_pesoL char   required 
+     nfe40_pesoB char   required 
+     nfe40_nSerie char   required 
+     nfe40_tpComb char   required 
+     nfe40_nMotor char   required 
+     nfe40_CMT char   required 
+     nfe40_dist char   required 
+     nfe40_anoMod char   required 
+     nfe40_anoFab char   required 
+     nfe40_tpPint char   required 
+     nfe40_tpVeic char   required 
+     nfe40_espVeic char   required 
+     nfe40_VIN selection   required 
+     nfe40_condVeic selection   required 
+     nfe40_cMod char   required 
+     nfe40_cCorDENATRAN char   required 
+     nfe40_lota char   required 
+     nfe40_tpRest selection   required 
+
+nfe.40.vol - volType
+     nfe40_vol_transp_id many2one  nfe.40.transp  
+     nfe40_qVol char    
+     nfe40_esp char    
+     nfe40_marca char    
+     nfe40_nVol char    
+     nfe40_pesoL float (12, 3)   TDec_1203
+     nfe40_pesoB float (12, 3)   TDec_1203
+     nfe40_lacres one2many  nfe.40.lacres 
