@@ -21,7 +21,6 @@ SHADOWED_FIELDS = [
     "uom_id",
     "quantity",
     "price_unit",
-    "discount_value",
 ]
 
 
@@ -139,12 +138,11 @@ class AccountMoveLine(models.Model):
         from the parent."""
         return SHADOWED_FIELDS
 
-    def _prepare_shadowed_fields_dict(self, default=False):
-        self.ensure_one()
-        vals = self._convert_to_write(self.read(self._shadowed_fields())[0])
-        if default:  # in case you want to use new rather than write later
-            return {"default_%s" % (k,): vals[k] for k in vals.keys()}
-        return vals
+    def _inject_shadowed_fields(self, vals_list):
+        for vals in vals_list:
+            for field in SHADOWED_FIELDS:
+                if vals.get(field):
+                    vals["fiscal_%s" % (field,)] = vals[field]
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -212,20 +210,15 @@ class AccountMoveLine(models.Model):
                         cfop_id=cfop_id,
                     )
                 )
+        self._inject_shadowed_fields(vals_list)
         lines = super().create(vals_list)
-
-        for line in lines.filtered(lambda l: l.fiscal_document_line_id != dummy_line):
-            shadowed_fiscal_vals = line._prepare_shadowed_fields_dict()
-            doc_id = line.move_id.fiscal_document_id.id
-            shadowed_fiscal_vals["document_id"] = doc_id
-            line.fiscal_document_line_id.write(shadowed_fiscal_vals)
-
         return lines
 
     def write(self, values):
         dummy_doc = self.env.company.fiscal_dummy_id
         dummy_line = fields.first(dummy_doc.fiscal_line_ids)
         non_dummy = self.filtered(lambda l: l.fiscal_document_line_id != dummy_line)
+        self._inject_shadowed_fields([values])
         if values.get("move_id") and len(non_dummy) == len(self):
             # we can write the document_id in all lines
             values["document_id"] = (
@@ -249,9 +242,6 @@ class AccountMoveLine(models.Model):
                 raise UserError(
                     _("You cannot edit an invoice related to a withholding entry")
                 )
-            if line.fiscal_document_line_id != dummy_line:
-                shadowed_fiscal_vals = line._prepare_shadowed_fields_dict()
-                line.fiscal_document_line_id.write(shadowed_fiscal_vals)
 
         ACCOUNTING_FIELDS = ("debit", "credit", "amount_currency")
         BUSINESS_FIELDS = ("price_unit", "quantity", "discount", "tax_ids")
