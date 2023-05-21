@@ -16,6 +16,9 @@ class FiscalDocument(models.Model):
         string="Invoices",
     )
 
+    # proxy fields to enable writing the related (shadowed) fields
+    # to the fiscal document from the account.move through the _inherits system
+    # despite they have the same names.
     fiscal_partner_id = fields.Many2one(related="partner_id")
     fiscal_company_id = fields.Many2one(related="company_id")
     fiscal_currency_id = fields.Many2one(related="currency_id")
