@@ -138,11 +138,24 @@ class AccountMoveLine(models.Model):
         from the parent."""
         return SHADOWED_FIELDS
 
+    @api.model
     def _inject_shadowed_fields(self, vals_list):
         for vals in vals_list:
-            for field in SHADOWED_FIELDS:
+            for field in self._shadowed_fields():
                 if vals.get(field):
                     vals["fiscal_%s" % (field,)] = vals[field]
+
+    def _inject_shadowed_fields_write(self, vals):
+        if len(self) == 1:
+            read_vals = self.read(self._shadowed_fields())[0]
+            read_vals = self._convert_to_write(read_vals)
+        else:
+            read_vals = {}
+        for field in self._shadowed_fields():
+            if vals.get(field):
+                vals["fiscal_%s" % (field,)] = vals.get(field)
+            elif read_vals.get(field):
+                vals["fiscal_%s" % (field,)] = read_vals.get(field)
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -215,10 +228,14 @@ class AccountMoveLine(models.Model):
         return lines
 
     def write(self, values):
+        if len(self) == 0:  # it does happen (cash basis) -> optimization: return fast
+            return
+
         dummy_doc = self.env.company.fiscal_dummy_id
         dummy_line = fields.first(dummy_doc.fiscal_line_ids)
         non_dummy = self.filtered(lambda l: l.fiscal_document_line_id != dummy_line)
-        self._inject_shadowed_fields([values])
+        self._inject_shadowed_fields_write(values)
+
         if values.get("move_id") and len(non_dummy) == len(self):
             # we can write the document_id in all lines
             values["document_id"] = (
