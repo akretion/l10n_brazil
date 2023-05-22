@@ -220,7 +220,7 @@ class Document(models.Model):
         default=False,
     )
 
-    @api.constrains("document_type", "state_edoc", "fiscal_line_ids")
+#    @api.constrains("document_type", "state_edoc", "fiscal_line_ids")
     def _check_product_default_code(self):
         for rec in self:
             if (
@@ -229,6 +229,7 @@ class Document(models.Model):
             ):
                 for line in rec.fiscal_line_ids:
                     if not line.product_id.default_code:
+                        print("VVVVVVVVV", line, rec.document_type)
                         raise ValidationError(
                             _(
                                 f"The product {line.product_id.display_name} "

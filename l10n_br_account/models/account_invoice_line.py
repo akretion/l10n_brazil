@@ -24,6 +24,10 @@ SHADOWED_FIELDS = [
 ]
 
 
+ACCOUNTING_FIELDS = ("debit", "credit", "amount_currency")
+BUSINESS_FIELDS = ("price_unit", "quantity", "discount", "tax_ids")
+ 
+
 class AccountMoveLine(models.Model):
     _name = "account.move.line"
     _inherit = [_name, "l10n_br_fiscal.document.line.mixin.methods"]
@@ -154,8 +158,6 @@ class AccountMoveLine(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        ACCOUNTING_FIELDS = ("debit", "credit", "amount_currency")
-        BUSINESS_FIELDS = ("price_unit", "quantity", "discount", "tax_ids")
         dummy_doc = self.env.company.fiscal_dummy_id
         dummy_line = fields.first(dummy_doc.fiscal_line_ids)
         for values in vals_list:
@@ -231,6 +233,8 @@ class AccountMoveLine(models.Model):
         dummy_doc = self.env.company.fiscal_dummy_id
         dummy_line = fields.first(dummy_doc.fiscal_line_ids)
         non_dummy = self.filtered(lambda l: l.fiscal_document_line_id != dummy_line)
+#        print("wwwwwwwww", self, values)
+
         if values.get("move_id") and len(non_dummy) == len(self):
             # we can write the document_id in all lines
             values["document_id"] = (
@@ -245,47 +249,49 @@ class AccountMoveLine(models.Model):
             )
             super(AccountMoveLine, non_dummy).write({"document_id": doc_id})
         else:
-            result = super().write(values)
+#            result = super().write(values)
 
-        for line in self:
-            if line.wh_move_line_id and (
-                "quantity" in values or "price_unit" in values
-            ):
-                raise UserError(
-                    _("You cannot edit an invoice related to a withholding entry")
+#            shadowed_fiscal_vals = line._prepare_shadowed_fields_dict()
+#            line.fiscal_document_line_id.write(shadowed_fiscal_vals)
+            self._inject_shadowed_fields([values])
+            cleaned_vals = self.move_id._cleanup_write_orm_values(self[0], values)
+#            if not cleaned_vals:
+#                continue
+
+#            if not line.move_id.is_invoice(include_receipts=True):
+#                continue
+
+            if (
+                    cleaned_vals and self.move_id.is_invoice(include_receipts=True)
+                    and any(
+                        field in cleaned_vals
+                    for field in [*ACCOUNTING_FIELDS, *BUSINESS_FIELDS]
+            )):
+                to_write = self._get_amount_credit_debit_model(
+                    self.move_id,
+                    exclude_from_invoice_tab=self.exclude_from_invoice_tab,
+                    amount_tax_included=self.amount_tax_included,
+                    amount_tax_not_included=self.amount_tax_not_included,
+                    amount_taxed=self.amount_taxed,
+                    currency_id=self.currency_id,
+                    company_id=self.company_id,
+                    date=self.date,
+                    cfop_id=self.cfop_id,
                 )
-            if line.fiscal_document_line_id != dummy_line:
-                shadowed_fiscal_vals = line._prepare_shadowed_fields_dict()
-                line.fiscal_document_line_id.write(shadowed_fiscal_vals)
+                values.update(to_write)
 
-        ACCOUNTING_FIELDS = ("debit", "credit", "amount_currency")
-        BUSINESS_FIELDS = ("price_unit", "quantity", "discount", "tax_ids")
-        for line in self:
-            cleaned_vals = line.move_id._cleanup_write_orm_values(line, values)
-            if not cleaned_vals:
-                continue
-
-            if not line.move_id.is_invoice(include_receipts=True):
-                continue
-
-            if any(
-                field in cleaned_vals
-                for field in [*ACCOUNTING_FIELDS, *BUSINESS_FIELDS]
-            ):
-                to_write = line._get_amount_credit_debit_model(
-                    line.move_id,
-                    exclude_from_invoice_tab=line.exclude_from_invoice_tab,
-                    amount_tax_included=line.amount_tax_included,
-                    amount_tax_not_included=line.amount_tax_not_included,
-                    amount_taxed=line.amount_taxed,
-                    currency_id=line.currency_id,
-                    company_id=line.company_id,
-                    date=line.date,
-                    cfop_id=line.cfop_id,
-                )
-                result |= super(AccountMoveLine, line).write(to_write)
-
-        return result
+            for line in non_dummy:
+                if line.wh_move_line_id and (
+                    "quantity" in values or "price_unit" in values
+                ):
+                    raise UserError(
+                        _("You cannot edit an invoice related to a withholding entry")
+                    )
+#            print("WWWWWWWWWWWWWWWW", self, values, self.env.context)
+            return super(
+                AccountMoveLine,
+                self.with_context(check_move_validity=False)
+            ).write(values)
 
     def unlink(self):
         dummy_doc = self.env.company.fiscal_dummy_id
