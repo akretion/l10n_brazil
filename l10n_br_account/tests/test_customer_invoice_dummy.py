@@ -2,362 +2,149 @@
 # Copyright (C) 2023 - TODAY Raphaël Valyi - Akretion
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from re import I
 import mock
 
-from odoo.models import NewId
-from odoo.tests import SavepointCase
+from odoo.addons.account.tests.common import AccountTestInvoicingCommon
+from odoo.tests.common import tagged, Form, SingleTransactionCase, OdooSuite
+from odoo.models import NewId, BaseModel
 
 
-class TestCustomerInvoice(SavepointCase):
+# This monkey patch is required to avoid triggering all the tests from
+# TestAccountMoveOutInvoiceOnchanges when it is imported.
+# see https://stackoverflow.com/questions/69091760/how-can-i-import-a-testclass-properly-to-inherit-from-without-it-being-run-as-a
+def patched_addTest(self, test):
+    # TODO call original_method, monkey patch properly
+    # sanity checks
+    if not callable(test):
+        raise TypeError("{} is not callable".format(repr(test)))
+    if isinstance(test, type) and issubclass(test,
+                                             (case.TestCase, TestSuite)):
+        raise TypeError("TestCases and TestSuites must be instantiated "
+                        "before passing them to addTest()")
+    if type(test).__name__ != "TestAccountMoveOutInvoiceOnchanges":
+        self._tests.append(test)
+
+original_addTest = OdooSuite.addTest
+OdooSuite.addTest = patched_addTest
+
+from odoo.addons.account.tests.test_account_move_out_invoice import TestAccountMoveOutInvoiceOnchanges
+
+#OdooSuite.addTest = original_addTest
+
+
+@tagged('post_install', '-at_install')
+class TestCustomerInvoice(TestAccountMoveOutInvoiceOnchanges):
     """
     This is a simple test for ensuring l10n_br_account doesn't break the basic
     account module behavior with customer invoices.
     """
 
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.sale_account = cls.env["account.account"].create(
-            dict(
-                code="X1020",
-                name="Product Sales - (test)",
-                user_type_id=cls.env.ref("account.data_account_type_revenue").id,
-                reconcile=True,
-            )
-        )
+    def setup_company_data(cls, company_name, chart_template=None, **kwargs):
+        cls.env.user.groups_id |= cls.env.ref('l10n_br_fiscal.group_manager')
+        return super().setup_company_data(company_name, chart_template, **kwargs)
 
-        cls.sale_journal = cls.env["account.journal"].create(
-            dict(
-                name="Sales Journal - (test)",
-                code="TSAJ",
-                type="sale",
-                refund_sequence=True,
-                default_account_id=cls.sale_account.id,
-            )
-        )
+    @classmethod
+    def setUpClass(cls, chart_template_ref=None):
+        super().setUpClass(chart_template_ref="l10n_generic_coa.configurable_chart_template")
+#        super().setUpClass(chart_template_ref="l10n_br_coa_simple.l10n_br_coa_simple_chart_template")
 
-        cls.init_number_of_fiscal_docs = cls.env[
-            "l10n_br_fiscal.document"
-        ].search_count([])
-        cls.init_number_of_fiscal_doc_lines = cls.env[
-            "l10n_br_fiscal.document.line"
-        ].search_count([])
-        cls.invoice_1 = cls.env["account.move"].create(
-            dict(
-                name="Test Customer Invoice 1",
-                move_type="out_invoice",
-                partner_id=cls.env.ref("base.res_partner_3").id,
-                journal_id=cls.sale_journal.id,
-                invoice_line_ids=[
-                    (
-                        0,
-                        0,
-                        {
-                            "product_id": cls.env.ref("product.product_product_5").id,
-                            "quantity": 10.0,
-                            "price_unit": 450.0,
-                            "account_id": cls.env["account.account"]
-                            .search(
-                                [
-                                    (
-                                        "user_type_id",
-                                        "=",
-                                        cls.env.ref(
-                                            "account.data_account_type_revenue"
-                                        ).id,
-                                    ),
-                                    (
-                                        "company_id",
-                                        "=",
-                                        cls.env.company.id,
-                                    ),
-                                ],
-                                limit=1,
-                            )
-                            .id,
-                            "name": "product test 5",
-                            "uom_id": cls.env.ref("uom.product_uom_unit").id,
-                        },
-                    )
-                ],
-            )
-        )
 
-        # Invoice with TAXES
-        tax_fixed = cls.env["account.tax"].create(
-            {
-                "sequence": 10,
-                "name": "Tax 10.0 (Fixed)",
-                "amount": 10.0,
-                "amount_type": "fixed",
-                "include_base_amount": True,
-            }
-        )
+# The following tests list is taken with
+# cat addons/account/tests/test_account_move_out_invoice.py | grep "def test_"
+# commented test are actually executed, just like when super() is called
+# but may be calling super() is more explicit.
+# disabled tests are overriden with the pass instruction.
 
-        tax_percent_included_base_incl = cls.env["account.tax"].create(
-            {
-                "sequence": 20,
-                "name": "Tax 50.0% (Percentage of Price Tax Included)",
-                "amount": 50.0,
-                "amount_type": "division",
-                "include_base_amount": True,
-            }
-        )
 
-        tax_percentage = cls.env["account.tax"].create(
-            {
-                "sequence": 30,
-                "name": "Tax 20.0% (Percentage of Price)",
-                "amount": 20.0,
-                "amount_type": "percent",
-                "include_base_amount": False,
-            }
-        )
+#    def test_out_invoice_onchange_invoice_date(self):
+#        pass
 
-        cls.invoice_2 = cls.env["account.move"].create(
-            dict(
-                name="Test Customer Invoice 2",
-                move_type="out_invoice",
-                partner_id=cls.env.ref("base.res_partner_3").id,
-                journal_id=cls.sale_journal.id,
-                invoice_line_ids=[
-                    (
-                        0,
-                        0,
-                        {
-                            "product_id": cls.env.ref("product.product_product_5").id,
-                            "quantity": 5.0,
-                            "price_unit": 100.0,
-                            "account_id": cls.env["account.account"]
-                            .search(
-                                [
-                                    (
-                                        "user_type_id",
-                                        "=",
-                                        cls.env.ref(
-                                            "account.data_account_type_revenue"
-                                        ).id,
-                                    ),
-                                    (
-                                        "company_id",
-                                        "=",
-                                        cls.env.company.id,
-                                    ),
-                                ],
-                                limit=1,
-                            )
-                            .id,
-                            "name": "product test 5",
-                            "uom_id": cls.env.ref("uom.product_uom_unit").id,
-                            "tax_ids": [
-                                (
-                                    6,
-                                    0,
-                                    [
-                                        tax_fixed.id,
-                                        tax_percent_included_base_incl.id,
-                                        tax_percentage.id,
-                                    ],
-                                )
-                            ],
-                        },
-                    )
-                ],
-            )
-        )
+    def test_out_invoice_line_onchange_product_1(self):
+        super().test_out_invoice_line_onchange_product_1()
 
-        tax_discount = cls.env["account.tax"].create(
-            {
-                "sequence": 40,
-                "name": "Tax 20.0% (Discount)",
-                "amount": 20.0,
-                "amount_type": "percent",
-                "include_base_amount": False,
-            }
-        )
+    def test_out_invoice_line_onchange_product_2_with_fiscal_pos_1(self):
+        super().test_out_invoice_line_onchange_product_2_with_fiscal_pos_1()
 
-        cls.invoice_3 = cls.env["account.move"].create(
-            dict(
-                name="Test Customer Invoice 3",
-                move_type="out_invoice",
-                currency_id=cls.env.ref("base.EUR").id,
-                partner_id=cls.env.ref("base.res_partner_3").id,
-                journal_id=cls.sale_journal.id,
-                invoice_line_ids=[
-                    (
-                        0,
-                        0,
-                        {
-                            "product_id": cls.env.ref("product.product_product_5").id,
-                            "quantity": 10.0,
-                            "price_unit": 450.0,
-                            "account_id": cls.env["account.account"]
-                            .search(
-                                [
-                                    (
-                                        "user_type_id",
-                                        "=",
-                                        cls.env.ref(
-                                            "account.data_account_type_revenue"
-                                        ).id,
-                                    ),
-                                    (
-                                        "company_id",
-                                        "=",
-                                        cls.env.company.id,
-                                    ),
-                                ],
-                                limit=1,
-                            )
-                            .id,
-                            "name": "product test 5",
-                            "uom_id": cls.env.ref("uom.product_uom_unit").id,
-                            "tax_ids": [
-                                (
-                                    6,
-                                    0,
-                                    [
-                                        tax_discount.id,
-                                        tax_percent_included_base_incl.id,
-                                        tax_percentage.id,
-                                    ],
-                                )
-                            ],
-                        },
-                    )
-                ],
-            )
-        )
+#    def test_out_invoice_line_onchange_product_2_with_fiscal_pos_2(self):
+#        pass
 
-    def test_dummy_doc_usage(self):
-        self.assertEqual(
-            self.init_number_of_fiscal_docs,
-            self.env["l10n_br_fiscal.document"].search_count([]),
-            "Non fiscal invoices should not create fiscal documents"
-            "They should use the company dummy document instead.",
-        )
+    def test_out_invoice_line_onchange_business_fields_1(self):
+        pass
 
-    def test_dummy_doc_line_usage(self):
-        self.assertEqual(
-            self.init_number_of_fiscal_doc_lines,
-            self.env["l10n_br_fiscal.document.line"].search_count([]),
-            "Non fiscal invoices should not create fiscal document lines"
-            "They should use the company dummy document line instead.",
-        )
+    def test_out_invoice_line_onchange_accounting_fields_1(self):
+        pass
 
-    def test_create_dont_recompute_existing_moves(self):
-        with mock.patch.object(
-            self.env.__class__, "add_to_compute", wraps=None
-        ) as mocked_env:
-            invoice = self.env["account.move"].create(
-                dict(
-                    name="Test Customer Invoice 1",
-                    move_type="out_invoice",
-                    partner_id=self.env.ref("base.res_partner_3").id,
-                    journal_id=self.sale_journal.id,
-                    invoice_line_ids=[
-                        (
-                            0,
-                            0,
-                            {
-                                "product_id": self.env.ref(
-                                    "product.product_product_5"
-                                ).id,
-                                "quantity": 10.0,
-                                "price_unit": 450.0,
-                                "account_id": self.env["account.account"]
-                                .search(
-                                    [
-                                        (
-                                            "user_type_id",
-                                            "=",
-                                            self.env.ref(
-                                                "account.data_account_type_revenue"
-                                            ).id,
-                                        ),
-                                        (
-                                            "company_id",
-                                            "=",
-                                            self.env.company.id,
-                                        ),
-                                    ],
-                                    limit=1,
-                                )
-                                .id,
-                                "name": "product test 5",
-                                "uom_id": self.env.ref("uom.product_uom_unit").id,
-                            },
-                        )
-                    ],
-                )
-            )
-            for mock_call in mocked_env.mock_calls:
-                if (
-                    str(mock_call.args[0]).split(".")[:-1] == ["account", "move"]
-                    and mock_call.args[1]
-                    and not isinstance(mock_call.args[1][0].id, NewId)
-                ):
-                    self.assertEqual(mock_call.args[1], invoice)
-                elif (
-                    str(mock_call.args[0]).split(".")[:-1]
-                    == ["account", "move", "line"]
-                    and mock_call.args[1]
-                    and not isinstance(mock_call.args[1][0].id, NewId)
-                ):
-                    for line in mock_call.args[1]:
-                        self.assertIn(line, invoice.line_ids)
+#    def test_out_invoice_line_onchange_partner_1(self):
+#        pass
 
-    def test_write_dont_recompute_existing_moves(self):
-        with mock.patch.object(
-            self.env.__class__, "add_to_compute", wraps=None
-        ) as mocked_env:
-            self.invoice_1.invoice_line_ids[0].write({"quantity": 20})
+#    def test_out_invoice_line_onchange_taxes_1(self):
+#        pass
 
-            for mock_call in mocked_env.mock_calls:
-                if (
-                    str(mock_call.args[0]).split(".")[:-1] == ["account", "move"]
-                    and mock_call.args[1]
-                    and not isinstance(mock_call.args[1][0].id, NewId)
-                ):
-                    self.assertEqual(mock_call.args[1], self.invoice_1)
-                elif (
-                    str(mock_call.args[0]).split(".")[:-1]
-                    == ["account", "move", "line"]
-                    and mock_call.args[1]
-                    and not isinstance(mock_call.args[1][0].id, NewId)
-                ):
-                    for line in mock_call.args[1]:
-                        self.assertIn(line, self.invoice_1.line_ids)
+#    def test_out_invoice_line_onchange_rounding_price_subtotal_1(self):
+#        pass
 
-    def test_state(self):
-        self.assertEqual(
-            self.invoice_1.state, "draft", "Invoice should be in state Draft"
-        )
-        self.invoice_1.action_post()
-        self.assertEqual(
-            self.invoice_1.state, "posted", "Invoice should be in state posted"
-        )
+#    def test_out_invoice_line_onchange_rounding_price_subtotal_2(self):
+#        pass
 
-    def test_post(self):
-        self.invoice_2.action_post()
-        self.assertEqual(
-            self.invoice_2.state, "posted", "Invoice should be in state posted"
-        )
+    def test_out_invoice_line_onchange_taxes_2_price_unit_tax_included(self):
+        pass
 
-    def test_invoice_other_currency(self):
-        self.assertEqual(
-            self.invoice_3.state, "draft", "Invoice should be in state Draft"
-        )
-        self.invoice_3.action_post()
-        self.assertEqual(
-            self.invoice_3.state, "posted", "Invoice should be in state posted"
-        )
+#    def test_out_invoice_line_onchange_analytic(self):
+#        pass
 
-    def test_line_ids_write(self):
-        self.invoice_3.invoice_line_ids.write({"move_id": self.invoice_3.id})
-        for line in self.invoice_3.invoice_line_ids:
-            self.assertEqual(
-                line.document_id.id,
-                self.invoice_3.fiscal_document_id.id,
-                "line.document_id should be equal invoice fiscal_document_id",
-            )
+#    def test_out_invoice_line_onchange_analytic_2(self):
+#        pass
+
+#    def test_out_invoice_line_onchange_cash_rounding_1(self):
+#        pass
+
+#    def test_out_invoice_line_onchange_currency_1(self):
+#        pass
+
+    def test_out_invoice_line_tax_fixed_price_include_free_product(self):
+        pass
+
+    def test_out_invoice_line_taxes_fixed_price_include_free_product(self):
+        pass
+
+#    def test_out_invoice_create_refund(self):
+
+#    def test_out_invoice_create_refund_multi_currency(self):
+
+#    def test_out_invoice_create_refund_auto_post(self):
+
+    def test_out_invoice_create_1(self):
+        super().test_out_invoice_create_1()
+
+#    def test_out_invoice_create_child_partner(self):
+#    def test_out_invoice_write_1(self):
+#    def test_out_invoice_write_2(self):
+#    def test_out_invoice_post_1(self):
+#    def test_out_invoice_post_2(self):
+#    def test_out_invoice_switch_out_refund_1(self):
+#    def test_out_invoice_switch_out_refund_2(self):
+#    def test_out_invoice_reverse_move_tags(self):
+#    def test_out_invoice_change_period_accrual_1(self):
+#    def test_out_invoice_multi_date_change_period_accrual(self):
+
+#    def test_out_invoice_filter_zero_balance_lines(self):
+
+#    def test_out_invoice_recomputation_receivable_lines(self):
+
+#    def test_out_invoice_rounding_recomputation_receivable_lines(self):
+
+#    def test_out_invoice_multi_company(self):
+
+#    def test_out_invoice_multiple_switch_payment_terms(self):
+    def test_out_invoice_copy_custom_date(self):
+         pass
+
+#    def test_select_specific_product_account(self):
+
+#    def test_out_invoice_note_and_tax_partner_is_set(self):
+#    def test_out_invoice_reverse_caba(self):
+    def test_out_invoice_duplicate_currency_rate(self):
+        pass
+#    def test_out_invoice_depreciated_account(self):

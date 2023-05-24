@@ -146,8 +146,9 @@ class AccountMove(models.Model):
                 shadowed_fiscal_vals = invoice._prepare_shadowed_fields_dict()
                 invoice.fiscal_document_id.write(shadowed_fiscal_vals)
 
+
     @api.model
-    def fields_view_get(
+    def TODOfields_view_get(
         self, view_id=None, view_type="form", toolbar=False, submenu=False
     ):
         invoice_view = super().fields_view_get(view_id, view_type, toolbar, submenu)
@@ -233,7 +234,7 @@ class AccountMove(models.Model):
         "line_ids.full_reconcile_id",
         "ind_final",
     )
-    def _compute_amount(self):
+    def TODO_compute_amount(self):
         if self.company_id.country_id.code != "BR":
             return super()._compute_amount()
         for move in self:

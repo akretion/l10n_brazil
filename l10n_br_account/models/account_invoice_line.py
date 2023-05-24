@@ -147,7 +147,7 @@ class AccountMoveLine(models.Model):
         return vals
 
     @api.model_create_multi
-    def create(self, vals_list):
+    def TODOcreate(self, vals_list):
         ACCOUNTING_FIELDS = ("debit", "credit", "amount_currency")
         BUSINESS_FIELDS = ("price_unit", "quantity", "discount", "tax_ids")
         dummy_doc = self.env.company.fiscal_dummy_id
@@ -222,7 +222,7 @@ class AccountMoveLine(models.Model):
 
         return lines
 
-    def write(self, values):
+    def TODOwrite(self, values):
         dummy_doc = self.env.company.fiscal_dummy_id
         dummy_line = fields.first(dummy_doc.fiscal_line_ids)
         non_dummy = self.filtered(lambda l: l.fiscal_document_line_id != dummy_line)
@@ -300,7 +300,7 @@ class AccountMoveLine(models.Model):
     # for now the method for companies in Brazil brings an empty result.
     # You can correctly map this behavior later.
     @api.model
-    def _get_fields_onchange_balance_model(
+    def TODO_get_fields_onchange_balance_model(
         self,
         quantity,
         discount,
@@ -474,7 +474,7 @@ class AccountMoveLine(models.Model):
         return super()._onchange_mark_recompute_taxes()
 
     @api.model
-    def _get_fields_onchange_subtotal_model(
+    def TODO_get_fields_onchange_subtotal_model(
         self, price_subtotal, move_type, currency, company, date
     ):
 
@@ -514,7 +514,8 @@ class AccountMoveLine(models.Model):
         "price_unit",
         "tax_ids",
     )
-    def _onchange_price_subtotal(self):
+    def TODO_onchange_price_subtotal(self):
+        return
         # Overridden to replace the method that calculates the amount_currency, debit
         # and credit. As this method is called manually in some places to guarantee
         # the calculation of the balance, that's why we prefer not to make a
@@ -528,7 +529,7 @@ class AccountMoveLine(models.Model):
             line.update(line._get_price_total_and_subtotal())
             line.update(line._get_amount_credit_debit())
 
-    def _get_amount_credit_debit(
+    def TODO_get_amount_credit_debit(
         self,
         move_id=None,
         exclude_from_invoice_tab=None,
