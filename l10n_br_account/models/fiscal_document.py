@@ -26,11 +26,13 @@ class FiscalDocument(models.Model):
     # proxy fields to enable writing the related (shadowed) fields
     # to the fiscal document from the account.move through the _inherits system
     # despite they have the same names.
-    fiscal_partner_id = fields.Many2one(related="partner_id")
-    fiscal_company_id = fields.Many2one(related="company_id")
-    fiscal_currency_id = fields.Many2one(related="currency_id")
-    fiscal_partner_shipping_id = fields.Many2one(related="partner_shipping_id")
-    fiscal_user_id = fields.Many2one(related="user_id")
+    fiscal_partner_id = fields.Many2one(related="partner_id", readonly=False)
+    fiscal_company_id = fields.Many2one(related="company_id", readonly=False)
+    fiscal_currency_id = fields.Many2one(related="currency_id", readonly=False)
+    fiscal_partner_shipping_id = fields.Many2one(
+        related="partner_shipping_id", readonly=False
+    )
+    fiscal_user_id = fields.Many2one(related="user_id", readonly=False)
 
     def write(self, vals):
         if self.document_type_id:

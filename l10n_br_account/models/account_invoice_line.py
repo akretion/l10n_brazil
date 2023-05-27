@@ -7,21 +7,23 @@ from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 # These fields have the same name in account.move.line
-# and l10n_br_fiscal.document.line.mixin. So they wouldn't get updated
+# and l10n_br_fiscal.document.line. So they wouldn't get updated
 # by the _inherits system. An alternative would be changing their name
 # in l10n_br_fiscal but that would make the code unreadable and fiscal mixin
 # methods would fail to do what we expect from them in the Odoo objects
 # where they are injected.
+# Fields that are related in l10n_br_fiscal.document.line like partner_id or company_id
+# don't need to be written through the account.move.line write.
 SHADOWED_FIELDS = [
     "name",
-    "partner_id",
-    "company_id",
-    "currency_id",
     "product_id",
     "uom_id",
     "quantity",
     "price_unit",
 ]
+
+ACCOUNTING_FIELDS = ("debit", "credit", "amount_currency")
+BUSINESS_FIELDS = ("price_unit", "quantity", "discount", "tax_ids")
 
 
 class AccountMoveLine(models.Model):
@@ -145,17 +147,8 @@ class AccountMoveLine(models.Model):
                 if vals.get(field):
                     vals["fiscal_%s" % (field,)] = vals[field]
 
-    def _prepare_shadowed_fields_dict(self, default=False):
-        self.ensure_one()
-        vals = self._convert_to_write(self.read(self._shadowed_fields())[0])
-        if default:  # in case you want to use new rather than write later
-            return {"default_%s" % (k,): vals[k] for k in vals.keys()}
-        return vals
-
     @api.model_create_multi
     def create(self, vals_list):
-        ACCOUNTING_FIELDS = ("debit", "credit", "amount_currency")
-        BUSINESS_FIELDS = ("price_unit", "quantity", "discount", "tax_ids")
         dummy_doc = self.env.company.fiscal_dummy_id
         dummy_line = fields.first(dummy_doc.fiscal_line_ids)
         for values in vals_list:
@@ -221,13 +214,15 @@ class AccountMoveLine(models.Model):
                     )
                 )
         self._inject_shadowed_fields(vals_list)
-        lines = super().create(vals_list)
-        return lines
+        return super().create(vals_list)
 
     def write(self, values):
+        shadowed_fiscal_vals = {}
+        shadowed_fiscal_vals2 = {}
         dummy_doc = self.env.company.fiscal_dummy_id
         dummy_line = fields.first(dummy_doc.fiscal_line_ids)
         non_dummy = self.filtered(lambda l: l.fiscal_document_line_id != dummy_line)
+        self._inject_shadowed_fields([values])
         if values.get("move_id") and len(non_dummy) == len(self):
             # we can write the document_id in all lines
             values["document_id"] = (
@@ -251,13 +246,7 @@ class AccountMoveLine(models.Model):
                 raise UserError(
                     _("You cannot edit an invoice related to a withholding entry")
                 )
-            if line.fiscal_document_line_id != dummy_line:
-                shadowed_fiscal_vals = line._prepare_shadowed_fields_dict()
-                line.fiscal_document_line_id.write(shadowed_fiscal_vals)
 
-        ACCOUNTING_FIELDS = ("debit", "credit", "amount_currency")
-        BUSINESS_FIELDS = ("price_unit", "quantity", "discount", "tax_ids")
-        for line in self:
             cleaned_vals = line.move_id._cleanup_write_orm_values(line, values)
             if not cleaned_vals:
                 continue
