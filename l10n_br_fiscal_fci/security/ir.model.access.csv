@@ -1,0 +1,5 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+"fiscal_fci_user","Fiscal Import content sheet for User","model_l10n_br_fiscal_fci","base.group_user",1,0,0,0
+"fiscal_fci_manager","Fiscal Import content sheet for Manager","model_l10n_br_fiscal_fci","l10n_br_fiscal_fci.group_manager",1,1,1,1
+"fiscal_fci_line_user","Fiscal Import content sheet for User","model_l10n_br_fiscal_fci_line","base.group_user",1,0,0,0
+"fiscal_fci_line_manager","Fiscal Import content sheet for Manager","model_l10n_br_fiscal_fci_line","l10n_br_fiscal_fci.group_manager",1,1,1,1

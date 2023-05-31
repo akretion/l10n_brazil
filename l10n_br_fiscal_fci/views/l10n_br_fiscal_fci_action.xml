@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- FCI -->
+    <record id="fci_action" model="ir.actions.act_window">
+        <field name="name">FCI</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">l10n_br_fiscal.fci</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="fci_tree"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+              Add a new FCI
+            </p><p>
+              A FCI is necessary to imported products.
+            </p>
+        </field>
+    </record>
+
+    <!-- FCI Line -->
+    <record id="fci_line_action" model="ir.actions.act_window">
+        <field name="name">FCI Line</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">l10n_br_fiscal.fci.line</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="fci_line_tree"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+              Add a new FCI Line
+            </p><p>
+              A FCI line is necessary to imported products.
+            </p>
+        </field>
+    </record>
+
+</odoo>

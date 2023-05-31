@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="fci_line_search" model="ir.ui.view">
+      <field name="name">l10n_br_fiscal_fci.line.search</field>
+      <field name="model">l10n_br_fiscal.fci.line</field>
+        <field name="arch" type="xml">
+            <search string="FCI Line">
+                <!--<field name="product_id"/>
+                <field name="product_tmpl_id"/>-->
+                <field name="name"/>
+                <field name="tag_name"/>
+                <field name="hash_code"/>
+                <field name="ncm_code"/>
+                <field name="gtin_code"/>
+                <field name="fci_id"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="fci_line_tree" model="ir.ui.view">
+      <field name="name">l10n_br_fiscal_fci.line.tree</field>
+      <field name="model">l10n_br_fiscal.fci.line</field>
+        <field name="arch" type="xml">
+            <tree>
+                <!--<field name="product_tmpl_id" />
+                <field name="product_id" />-->
+                <field name="fci_id" />
+                <field name="name" />
+                <field name="tag_name" />
+                <field name="hash_code" />
+                <field name="import_content_percent" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="fci_line_form" model="ir.ui.view">
+        <field name="name">l10n_br_fiscal_fci.line.form</field>
+        <field name="model">l10n_br_fiscal.fci.line</field>
+        <field name="arch" type="xml">
+            <form string="FCI Line">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" class="h5"/>
+                            <field name="tag_name" class="h5"/>
+                            <field name="uom_id" />
+                            <field name="hash_code" class="h5"/>
+                            <field name="company_id" />
+                        </group>
+                        <group>
+                            <field name="fci_id" />
+                            <field name="ncm_code" />
+                            <field name="gtin_code" />
+                            <div class="o_row" colspan="4">
+                              <group>
+                                  <group>
+                                      <field name="amount_total_outgoing"/>
+                                      <field name="amount_total_imported"/>
+                                      <field name="import_content_percent"/>
+                                  </group>
+                                  <group></group>
+                              </group>
+                            </div>
+                        </group>
+                    </group>
+                    <field name="product_ids" nolabel="1" widget="many2many" options="{'no_create': True}" />
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

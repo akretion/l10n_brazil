@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- FCI -->
+  <menuitem id="fci_menu" action="fci_action" name="FCI" parent="l10n_br_fiscal.product_service_menu" groups="l10n_br_fiscal_fci.group_manager" sequence="30"/>
+
+  <!-- FCI Line -->
+  <menuitem id="fci_line_menu" action="fci_line_action" name="FCI Line" parent="l10n_br_fiscal.product_service_menu" groups="l10n_br_fiscal_fci.group_manager" sequence="40"/>
+
+</odoo>

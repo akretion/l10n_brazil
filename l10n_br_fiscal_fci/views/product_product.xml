@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="product_product_from" model="ir.ui.view">
+        <field name="name">l10n_br_fiscal_fci.product.form</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="l10n_br_fiscal.product_form"/>
+        <field name="arch" type="xml">
+            <field name="nbs_id" position="after">
+                <field name="fci_id" attrs="{'invisible': [('fiscal_type', '=', '09')]}" options="{'no_create': True, 'no_create_edit': True}"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>
