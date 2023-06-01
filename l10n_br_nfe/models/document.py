@@ -788,12 +788,15 @@ class NFe(spec_models.StackedModel):
             return signed_nfe
 
         for record in self.filtered(filter_processador_edoc_nfe):
+            if self.xml_error_message:
+                return
+
             edoc_binding = record.serialize()[0]
             record._processador()
             xml_data = self._render_edoc(edoc_binding)
             #            signed_xml_etree = sign_nfe(xml_data)
             signed_xml_etree = etree.fromstring(xml_data.encode())
-            # self._valida_xml(signed_xml_etree)
+            self._valida_xml(signed_xml_etree)
             signed_xml_data = etree.tostring(
                 signed_xml_etree,
                 method="c14n2",
