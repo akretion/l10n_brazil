@@ -92,6 +92,15 @@ class AccountMove(models.Model):
         ondelete="cascade",
     )
 
+    fiscal_document_ids = fields.Many2one(
+        comodel_name="l10n_br_fiscal.document",
+        string="Fiscal Documents",
+        compute="_compute_fiscal_document_ids",
+        help="""In some rare cases (NFS-e, CT-e...) a single account.move
+        may have several different fiscal documents related to its account.move.lines.
+        """
+    )
+
     fiscal_operation_type = fields.Selection(
         selection=FISCAL_IN_OUT_ALL,
         related=None,
@@ -312,6 +321,7 @@ class AccountMove(models.Model):
 
     def write(self, values):
         self._inject_shadowed_fields([values])
+            # TODO if values.keys() in fiscal doc fields and len(fiscal_document_ids) > 1 raise or write in other fiscal docs
         result = super().write(values)
         return result
 
@@ -469,23 +479,22 @@ class AccountMove(models.Model):
         return action
 
     def button_draft(self):
-        for i in self.filtered(lambda d: d.document_type_id):
-            if i.state_edoc == SITUACAO_EDOC_CANCELADA:
-                if i.issuer == DOCUMENT_ISSUER_COMPANY:
+        for invoice in self.filtered(lambda d: d.document_type_id):
+            if invoice.state_edoc == SITUACAO_EDOC_CANCELADA:
+                if invoice.issuer == DOCUMENT_ISSUER_COMPANY:
                     raise UserError(
                         _(
                             "You can't set this document number: {} to draft "
                             "because this document is cancelled in SEFAZ"
-                        ).format(i.document_number)
+                        ).format(invoice.document_number)
                     )
-            if i.state_edoc != SITUACAO_EDOC_EM_DIGITACAO:
-                i.fiscal_document_id.action_document_back2draft()
+            docs = invoice.fiscal_document_ids.filtered(lambda d: d.state_edoc != SITUACAO_EDOC_EM_DIGITACAO)
+            docs.action_document_back2draft()
         return super().button_draft()
 
     def action_document_send(self):
-        invoices = self.filtered(lambda d: d.document_type_id)
-        if invoices:
-            invoices.mapped("fiscal_document_id").action_document_send()
+        for invoice in self.filtered(lambda d: d.document_type_id):
+            invoice.fiscal_document_ids.action_document_send()
             # FIXME: na migração para a v14 foi permitido o post antes do envio
             #  para destravar a migração, mas poderia ser cogitado de obrigar a
             #  transmissão antes do post novamente como na v12.
@@ -493,23 +502,29 @@ class AccountMove(models.Model):
             #     invoice.move_id.post(invoice=invoice)
 
     def action_document_cancel(self):
-        for i in self.filtered(lambda d: d.document_type_id):
-            return i.fiscal_document_id.action_document_cancel()
+        for invoice in self.filtered(lambda d: d.document_type_id):
+            if len(invoice.fiscal_document_ids) > 1:
+                raise UserError(_("More than 1 fiscal document! You should open the fiscal view and cancel them 1 by 1."))
+            return invoice.fiscal_document_id.action_document_cancel()
 
     def action_document_correction(self):
-        for i in self.filtered(lambda d: d.document_type_id):
-            return i.fiscal_document_id.action_document_correction()
+        for invoice in self.filtered(lambda d: d.document_type_id):
+            if len(invoice.fiscal_document_ids) > 1:
+                raise UserError(_("More than 1 fiscal document! You should open the fiscal view and correct them 1 by 1."))
+            return invoice.fiscal_document_id.action_document_correction()
 
     def action_document_invalidate(self):
-        for i in self.filtered(lambda d: d.document_type_id):
-            return i.fiscal_document_id.action_document_invalidate()
+        for invoice in self.filtered(lambda d: d.document_type_id):
+            if len(invoice.fiscal_document_ids) > 1:
+                raise UserError(_("More than 1 fiscal document! You should open the fiscal view and invalidate them 1 by 1."))
+            return invoice.fiscal_document_id.action_document_invalidate()
 
     def action_document_back2draft(self):
         """Sets fiscal document to draft state and cancel and set to draft
         the related invoice for both documents remain equivalent state."""
-        for i in self.filtered(lambda d: d.document_type_id):
-            i.button_cancel()
-            i.button_draft()
+        for invoice in self.filtered(lambda d: d.document_type_id):
+            invoice.button_cancel()
+            invoice.button_draft()
 
     def action_post(self):
         result = super().action_post()
@@ -543,10 +558,14 @@ class AccountMove(models.Model):
 
     def view_xml(self):
         self.ensure_one()
+        if len(invoice.fiscal_document_ids) > 1:
+            pass  # TODO open tree view
         return self.fiscal_document_id.view_xml()
 
     def view_pdf(self):
         self.ensure_one()
+        if len(invoice.fiscal_document_ids) > 1:
+            pass  # TODO
         return self.fiscal_document_id.view_pdf()
 
     def action_send_email(self):

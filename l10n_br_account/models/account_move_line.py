@@ -155,7 +155,7 @@ class AccountMoveLine(models.Model):
     def create(self, vals_list):
         for values in vals_list:
             move_id = self.env["account.move"].browse(values["move_id"])
-            fiscal_doc_id = move_id.fiscal_document_id.id
+            fiscal_doc_id = move_id.fiscal_document_id.id  # TODO or values.get("fiscal_document_id")
 
             if not fiscal_doc_id or values.get("exclude_from_invoice_tab"):
                 values["fiscal_document_line_id"] = False
