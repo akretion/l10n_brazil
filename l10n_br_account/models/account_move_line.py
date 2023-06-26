@@ -155,7 +155,7 @@ class AccountMoveLine(models.Model):
             move_id = self.env["account.move"].browse(values["move_id"])
             fiscal_doc_id = move_id.fiscal_document_id.id
 
-            if fiscal_doc_id == dummy_doc.id or values.get("exclude_from_invoice_tab"):
+            if fiscal_doc_id in (dummy_doc.id, False) or values.get("exclude_from_invoice_tab"):
                 if len(dummy_line) < 1:
                     raise UserError(
                         _(

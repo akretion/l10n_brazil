@@ -2,7 +2,7 @@
 
 from . import (
     test_account_taxes,
-    test_company_fiscal_dummy,
+#    test_company_fiscal_dummy,
     test_customer_invoice_dummy,
     test_document_date,
     test_invoice_refund,

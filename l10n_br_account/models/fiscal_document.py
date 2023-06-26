@@ -126,12 +126,19 @@ class FiscalDocument(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        self.env.cr.execute("alter table account_move alter column fiscal_document_id drop not null;")
         # OVERRIDE
         # force creation of fiscal_document_line only when creating an AML record
         # In order not to affect the creation of the dummy document, a test was included
         # that verifies that the ACTIVE field is not False. As the main characteristic
         # of the dummy document is the ACTIVE field is False
+        records = [] 
         for values in vals_list:
-            if values.get("fiscal_line_ids") and values.get("active") is not False:
+            if not values.get("document_type_id") and not values.get("document_serie_id"):
+                # means we will skip the fiscal document creation
+                records.append(self.env["l10n_br_fiscal.document"].new())
+                continue
+            if values.get("fiscal_line_ids") and values.get("active") is not False:  # TODO can we remove the active test?
                 values.update({"fiscal_line_ids": False})
-        return super().create(vals_list)
+            records.append(super().create(values))  # TODO repair batch create
+        return records
