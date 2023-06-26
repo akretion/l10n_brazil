@@ -206,7 +206,7 @@ class AccountMoveLine(models.Model):
         return super().create(vals_list)
 
     def write(self, values):
-        non_dummy = self.filtered(lambda l: l.fiscal_document_line_id != False)
+        non_dummy = self.filtered(lambda l: l.fiscal_document_line_id)
         self._inject_shadowed_fields([values])
         if values.get("move_id") and len(non_dummy) == len(self):
             # we can write the document_id in all lines

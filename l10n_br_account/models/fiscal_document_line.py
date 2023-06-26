@@ -25,13 +25,12 @@ class FiscalDocumentLine(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        # TODO move this query to init/_auto_init; however it is not trivial
         self.env.cr.execute(
-            "alter table account_move_line alter column fiscal_document_Line_id drop not null;"
-        )  # FIXME move to _auto_init
+            "alter table account_move_line alter column fiscal_document_line_id drop not null;"
+        )
         records = []
         for values in vals_list:
-            if values.get("document_id") and not isinstance(
-                values.get("document_id"), models.NewId
-            ):
+            if values.get("document_id"):
                 records.append(super().create(values))  # TODO repair batch create
         return records

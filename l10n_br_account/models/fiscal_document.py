@@ -106,9 +106,10 @@ class FiscalDocument(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        # TODO move this query to init/_auto_init; however it is not trivial
         self.env.cr.execute(
             "alter table account_move alter column fiscal_document_id drop not null;"
-        )  # FIXME move to _auto_init
+        )
         # OVERRIDE
         # force creation of fiscal_document_line only when creating an AML record
         # In order not to affect the creation of the dummy document, a test was included
