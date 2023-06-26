@@ -85,16 +85,16 @@ class ResCompany(models.Model):
         the fiscal dummy is passed without a company_id and updated
         after it is created.
         """
-        dummy_doc = (
-            self.env["l10n_br_fiscal.document"]
-            .sudo()
-            .create(self._prepare_create_fiscal_dummy_doc())
-        )
-        for vals in vals_list:
-            vals.update({"fiscal_dummy_id": dummy_doc.id})
+#        dummy_doc = (
+#            self.env["l10n_br_fiscal.document"]
+#            .sudo()
+#            .create(self._prepare_create_fiscal_dummy_doc())
+#        )
+#        for vals in vals_list:
+#            vals.update({"fiscal_dummy_id": dummy_doc.id})
         company = super().create(vals_list)
-        dummy_doc.company_id = company
-        dummy_doc.fiscal_line_ids.company_id = company
+#        dummy_doc.company_id = company
+#        dummy_doc.fiscal_line_ids.company_id = company
         return company
 
     @api.model
