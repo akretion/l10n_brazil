@@ -3,7 +3,6 @@
 
 from odoo import SUPERUSER_ID, _, api
 from odoo.exceptions import UserError
-from odoo.tools.sql import column_exists, create_column
 
 
 def pre_init_hook(cr):
