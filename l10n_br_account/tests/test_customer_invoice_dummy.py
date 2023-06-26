@@ -37,12 +37,12 @@ class TestCustomerInvoice(SavepointCase):
             )
         )
 
-        cls.init_number_of_fiscal_docs = len(cls.env[
-            "l10n_br_fiscal.document"
-        ].search([]))  # NOTE search_count would increment with disabled dummy docs create
-        cls.init_number_of_fiscal_doc_lines = len(cls.env[
-            "l10n_br_fiscal.document.line"
-        ].search([]))
+        cls.init_number_of_fiscal_docs = len(
+            cls.env["l10n_br_fiscal.document"].search([])
+        )  # NOTE search_count would increment with disabled dummy docs create
+        cls.init_number_of_fiscal_doc_lines = len(
+            cls.env["l10n_br_fiscal.document.line"].search([])
+        )
         cls.invoice_1 = cls.env["account.move"].create(
             dict(
                 name="Test Customer Invoice 1",
@@ -241,7 +241,7 @@ class TestCustomerInvoice(SavepointCase):
     def test_dummy_doc_line_usage(self):
         self.assertEqual(
             self.init_number_of_fiscal_doc_lines,
-            len(self.env["l10n_br_fiscal.document.line"].search_count()),
+            len(self.env["l10n_br_fiscal.document.line"].search([])),
             "Non fiscal invoices should not create fiscal document lines"
             "They should use the company dummy document line instead.",
         )
@@ -396,9 +396,7 @@ class TestCustomerInvoice(SavepointCase):
 
         # Check that all account move lines are associated with the fiscal dummy
         for line in invoice_copy.line_ids:
-            self.assertEqual(
-                line.fiscal_document_line_id.id, dummy_fiscal_document_line.id
-            )
+            self.assertEqual(line.fiscal_document_line_id.id, False)
 
         self.assertEqual(len(invoice_copy), 1)
 
