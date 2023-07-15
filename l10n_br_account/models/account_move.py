@@ -108,17 +108,17 @@ class AccountMove(models.Model):
                 )
 
     def _compute_fiscal_operation_type(self):
-        for inv in self:
-            if inv.move_type == "entry":
+        for move in self:
+            if move.move_type == "entry":
                 # if it is a Journal Entry there is nothing to do.
-                inv.fiscal_operation_type = False
+                move.fiscal_operation_type = False
                 continue
-            if inv.fiscal_operation_id:
-                inv.fiscal_operation_type = (
-                    inv.fiscal_operation_id.fiscal_operation_type
+            if move.fiscal_operation_id:
+                move.fiscal_operation_type = (
+                    move.fiscal_operation_id.fiscal_operation_type
                 )
             else:
-                inv.fiscal_operation_type = MOVE_TO_OPERATION[inv.move_type]
+                move.fiscal_operation_type = MOVE_TO_OPERATION[move.move_type]
 
     def _get_amount_lines(self):
         """Get object lines instaces used to compute fields"""
@@ -468,23 +468,23 @@ class AccountMove(models.Model):
         return action
 
     def button_draft(self):
-        for i in self.filtered(lambda d: d.document_type_id):
-            if i.state_edoc == SITUACAO_EDOC_CANCELADA:
-                if i.issuer == DOCUMENT_ISSUER_COMPANY:
+        for move in self.filtered(lambda d: d.document_type_id):
+            if move.state_edoc == SITUACAO_EDOC_CANCELADA:
+                if move.issuer == DOCUMENT_ISSUER_COMPANY:
                     raise UserError(
                         _(
                             "You can't set this document number: {} to draft "
                             "because this document is cancelled in SEFAZ"
-                        ).format(i.document_number)
+                        ).format(move.document_number)
                     )
-            if i.state_edoc != SITUACAO_EDOC_EM_DIGITACAO:
-                i.fiscal_document_id.action_document_back2draft()
+            move.fiscal_document_ids.filtered(
+                lambda d: d.state_edoc != SITUACAO_EDOC_EM_DIGITACAO
+            ).action_document_back2draft()
         return super().button_draft()
 
     def action_document_send(self):
-        invoices = self.filtered(lambda d: d.document_type_id)
-        if invoices:
-            invoices.mapped("fiscal_document_id").action_document_send()
+        for move in self.filtered(lambda d: d.document_type_id):
+            move.fiscal_document_ids.action_document_send()
             # FIXME: na migração para a v14 foi permitido o post antes do envio
             #  para destravar a migração, mas poderia ser cogitado de obrigar a
             #  transmissão antes do post novamente como na v12.
@@ -492,23 +492,23 @@ class AccountMove(models.Model):
             #     invoice.move_id.post(invoice=invoice)
 
     def action_document_cancel(self):
-        for i in self.filtered(lambda d: d.document_type_id):
-            return i.fiscal_document_id.action_document_cancel()
+        for move in self.filtered(lambda d: d.document_type_id):
+            return move.fiscal_document_id.action_document_cancel()
 
     def action_document_correction(self):
-        for i in self.filtered(lambda d: d.document_type_id):
-            return i.fiscal_document_id.action_document_correction()
+        for move in self.filtered(lambda d: d.document_type_id):
+            return move.fiscal_document_id.action_document_correction()
 
     def action_document_invalidate(self):
-        for i in self.filtered(lambda d: d.document_type_id):
-            return i.fiscal_document_id.action_document_invalidate()
+        for move in self.filtered(lambda d: d.document_type_id):
+            return move.fiscal_document_id.action_document_invalidate()
 
     def action_document_back2draft(self):
         """Sets fiscal document to draft state and cancel and set to draft
         the related invoice for both documents remain equivalent state."""
-        for i in self.filtered(lambda d: d.document_type_id):
-            i.button_cancel()
-            i.button_draft()
+        for move in self.filtered(lambda d: d.document_type_id):
+            move.button_cancel()
+            move.button_draft()
 
     def action_post(self):
         result = super().action_post()
@@ -631,26 +631,26 @@ class AccountMove(models.Model):
         }
         return values
 
-    def _prepare_wh_invoice_line(self, invoice, move_line):
+    def _prepare_wh_invoice_line(self, move, move_line):
         values = {
             "name": move_line.name,
             "quantity": move_line.quantity,
             "uom_id": move_line.product_uom_id,
             "price_unit": abs(move_line.balance),
-            "move_id": invoice.id,
+            "move_id": move.id,
             "account_id": move_line.account_id.id,
             "wh_move_line_id": move_line.id,
             "account_analytic_id": move_line.analytic_account_id.id,
         }
         return values
 
-    def _finalize_invoices(self, invoices):
-        for invoice in invoices:
-            invoice.compute_taxes()
-            for line in invoice.line_ids:
+    def _finalize_invoices(self, moves):
+        for move in moves:
+            move.compute_taxes()
+            for line in move.line_ids:
                 # Use additional field helper function (for account extensions)
-                line._set_additional_fields(invoice)
-            invoice._onchange_cash_rounding()
+                line._set_additional_fields(move)
+            move._onchange_cash_rounding()
 
     def create_wh_invoices(self):
         for move in self:
@@ -663,28 +663,28 @@ class AccountMove(models.Model):
                 if account_tax_group and account_tax_group.fiscal_tax_group_id:
                     fiscal_group = account_tax_group.fiscal_tax_group_id
                     if fiscal_group.tax_withholding:
-                        invoice = self.env["account.move"].create(
+                        wh_move = self.env["account.move"].create(
                             self._prepare_wh_invoice(line, fiscal_group)
                         )
 
                         self.env["account.move.line"].create(
-                            self._prepare_wh_invoice_line(invoice, line)
+                            self._prepare_wh_invoice_line(wh_move, line)
                         )
 
-                        self._finalize_invoices(invoice)
-                        invoice.action_post()
+                        self._finalize_invoices(wh_move)
+                        wh_move.action_post()
 
     def _withholding_validate(self):
         for m in self:
-            invoices = (
+            moves = (
                 self.env["account.move.line"]
                 .search([("wh_move_line_id", "in", m.mapped("line_ids").ids)])
                 .mapped("move_id")
             )
-            invoices.filtered(lambda i: i.state == "open").button_cancel()
-            invoices.filtered(lambda i: i.state == "cancel").button_draft()
-            invoices.invalidate_cache()
-            invoices.filtered(lambda i: i.state == "draft").unlink()
+            moves.filtered(lambda i: i.state == "open").button_cancel()
+            moves.filtered(lambda i: i.state == "cancel").button_draft()
+            moves.invalidate_cache()
+            moves.filtered(lambda i: i.state == "draft").unlink()
 
     def button_cancel(self):
         for doc in self.filtered(lambda d: d.document_type_id):
