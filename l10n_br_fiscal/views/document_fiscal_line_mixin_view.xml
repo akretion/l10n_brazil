@@ -35,7 +35,6 @@
           <page name="fiscal_taxes" string="Taxes">
               <group>
                     <field name="tax_framework" invisible="1" />
-
               <field
                                 name="tax_icms_or_issqn"
                                 force_save="1"

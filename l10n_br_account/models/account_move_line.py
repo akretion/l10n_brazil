@@ -446,16 +446,25 @@ class AccountMoveLine(models.Model):
     @api.onchange("fiscal_document_line_id")
     def _onchange_fiscal_document_line_id(self):
         if self.fiscal_document_line_id:
-            fiscal_line_data = self.fiscal_document_line_id.read(
-                self._shadowed_fields()
-            )[0]
-            print("rrr", fiscal_line_data)
-            for k, v in fiscal_line_data.items():
+            print(
+                "OOOOOOOO",
+                self.fiscal_document_line_id,
+                self.fiscal_document_line_id.product_id,
+            )
+
+        if self.fiscal_document_line_id and (
+            not isinstance(self.fiscal_document_line_id.id, models.NewId)
+            or self.fiscal_document_line_id.id.origin
+        ):
+            for k in self._shadowed_fields():
+                v = getattr(self, k)
+                print("sssssssss", k, v)
                 if isinstance(v, tuple):  # m2o
                     setattr(self, k, v[0])
                 else:
                     setattr(self, k, v)
-                print("sssssssss", k, v)
+
+
 
     @api.onchange("fiscal_tax_ids")
     def _onchange_fiscal_tax_ids(self):

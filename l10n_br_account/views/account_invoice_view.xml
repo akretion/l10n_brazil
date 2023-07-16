@@ -148,6 +148,7 @@
                     options="{'no_create': True}"
                 />
                 <field name="document_type_id" invisible="1" />
+                <field name="fiscal_document_line_id" invisible="1" />
                 <field name="amount_tax_withholding" optional="hide" />
                 <field name="amount_tax_included" optional="hide" />
                 <field name="amount_tax_not_included" optional="hide" />
@@ -270,6 +271,8 @@
                     attrs="{'invisible': [('document_type_id', '=', False)]}"
                 />
                 <div>
+           <field name="fiscal_document_line_id" />
+ 
                     <field
                         name="fiscal_quantity"
                         class="oe_inline"

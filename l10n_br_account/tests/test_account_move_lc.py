@@ -62,6 +62,104 @@ class AccountMoveLucroPresumido(AccountMoveBRCommon):
             fiscal_operation_lines=[cls.env.ref("l10n_br_fiscal.fo_venda_venda")],
         )
 
+        fiscal_line_vals1 = [
+            (
+                0,
+                0,
+                {
+                    "product_id": cls.product_a.id,
+                    "quantity": 1,
+                    "price_unit": 1000.0,
+                    "fiscal_operation_line_id": cls.env.ref("l10n_br_fiscal.fo_venda_venda").id,
+                },
+            )
+        ]
+
+        cls.fiscal_doc1_id = cls.env["l10n_br_fiscal.document"].create(
+            {
+                #                    "company_id": cls.company.id,
+                "document_serie_id": cls.env.ref(
+                    "l10n_br_fiscal.empresa_lc_document_55_serie_1"
+                ).id,
+                "fiscal_operation_id": cls.env.ref("l10n_br_fiscal.fo_venda").id,
+                "fiscal_line_ids": fiscal_line_vals1,
+            }
+        )
+        cls.fiscal_doc1_id._onchange_partner_id_fiscal()
+        cls.fiscal_doc1_id._onchange_fiscal_operation_id()
+        for line in cls.fiscal_doc1_id.fiscal_line_ids:
+            line._onchange_product_id_fiscal()
+            line._onchange_fiscal_operation_id()
+            line._onchange_fiscal_operation_line_id()
+            line._onchange_fiscal_taxes()
+            line._onchange_fiscal_tax_ids()
+
+        fiscal_line_vals2 = [
+            (
+                0,
+                0,
+                {
+                    "product_id": cls.product_b.id,
+                    "quantity": 2,
+                    "price_unit": 2000.0,
+                    "fiscal_operation_line_id": cls.env.ref("l10n_br_fiscal.fo_simples_remessa_simples_remessa").id,
+                },
+            )
+        ]
+
+        cls.fiscal_doc2_id = cls.env["l10n_br_fiscal.document"].create(
+            {
+                #                    "company_id": cls.company.id,
+                "document_serie_id": cls.env.ref(
+                    "l10n_br_fiscal.empresa_lc_document_55_serie_1"
+                ).id,
+                "fiscal_operation_id": cls.env.ref(
+                    "l10n_br_fiscal.fo_simples_remessa"
+                ).id,
+                "fiscal_line_ids": fiscal_line_vals2,
+            }
+        )
+        cls.fiscal_doc2_id._onchange_partner_id_fiscal()
+        cls.fiscal_doc2_id._onchange_fiscal_operation_id()
+        for line in cls.fiscal_doc2_id.fiscal_line_ids:
+            line._onchange_product_id_fiscal()
+            line._onchange_fiscal_operation_id()
+            line._onchange_fiscal_operation_line_id()
+            line._onchange_fiscal_taxes()
+            line._onchange_fiscal_tax_ids()
+
+
+        # TODO FIXME TODO FIXME
+        #
+        # we should use Form to fill the fiscal doc (onchanges)
+        # the _onchange_fiscal_document_line_id seems KO (NewId test)
+        #
+        # TODO FIXME TODO FIXME
+
+        cls.move_out_composite = cls.init_invoice(
+            "out_invoice",
+            products=[cls.product_a, cls.product_b],
+            fiscal_document_line_ids=[
+                cls.fiscal_doc1_id.fiscal_line_ids[0],
+                cls.fiscal_doc2_id.fiscal_line_ids[0],
+            ],
+        )
+        for l in cls.move_out_composite.invoice_line_ids:
+            l._onchange_product_id()
+            l._onchange_fiscal_operation_line_id()
+            l._onchange_fiscal_tax_ids()
+ 
+        for l in cls.move_out_composite.line_ids:
+            print(
+                "---------------",
+                l.name,
+                l.debit,
+                l.credit,
+                l.fiscal_document_line_id,
+                l.account_id.name,
+                l.product_id,
+            )
+
         cls.move_out_simples_remessa = cls.init_invoice(
             "out_invoice",
             products=[cls.product_a],

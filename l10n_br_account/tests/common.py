@@ -182,6 +182,7 @@ class AccountMoveBRCommon(AccountTestInvoicingCommon):
         document_serie_id=None,
         fiscal_operation=None,
         fiscal_operation_lines=None,
+        fiscal_document_line_ids=None,
         document_serie=None,
         document_number=None,
     ):
@@ -190,6 +191,8 @@ class AccountMoveBRCommon(AccountTestInvoicingCommon):
         """
         products = [] if products is None else products
         amounts = [] if amounts is None else amounts
+        fiscal_operation_lines = [False] * len(products) if fiscal_operation_lines is None else fiscal_operation_lines
+        fiscal_document_line_ids = [False] * len(products) if fiscal_document_line_ids is None else fiscal_document_line_ids
         move_form = Form(
             cls.env["account.move"].with_context(
                 default_move_type=move_type,
@@ -202,10 +205,12 @@ class AccountMoveBRCommon(AccountTestInvoicingCommon):
         move_form.currency_id = currency if currency else cls.company_data["currency"]
 
         # extra BR fiscal params:
-        move_form.document_type_id = document_type
+        if document_type:
+            move_form.document_type_id = document_type
         if document_serie_id is not None:
             move_form.document_serie_id = document_serie_id
-        move_form.fiscal_operation_id = fiscal_operation
+        if fiscal_operation:
+            move_form.fiscal_operation_id = fiscal_operation
         if document_number is not None:
             move_form.document_number = document_number
         if document_serie is not None:
@@ -216,7 +221,10 @@ class AccountMoveBRCommon(AccountTestInvoicingCommon):
                 line_form.product_id = product
 
                 # extra BR fiscal params:
-                line_form.fiscal_operation_line_id = fiscal_operation_lines[index]
+                if fiscal_operation_lines[index]:
+                    line_form.fiscal_operation_line_id = fiscal_operation_lines[index]
+                if fiscal_document_line_ids[index]:
+                    line_form.fiscal_document_line_id = fiscal_document_line_ids[index]
 
                 if taxes:
                     line_form.tax_ids.clear()
