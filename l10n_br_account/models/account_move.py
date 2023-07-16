@@ -91,6 +91,15 @@ class AccountMove(models.Model):
         ondelete="cascade",
     )
 
+    fiscal_document_ids = fields.One2many(
+        comodel_name="l10n_br_fiscal.document",
+        string="Fiscal Documents",
+        compute="_compute_fiscal_document_ids",
+        help="""In some rare cases (NFS-e, CT-e...) a single account.move
+        may have several different fiscal documents related to its account.move.lines.
+        """,
+    )
+
     fiscal_operation_type = fields.Selection(
         selection=FISCAL_IN_OUT_ALL,
         related=None,
@@ -107,6 +116,15 @@ class AccountMove(models.Model):
                     )
                 )
 
+    @api.depends("line_ids", "invoice_line_ids")
+    def _compute_fiscal_document_ids(self):
+        for move in self:
+            docs = set()
+            for line in move.invoice_line_ids:
+                docs.add(line.document_id.id)
+            move.fiscal_document_ids = list(docs)
+
+    @api.depends("move_type", "fiscal_operation_id")
     def _compute_fiscal_operation_type(self):
         for move in self:
             if move.move_type == "entry":
@@ -285,6 +303,20 @@ class AccountMove(models.Model):
 
     @api.model
     def _move_autocomplete_invoice_lines_create(self, vals_list):
+        fiscal_document_line_ids = {}
+        for idx1, move_val in enumerate(vals_list):
+            if "invoice_line_ids" in move_val:
+                fiscal_document_line_ids[idx1] = {}
+                for idx2, line_val in enumerate(move_val["invoice_line_ids"]):
+                    if (
+                        line_val[0] == 0
+                        and line_val[1] == 0
+                        and isinstance(line_val[2], dict)
+                    ):
+                        fiscal_document_line_ids[idx1][idx2] = line_val[2].get(
+                            "fiscal_document_line_id", False
+                        )
+
         new_vals_list = super(
             AccountMove, self.with_context(lines_compute_amounts=True)
         )._move_autocomplete_invoice_lines_create(vals_list)
@@ -292,7 +324,23 @@ class AccountMove(models.Model):
             if not vals.get("document_type_id"):
                 vals[
                     "fiscal_document_id"
-                ] = False  # self.env.company.fiscal_dummy_id.id
+                ] = False
+
+        for idx1, move_val in enumerate(new_vals_list):
+            if "line_ids" in move_val:
+                if fiscal_document_line_ids.get(idx1):
+                    idx2 = 0
+                    for line_val in move_val["line_ids"]:
+                        if (
+                            line_val[0] == 0
+                            and line_val[1] == 0
+                            and isinstance(line_val[2], dict)
+                        ):
+                            line_val[2][
+                                "fiscal_document_line_id"
+                            ] = fiscal_document_line_ids[idx1].get(idx2)
+                            idx2 += 1
+
         return new_vals_list
 
     def _move_autocomplete_invoice_lines_values(self):
@@ -311,6 +359,8 @@ class AccountMove(models.Model):
 
     def write(self, values):
         self._inject_shadowed_fields([values])
+        # TODO if values.keys() in fiscal doc fieldsand
+        # and len(fiscal_document_ids) > 1 raise or write in other fiscal docs
         result = super().write(values)
         return result
 
@@ -493,14 +543,32 @@ class AccountMove(models.Model):
 
     def action_document_cancel(self):
         for move in self.filtered(lambda d: d.document_type_id):
+            if len(move.fiscal_document_ids) > 1:
+                raise UserError(
+                    _(
+                        "More than 1 fiscal document! You should open the fiscal view and cancel them 1 by 1."
+                    )
+                )
             return move.fiscal_document_id.action_document_cancel()
 
     def action_document_correction(self):
         for move in self.filtered(lambda d: d.document_type_id):
+            if len(move.fiscal_document_ids) > 1:
+                raise UserError(
+                    _(
+                        "More than 1 fiscal document! You should open the fiscal view and correct them 1 by 1."
+                    )
+                )
             return move.fiscal_document_id.action_document_correction()
 
     def action_document_invalidate(self):
         for move in self.filtered(lambda d: d.document_type_id):
+            if len(move.fiscal_document_ids) > 1:
+                raise UserError(
+                    _(
+                        "More than 1 fiscal document! You should open the fiscal view and invalidate them 1 by 1."
+                    )
+                )
             return move.fiscal_document_id.action_document_invalidate()
 
     def action_document_back2draft(self):
@@ -542,10 +610,14 @@ class AccountMove(models.Model):
 
     def view_xml(self):
         self.ensure_one()
+        if len(self.fiscal_document_ids) > 1:
+            pass  # TODO open tree view
         return self.fiscal_document_id.view_xml()
 
     def view_pdf(self):
         self.ensure_one()
+        if len(self.fiscal_document_ids) > 1:
+            pass  # TODO
         return self.fiscal_document_id.view_pdf()
 
     def action_send_email(self):
