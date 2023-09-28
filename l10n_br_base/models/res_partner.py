@@ -30,8 +30,6 @@ class Partner(models.Model):
             partner.street = street
         return super(Partner, not_br_partner)._inverse_street_data()
 
-    vat = fields.Char(related="cnpj_cpf")
-
     is_accountant = fields.Boolean(string="Is accountant?")
 
     crc_code = fields.Char(string="CRC Code", size=18, unaccent=False)
@@ -110,6 +108,20 @@ class Partner(models.Model):
                     raise ValidationError(
                         _("There is already a partner record with this CPF/RG!")
                     )
+
+    @api.depends(
+        "cnpj_cpf", "is_company", "parent_id", "parent_id.vat", "commercial_partner_id"
+    )
+    def _compute_vat_from_cnpj_cpf(self):
+        for partner in self:
+            if partner.company_name and partner.vat:
+                continue
+            elif partner.commercial_partner_id.cnpj_cpf:
+                partner.vat = partner.commercial_partner_id.cnpj_cpf
+            elif partner.vat:
+                continue
+            else:
+                partner.vat = False
 
     @api.constrains("cnpj_cpf", "country_id")
     def _check_cnpj_cpf(self):
@@ -196,3 +208,19 @@ class Partner(models.Model):
         """Check if is a Brazilian Partner."""
         for record in self:
             record.is_br_partner = record._is_br_partner()
+
+    vat = fields.Char(compute="_compute_vat_from_cnpj_cpf", store=True)
+
+    def create_company(self):
+        self.ensure_one()
+        inscr_est = self.inscr_est
+        inscr_mun = self.inscr_mun
+        res = super().create_company()
+        if res:
+            parent = self.parent_id
+            if parent.country_id.code == "BR":
+                parent.legal_name = parent.name
+                parent.cnpj_cpf = parent.vat
+                parent.inscr_est = inscr_est
+                parent.inscr_mun = inscr_mun
+        return res
