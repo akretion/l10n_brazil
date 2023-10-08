@@ -7,12 +7,12 @@ from odoo import fields, models
 class PoXsdMixin(models.AbstractModel):
     _description = "Abstract Model for PO XSD"
     _name = "spec.mixin.poxsd"
-    _field_prefix = "poxsd10_"
-    _schema_name = "poxsd"
-    _schema_version = "1.0"
-    _odoo_module = "poxsd"
-    _spec_module = "odoo.addons.spec_driven_model.tests.spec_poxsd"
-    _binding_module = "odoo.addons.spec_driven_model.tests.purchase_order_lib"
+    _field_prefix = "poxsd10_"  # TODO from _spec_prefix func
+    _schema_name = "poxsd"      # TODO from __init__.py
+    _schema_version = "1.0"     # TODO from __init__.py
+    _odoo_module = "poxsd"                                                      # TODO with prefix
+    _spec_module = "odoo.addons.spec_driven_model.tests.spec_poxsd"             # TODO with prefix
+    _binding_module = "odoo.addons.spec_driven_model.tests.purchase_order_lib"  # TODO with prefix
 
     # TODO rename
     brl_currency_id = fields.Many2one(

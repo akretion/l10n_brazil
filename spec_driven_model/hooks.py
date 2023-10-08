@@ -1,6 +1,7 @@
 # Copyright (C) 2019-TODAY - Raphaël Valyi Akretion
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0.en.html).
 
+from importlib import import_module
 import inspect
 import logging
 import sys
@@ -79,7 +80,9 @@ def get_remaining_spec_models(cr, registry, module_name, spec_module):
         for i in cr.fetchall()
         if registry.get(i[0]) and not registry[i[0]]._abstract
     ]
-
+    # TODO use? for cls in models.MetaModel.module_to_models.get(module.name, []):
+    # cf odoo/modules/registry.py
+ 
     injected_models = set()
     for model in module_models:
         base_class = registry[model]
@@ -106,10 +109,13 @@ def get_remaining_spec_models(cr, registry, module_name, spec_module):
             injected_classes.add(c)
 
     for model in module_models:
+        mod = import_module(".".join(spec_module.split(".")[:-1]))
+        spec_prefix = model._spec_prefix(spec_schema=mod.spec_schema, spec_version=mod.spec_version)
         base_class = registry[model]
         # 2nd StackedModel classes, that we will visit
-        if hasattr(base_class, "_stacked"):
-            node = SpecModel._odoo_name_to_class(base_class._stacked, spec_module)
+        if hasattr(base_class, "%s_stacking_settings" % (spec_prefix,)):
+            stacking_settings = getattr(cls, "%s_stacking_settings" % (spec_prefix,))
+            node = SpecModel._odoo_name_to_class(stacking_settings["name"], spec_module)
 
             env = api.Environment(cr, SUPERUSER_ID, {})
             for (
@@ -118,7 +124,7 @@ def get_remaining_spec_models(cr, registry, module_name, spec_module):
                 _path,
                 _field_path,
                 _child_concrete,
-            ) in base_class._visit_stack(env, node):
+            ) in base_class._visit_stack(env, node, stacking_settings):
                 injected_classes.add(klass)
 
     all_spec_models = {

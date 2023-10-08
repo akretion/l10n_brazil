@@ -162,7 +162,7 @@ class AbstractSpecMixin(models.AbstractModel):
             )
         else:
             return (self[field_name] or self)._build_generateds(
-                class_obj._fields[field_name].comodel_name
+                class_name=class_obj._fields[field_name].comodel_name
             )
 
     def _export_one2many(self, field_name, class_obj=None):
@@ -170,7 +170,7 @@ class AbstractSpecMixin(models.AbstractModel):
         relational_data = []
         for relational_field in self[field_name]:
             field_data = relational_field._build_generateds(
-                class_obj._fields[field_name].comodel_name
+                class_name=class_obj._fields[field_name].comodel_name
             )
             relational_data.append(field_data)
         return relational_data
@@ -202,7 +202,7 @@ class AbstractSpecMixin(models.AbstractModel):
             ).isoformat("T")
         )
 
-    def _build_generateds(self, class_name=False):
+    def _build_generateds(self, spec_schema=None, spec_version=None, class_name=False):  # TODO _build_binding?
         """
         Iterate over an Odoo record and its m2o and o2m sub-records
         using a pre-order tree traversal and maps the Odoo record values
@@ -213,9 +213,11 @@ class AbstractSpecMixin(models.AbstractModel):
         sub binding instances already properly instanciated.
         """
         self.ensure_one()
+        self = self.with_context(self.env, spec_schema=spec_schema, spec_version=spec_version)
+        spec_prefix = self._spec_prefix(spec_schema=spec_schema, spec_version=spec_version)
         if not class_name:
-            if hasattr(self, "_stacked"):
-                class_name = self._stacked
+            if hasattr(self, "%s_stacking_settings" % (spec_prefix,)):
+                class_name = getattr(self, "%s_stacking_settings" % (spec_prefix,))["name"]
             else:
                 class_name = self._name
 
@@ -244,7 +246,7 @@ class AbstractSpecMixin(models.AbstractModel):
         self.ensure_one()
         result = []
 
-        if hasattr(self, "_stacked"):
+        if hasattr(self, "_stacked"):   # FIXME!
             binding_instance = self._build_generateds()
             if print_xml:
                 self._print_xml(binding_instance)
@@ -253,12 +255,12 @@ class AbstractSpecMixin(models.AbstractModel):
         else:
             spec_classes = self._get_spec_classes()
             for class_name in spec_classes:
-                binding_instance = self._build_generateds(class_name)
+                binding_instance = self._build_generateds(class_name=class_name)
                 if print:
                     self._print_xml(binding_instance)
                 result.append(binding_instance)
         return result
 
-    def export_ds(self):
+    def export_ds(self, spec_schema, spec_version):  # TODO change name -> export_binding!
         self.ensure_one()
-        return self.export_xml(print_xml=False)
+        return self.with_context(spec_schema=spec_schema, spec_version=spec_version).export_xml(print_xml=False)

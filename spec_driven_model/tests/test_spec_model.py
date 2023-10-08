@@ -78,7 +78,7 @@ class TestSpecModel(SavepointCase, FakeModelLoader):
     def test_stacked_model(self):
         po_fields_or_stacking = set(self.env["fake.purchase.order"]._fields.keys())
         po_fields_or_stacking.update(
-            set(self.env["fake.purchase.order"]._stacking_points.keys())
+            set(self.env["fake.purchase.order"].poxsd10_stacking_settings["mount_points"].keys())
         )
         self.assertTrue(
             po_fields_or_stacking.issuperset(
@@ -86,7 +86,7 @@ class TestSpecModel(SavepointCase, FakeModelLoader):
             )
         )
         self.assertEqual(
-            list(self.env["fake.purchase.order"]._stacking_points.keys()),
+            list(self.env["fake.purchase.order"].poxsd10_stacking_settings["mount_points"].keys()),
             ["poxsd10_items"],
         )
 
@@ -126,7 +126,7 @@ class TestSpecModel(SavepointCase, FakeModelLoader):
 
         # 2nd we serialize it into a binding object:
         # (that could be further XML serialized)
-        po_binding = po._build_generateds()
+        po_binding = po._build_generateds(spec_schema="poxsd", spec_version="10")
         self.assertEqual(po_binding.bill_to.name, "Wood Corner")
         self.assertEqual(po_binding.items.item[0].product_name, "Some product desc")
         self.assertEqual(po_binding.items.item[0].quantity, 42)
