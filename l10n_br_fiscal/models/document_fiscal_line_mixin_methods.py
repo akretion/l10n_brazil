@@ -291,6 +291,11 @@ class FiscalDocumentLineMixinMethods(models.AbstractModel):
             line.fiscal_tax_ids = fiscal_taxes + taxes
 
     def _update_taxes(self):
+        tax_calc = self.env.context.get(
+            "tax_calc_override"  # , self.fiscal_operation_line_id.tax_calc
+        )
+        if tax_calc == TAX_CALC_MANUAL:
+            return
         for line in self:
             compute_result = self._compute_taxes(line.fiscal_tax_ids)
             computed_taxes = compute_result.get("taxes", {})

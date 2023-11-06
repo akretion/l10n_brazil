@@ -19,6 +19,7 @@ from odoo.addons.l10n_br_fiscal.constants.fiscal import (
     SITUACAO_EDOC_AUTORIZADA,
     SITUACAO_EDOC_CANCELADA,
     SITUACAO_EDOC_EM_DIGITACAO,
+    TAX_CALC_MANUAL,
 )
 
 MOVE_TO_OPERATION = {
@@ -426,6 +427,23 @@ class AccountMove(models.Model):
             icms_origin=base_line.icms_origin,
             ind_final=base_line.ind_final,
         )
+        tax_calc = self.env.context.get(
+            "tax_calc_override"  # , base_line.fiscal_operation_line_id.tax_calc ?
+        )
+        if tax_calc == TAX_CALC_MANUAL:
+            # then force the manual base and amount taxes:
+            for tax_item in balance_taxes_res["taxes"]:
+                if not tax_item.get("fiscal_tax_id") and not isinstance(
+                    tax_item["fiscal_tax_id"], models.NewId
+                ):
+                    continue
+                tax_domain = (
+                    self.env["l10n_br_fiscal.tax"]
+                    .browse(tax_item["fiscal_tax_id"].origin)
+                    .tax_domain
+                )
+                tax_item["base"] = getattr(base_line, "%s_base" % (tax_domain,))
+                tax_item["amount"] = getattr(base_line, "%s_value" % (tax_domain,))
         return balance_taxes_res
 
     def _preprocess_taxes_map(self, taxes_map):
