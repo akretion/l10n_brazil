@@ -1,0 +1,9 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+"l10n_br_di_di_user","Import Customs Declaration User","model_l10n_br_di_di","l10n_br_di.group_user",1,0,0,0
+"l10n_br_di_di_manager","Import Customs Declaration Manager","model_l10n_br_di_di","l10n_br_di.group_user",1,1,1,1
+"l10n_br_di_line_user","Import Customs Declaration Line User","model_l10n_br_di_line","l10n_br_di.group_user",1,0,0,0
+"l10n_br_di_line_manager","Import Customs Declaration Line Manager","model_l10n_br_di_line","l10n_br_di.group_user",1,1,1,1
+"l10n_br_di_item_user","Import Customs Declaration Item User","model_l10n_br_di_item","l10n_br_di.group_user",1,0,0,0
+"l10n_br_di_item_manager","Import Customs Declaration Item Manager","model_l10n_br_di_item","l10n_br_di.group_user",1,1,1,1
+"l10n_br_di_currency_user","Customs Declaration Currency User","model_l10n_br_di_currency","l10n_br_di.group_user",1,0,0,0
+"l10n_br_di_currency_manager","Customs Declaration Currency Manager","model_l10n_br_di_currency","l10n_br_di.group_user",1,1,1,1

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <!-- Main Menu -->
+    <menuitem
+        id="customs_declaration_menu"
+        name="Customs Declaration"
+        groups="l10n_br_fiscal.group_user,l10n_br_fiscal.group_manager"
+        parent="l10n_br_fiscal.fiscal_menu"
+        sequence="30"
+    />
+
+
+    <!-- Import Customs Declaration -->
+    <menuitem
+        id="di_menu"
+        name="Import Customs Declartion"
+        groups="l10n_br_fiscal.group_user,l10n_br_fiscal.group_manager"
+        action="di_action"
+        parent="customs_declaration_menu"
+        sequence="0"
+    />
+
+</odoo>

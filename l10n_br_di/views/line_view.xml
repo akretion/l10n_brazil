@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <!-- <record id="import_customs_declaration_search" model="ir.ui.view">
+        <field name="name">l10n_br_foreign_trade.import.customs.declaration.search</field>
+        <field name="model">l10n_br_foreign_trade.import.customs.declaration</field>
+        <field name="arch" type="xml">
+            <search string="Import Customs Declaration">
+                <field name="name" />
+            </search>
+        </field>
+    </record>
+
+    <record id="import_customs_declaration_tree" model="ir.ui.view">
+        <field name="name">l10n_br_foreign_trade.import.customs.declaration.tree</field>
+        <field name="model">l10n_br_foreign_trade.import.customs.declaration</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="partner_importer_id" />
+                <field name="partner_acquirer_id" />
+            </tree>
+        </field>
+    </record> -->
+
+    <record id="line_form" model="ir.ui.view">
+        <field name="name">l10n_br_di.line.form</field>
+        <field name="model">l10n_br_di.line</field>
+        <field name="arch" type="xml">
+            <form string="Import Customs Declaration Line">
+                <sheet>
+                    <group name="general_infos" string="General Information">
+                        <field name="di_id" invisible="1" />
+                        <field name="line_number" />
+                        <field name="name" />
+                        <field name="manufacturer_id" />
+                        <field name="country_origin_id" />
+                        <field name="item_ids">
+                            <tree>
+                                <field name="item_sequence" />
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

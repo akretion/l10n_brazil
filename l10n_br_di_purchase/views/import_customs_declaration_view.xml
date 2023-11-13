@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="import_customs_declaration_search" model="ir.ui.view">
+        <field name="name">l10n_br_foreign_trade.import.customs.declaration.search</field>
+        <field name="model">l10n_br_foreign_trade.import.customs.declaration</field>
+        <field name="arch" type="xml">
+            <search string="Import Customs Declaration">
+                <field name="name" />
+            </search>
+        </field>
+    </record>
+
+    <record id="import_customs_declaration_tree" model="ir.ui.view">
+        <field name="name">l10n_br_foreign_trade.import.customs.declaration.tree</field>
+        <field name="model">l10n_br_foreign_trade.import.customs.declaration</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="partner_importer_id" />
+                <field name="partner_acquirer_id" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="import_customs_declaration_form" model="ir.ui.view">
+        <field name="name">l10n_br_foreign_trade.import.customs.declaration.form</field>
+        <field name="model">l10n_br_foreign_trade.import.customs.declaration</field>
+        <field name="arch" type="xml">
+            <form string="Import Customs Declaration">
+                <sheet>
+                    <field name="name" />
+                    <group name="general_infos" string="General Information">
+                        <field name="name" />
+                        <field name="date" />
+                    </group>
+                    <group name="partners" string="Partners">
+                        <field name="partner_importer_id" />
+                        <field name="partner_acquirer_id" />
+                        <field name="partner_procurator_id" />
+                    </group>
+                    <field name="currency_ids">
+                        <tree>
+                            <field name="currency_id" />
+                            <field name="currency_rate_id" invisible="1" />
+                            <field name="currency_date" />
+                            <field name="currency_rate" />
+                        </tree>
+                    </field>
+                    <field name="line_ids">
+                        <tree>
+                            <field name="name" />
+                            <field name="description" />
+                        </tree>
+                    </field>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" />
+                    <field name="activity_ids" widget="mail_activity" />
+                    <field name="message_ids" widget="mail_thread" />
+                </div>
+            </form>
+        </field>
+    </record>
+
+<!--
+
+            <form string="Import Customs Declaration">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button
+                            type="action"
+                            class="oe_stat_button"
+                            id="product_tmpl_button"
+                            icon="fa-bars"
+                            name="%(product.product_template_action_all)d"
+                            context="{'search_default_nbm_id': active_id}"
+                            attrs="{'invisible': [('product_tmpl_qty', '=', 0)]}"
+                        >
+                            <field
+                                string="Products"
+                                widget="statinfo"
+                                name="product_tmpl_qty"
+                            />
+                        </button>
+                    </div>
+                    <group>
+                        <field name="code" readonly="1" />
+                        <field name="name" readonly="1" />
+                    </group>
+                    <notebook>
+                        <page string="Related Produts" name="tax_product_tmpl">
+                            <field name="product_tmpl_ids" />
+                        </page>
+                        <page string="Related NCMs" name="ncms">
+                            <group name="ncms" string="NCMs">
+                                <label for="ncms" />
+                                <div class="o_row">
+                                    <field
+                                        name="ncms"
+                                        force_save="1"
+                                        class="oe_inline"
+                                    />
+                                    <button
+                                        name="action_search_ncms"
+                                        type="object"
+                                        class="oe_inline btn-sm btn-link mb4 fa fa-search oe_edit_only"
+                                        aria-label="Search NCMs"
+                                        title="Search NCMs"
+                                    />
+                                </div>
+                                <field
+                                    name="ncm_ids"
+                                    force_save="1"
+                                    nolabel="1"
+                                    colspan="2"
+                                />
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+-->
+</odoo>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <!-- Import Customs Declaration -->
+    <record id="di_action" model="ir.actions.act_window">
+        <field name="name">Import Customs Declaration</field>
+        <field name="res_model">l10n_br_di.di</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="di_tree" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+              Add a new Import Customs Declarations
+            </p>
+            <p>
+              Create fiscal import customs declarations.
+            </p>
+        </field>
+    </record>
+
+</odoo>
