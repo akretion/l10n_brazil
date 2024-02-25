@@ -533,10 +533,10 @@ class NFeLine(spec_models.StackedModel):
     # Grupo O. Imposto sobre Produtos Industrializados
     ##################################################
 
-    nfe40_choice3 = fields.Selection(
+    nfe40_choice_ipitrib_ipint = fields.Selection(
         selection=[("nfe40_IPITrib", "IPITrib"), ("nfe40_IPINT", "IPINT")],
         string="IPITrib ou IPINT",
-        compute="_compute_choice3",
+        compute="_compute_choice_ipitrib_ipint",
         store=True,
     )
 
@@ -570,12 +570,12 @@ class NFeLine(spec_models.StackedModel):
     ##########################
 
     @api.depends("ipi_cst_id")
-    def _compute_choice3(self):
+    def _compute_choice_ipitrib_ipint(self):
         for record in self:
             if record.ipi_cst_id.code in ["00", "49", "50", "99"]:
-                record.nfe40_choice3 = "nfe40_IPITrib"
+                record.nfe40_choice_ipitrib_ipint = "nfe40_IPITrib"
             else:
-                record.nfe40_choice3 = "nfe40_IPINT"
+                record.nfe40_choice_ipitrib_ipint = "nfe40_IPINT"
 
     @api.depends("ipi_base_type")
     def _compute_nfe40_choice20(self):
