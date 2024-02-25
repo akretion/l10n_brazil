@@ -91,7 +91,7 @@ class ResPartner(spec_models.SpecModel):
     )
 
     # Emit
-    nfe40_choice6 = fields.Selection(
+    nfe40_choice_cnpj_cpf = fields.Selection(
         selection=[("nfe40_CNPJ", "CNPJ"), ("nfe40_CPF", "CPF")],
         string="CNPJ/CPF do Emitente",
         compute="_compute_nfe_data",
@@ -134,13 +134,7 @@ class ResPartner(spec_models.SpecModel):
     # nfe.40.infresptec
     nfe40_xContato = fields.Char(related="legal_name")
 
-    nfe40_choice2 = fields.Selection(
-        selection=[("nfe40_CNPJ", "CNPJ"), ("nfe40_CPF", "CPF")],
-        string="CNPJ/CPF do Parceiro",
-        compute="_compute_nfe_data",
-    )
-
-    nfe40_choice7 = fields.Selection(
+    nfe40_choice_cnpj_cpf_idest = fields.Selection(
         selection=[
             ("nfe40_CNPJ", "CNPJ"),
             ("nfe40_CPF", "CPF"),
@@ -149,23 +143,6 @@ class ResPartner(spec_models.SpecModel):
         compute="_compute_nfe_data",
         compute_sudo=True,
         string="CNPJ/CPF/idEstrangeiro",
-    )
-
-    # nfe.40.autXML
-    nfe40_choice8 = fields.Selection(
-        selection=[("nfe40_CNPJ", "CNPJ"), ("nfe40_CPF", "CPF")],
-        string="CNPJ/CPF do Parceiro Autorizado",
-        compute="_compute_nfe_data",
-    )
-
-    # nfe.40.transporta
-    nfe40_choice19 = fields.Selection(
-        selection=[
-            ("nfe40_CNPJ", "CNPJ"),
-            ("nfe40_CPF", "CPF"),
-        ],
-        string="CNPJ or CPF",
-        compute="_compute_nfe_data",
     )
 
     is_anonymous_consumer = fields.Boolean(
@@ -200,30 +177,21 @@ class ResPartner(spec_models.SpecModel):
             cnpj_cpf = punctuation_rm(rec.cnpj_cpf)
             if cnpj_cpf:
                 if rec.country_id.code != "BR":
-                    rec.nfe40_choice7 = "nfe40_idEstrangeiro"
-                    rec.nfe40_choice2 = False
+                    rec.nfe40_choice_cnpj_cpf_idest = "nfe40_idEstrangeiro"
+                    rec.nfe40_choice_cnpj_cpf = False
                 elif rec.is_company:
-                    rec.nfe40_choice2 = "nfe40_CNPJ"
-                    rec.nfe40_choice6 = "nfe40_CNPJ"
-                    rec.nfe40_choice7 = "nfe40_CNPJ"
-                    rec.nfe40_choice8 = "nfe40_CNPJ"
-                    rec.nfe40_choice19 = "nfe40_CNPJ"
+                    rec.nfe40_choice_cnpj_cpf = "nfe40_CNPJ"
+                    rec.nfe40_choice_cnpj_cpf_idest = "nfe40_CNPJ"
                     rec.nfe40_CNPJ = cnpj_cpf
                     rec.nfe40_CPF = None
                 else:
-                    rec.nfe40_choice2 = "nfe40_CPF"
-                    rec.nfe40_choice6 = "nfe40_CPF"
-                    rec.nfe40_choice7 = "nfe40_CPF"
-                    rec.nfe40_choice8 = "nfe40_CPF"
-                    rec.nfe40_choice19 = "nfe40_CPF"
+                    rec.nfe40_choice_cnpj_cpf = "nfe40_CPF"
+                    rec.nfe40_choice_cnpj_cpf_idest = "nfe40_CPF"
                     rec.nfe40_CPF = cnpj_cpf
                     rec.nfe40_CNPJ = None
             else:
-                rec.nfe40_choice2 = False
-                rec.nfe40_choice6 = False
-                rec.nfe40_choice7 = False
-                rec.nfe40_choice8 = False
-                rec.nfe40_choice19 = False
+                rec.nfe40_choice_cnpj_cpf = False
+                rec.nfe40_choice_cnpj_cpf_idest = False
                 rec.nfe40_CNPJ = ""
                 rec.nfe40_CPF = ""
 
@@ -239,29 +207,23 @@ class ResPartner(spec_models.SpecModel):
         for rec in self:
             if rec.nfe40_CNPJ:
                 rec.is_company = True
-                rec.nfe40_choice2 = "nfe40_CPF"
-                rec.nfe40_choice6 = "nfe40_CPF"
+                rec.nfe40_choice_cnpj_cpf = "nfe40_CPF"
                 if rec.country_id.code != "BR":
-                    rec.nfe40_choice7 = "nfe40_idEstrangeiro"
+                    rec.nfe40_choice_cnpj_cpf_idest = "nfe40_idEstrangeiro"
                 else:
-                    rec.nfe40_choice7 = "nfe40_CNPJ"
-                rec.nfe40_choice7 = "nfe40_CPF"
-                rec.nfe40_choice8 = "nfe40_CPF"
-                rec.nfe40_choice19 = "nfe40_CPF"
+                    rec.nfe40_choice_cnpj_cpf_idest = "nfe40_CNPJ"
+                rec.nfe40_choice_cnpj_cpf = "nfe40_CPF"
                 rec.cnpj_cpf = cnpj_cpf.formata(str(rec.nfe40_CNPJ))
 
     def _inverse_nfe40_CPF(self):
         for rec in self:
             if rec.nfe40_CPF:
                 rec.is_company = False
-                rec.nfe40_choice2 = "nfe40_CNPJ"
-                rec.nfe40_choice6 = "nfe40_CNPJ"
+                rec.nfe40_choice_cnpj_cpf = "nfe40_CNPJ"
                 if rec.country_id.code != "BR":
-                    rec.nfe40_choice7 = "nfe40_idEstrangeiro"
+                    rec.nfe40_choice_cnpj_cpf_idest = "nfe40_idEstrangeiro"
                 else:
-                    rec.nfe40_choice7 = "nfe40_CPF"
-                rec.nfe40_choice8 = "nfe40_CNPJ"
-                rec.nfe40_choice19 = "nfe40_CNPJ"
+                    rec.nfe40_choice_cnpj_cpf_idest = "nfe40_CPF"
                 rec.cnpj_cpf = cnpj_cpf.formata(str(rec.nfe40_CPF))
 
     def _inverse_nfe40_IE(self):
@@ -328,7 +290,7 @@ class ResPartner(spec_models.SpecModel):
             else:
                 cnpj_cpf = punctuation_rm(self.cnpj_cpf)
 
-            if xsd_field == self.nfe40_choice2:
+            if xsd_field == self.nfe40_choice_cnpj_cpf:
                 return cnpj_cpf
 
         if self.country_id.code != "BR":
