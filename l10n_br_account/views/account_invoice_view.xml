@@ -39,13 +39,14 @@
         </field>
     </record>
 
-    <!-- Customer Invoice views -->
     <record id="invoice_form" model="ir.ui.view">
         <field name="name">l10n_br_account.invoice.form</field>
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_move_form" />
         <field name="priority">200</field>
         <field name="arch" type="xml">
+
+            <!-- account.move top form extensions: -->
             <div name="button_box" position="inside">
                 <button
                     name="open_fiscal_document"
@@ -125,127 +126,51 @@
                 <field string="(-) Tax Withholding" name="amount_tax_withholding" />
             </field>
 
-
-            <!-- invoice_line_ids tree (Invoice Lines) -->
+            <!-- invoice_line_ids (Invoice Lines) tree extensions: -->
             <xpath expr="//field[@name='invoice_line_ids']/tree" position="attributes">
-              <attribute
+              <!--attribute
                     name="editable"
-                /><!-- TODO put this in a view with a specific group? -->
+                /--><!-- TODO put this in a view with a specific group? -->
             </xpath>
             <xpath expr="//field[@name='invoice_line_ids']" position="attributes">
                 <attribute
                     name="context"
                 >{'default_move_type': context.get('default_move_type'), 'journal_id': journal_id, 'default_partner_id': commercial_partner_id, 'default_currency_id': currency_id or company_currency_id, 'default_fiscal_operation_id': fiscal_operation_id, 'default_document_type_id': document_type_id}</attribute>
             </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']/tree" position="inside">
+                <control name="fiscal_fields" invisible="1" />
+                <control name="fiscal_taxes_fields" string="Taxes" invisible="1" />
+            </xpath>
             <xpath
-                expr="//field[@name='invoice_line_ids']/tree/field[@name='tax_ids']"
-                position="replace"
+                expr="//field[@name='invoice_line_ids']/form//field[@name='tax_ids']"
+                position="attributes"
             >
-                <field
-                    name="tax_ids"
-                    optional="hide"
-                    widget="many2many_tags"
-                    options="{'no_create': True}"
-                />
-                <field name="document_type_id" invisible="1" />
-                <field name="amount_tax_withholding" optional="hide" />
-                <field name="amount_tax_included" optional="hide" />
-                <field name="amount_tax_not_included" optional="hide" />
-                <field name="fiscal_operation_id" optional="hide" />
-                <field name="fiscal_operation_line_id" optional="show" />
-                <field name="cfop_id" optional="hide" />
-                <field name="city_taxation_code_id" optional="hide" />
-                <field name="service_type_id" optional="hide" />
-                <field name="cnae_id" optional="hide" />
-                <field name="ncm_id" optional="hide" />
-                <field name="nbs_id" optional="hide" />
-                <field name="nbm_id" optional="hide" />
-                <field name="cest_id" optional="hide" />
-                <field name="product_uom_id" optional="hide" />
-                <field name="fiscal_genre_id" optional="hide" />
-                <field
-                    name="fiscal_tax_ids"
-                    attrs="{'invisible': [('document_type_id', '=', False)]}"
-                    widget="many2many_tags"
-                    options="{'no_create': True}"
-                />
-                <field name="icms_value" optional="hide" />
-                <field name="ipi_value" optional="hide" />
-                <field name="pis_value" optional="hide" />
-                <field name="cofins_value" optional="hide" />
-                <field name="freight_value" optional="hide" />
-                <field name="insurance_value" optional="hide" />
-                <field name="other_value" optional="hide" />
-                <field name="estimate_tax" optional="hide" />
+                <attribute
+                    name="attrs"
+                >{'invisible': [('parent.fiscal_operation_id', '!=', False)]}</attribute>
             </xpath>
 
-
-            <!-- line_ids tree (Journal Items) -->
-            <!-- repeating fiscal fields in line_ids IS REQUIRED to persist values -->
+            <!-- line_ids (Journal Items) tree view extensions: -->
+            <!-- (yes repeating fiscal fields in line_ids IS REQUIRED to persist values) -->
             <xpath expr="//field[@name='line_ids']" position="attributes">
                 <attribute
                     name="context"
                 >{'default_move_type': context.get('default_move_type'), 'line_ids': line_ids, 'journal_id': journal_id, 'default_partner_id': commercial_partner_id, 'default_currency_id': currency_id or company_currency_id, 'default_fiscal_operation_id': fiscal_operation_id, 'default_document_type_id': document_type_id, 'default_exclude_from_invoice_tab': 1}</attribute>
             </xpath>
+            <xpath expr="//field[@name='line_ids']/tree" position="inside">
+                <control name="fiscal_fields" invisible="1" />
+                <control name="fiscal_taxes_fields" string="Taxes" invisible="1" />
+            </xpath>
             <xpath
-                expr="//field[@name='line_ids']/tree/field[@name='tax_ids']"
-                position="replace"
+                expr="//field[@name='line_ids']/form//field[@name='tax_ids']"
+                position="attributes"
             >
-                <field
-                    name="tax_ids"
-                    optional="hide"
-                    widget="many2many_tags"
-                    options="{'no_create': True}"
-                />
-                <field name="document_type_id" invisible="1" />
-                <field name="amount_tax_withholding" invisible="1" />
-                <field name="amount_tax_included" invisible="1" />
-                <field name="amount_tax_not_included" invisible="1" />
-                <field name="fiscal_operation_id" invisible="1" />
-                <field name="fiscal_operation_line_id" optional="hide" />
-                <field name="cfop_id" optional="hide" />
-                <field name="city_taxation_code_id" optional="hide" />
-                <field name="service_type_id" optional="hide" />
-                <field name="cnae_id" optional="hide" />
-                <field name="ncm_id" optional="hide" />
-                <field name="nbs_id" optional="hide" />
-                <field name="nbm_id" optional="hide" />
-                <field name="cest_id" optional="hide" />
-                <field name="uom_id" optional="hide" />
-                <field name="fiscal_genre_id" optional="hide" />
-                <field name="partner_company_type" invisible="1" />
-                    <field name="fiscal_operation_type" invisible="1" />
-                <field
-                    name="fiscal_tax_ids"
-                    invisible="1"
-                    attrs="{'invisible': [('document_type_id', '=', False)]}"
-                    widget="many2many_tags"
-                    options="{'no_create': True}"
-                />
-                            <field name="fiscal_quantity" invisible="1" />
-                            <field name="uot_id" invisible="1" />
-                            <field name="fiscal_price" invisible="1" />
-                            <field name="discount_value" invisible="1" />
-
-                    <!--group name="fiscal_fields" invisible="1" /-->
-
-                    <field name="freight_value" invisible="1" />
-                    <field name="insurance_value" invisible="1" />
-                    <field name="other_value" invisible="1" />
-                    <field name="estimate_tax" invisible="1" />
-
-                  <!-- TODO adapt these placeholders for tree view for fiscal_form_view -->
-                    <control name="fiscal_taxes_fields" string="Taxes" invisible="1" />
-                    <field name="tax_icms_or_issqn" invisible="1" />
-                    <control
-                    name="fiscal_line_extra_info_fields"
-                    string="Extra Info"
-                    invisible="1"
-                />
+                <attribute
+                    name="attrs"
+                >{'invisible': [('parent.fiscal_operation_id', '!=', False)]}</attribute>
             </xpath>
 
-
-            <!-- invoice_line_ids form -->
+            <!-- invoice_line_ids form extensions: -->
            <xpath
                 expr="//field[@name='invoice_line_ids']/form/sheet/group/field[@name='tax_ids']"
                 position="attributes"
@@ -470,6 +395,7 @@
                 </notebook>
             </xpath>
 
+            <!-- account.move bottom form extensions: -->
             <xpath
                 expr="//page[@id='invoice_tab']//group[hasclass('oe_subtotal_footer')]"
                 position="replace"
