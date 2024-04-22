@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="l10n_br_account_company_form" model="ir.ui.view">
+        <field name="name">l10n_br_account.res.company.form</field>
+        <field name="model">res.company</field>
+        <field name="priority">99</field>
+        <field name="inherit_id" ref="l10n_br_fiscal.fiscal_res_company_form" />
+        <field name="arch" type="xml">
+            <field name="delivery_costs" position="after" >
+                <field name="account_freight_in_id" />
+                <field name="account_freight_out_id" />
+            </field>
+        </field>
+    </record>
+</odoo>

@@ -438,7 +438,7 @@ class AccountMoveLine(models.Model):
             result["price_total"] = taxes_res["total_included"]
 
         result["price_total"] = (
-            result["price_total"] + insurance_value + other_value + freight_value
+            result["price_total"]
         )
 
         return result
