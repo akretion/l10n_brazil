@@ -472,6 +472,40 @@ class AccountMove(models.Model):
         self.clear_caches()
         return result
 
+    def _recompute_dynamic_lines(self, recompute_all_taxes=False, recompute_tax_base_amount=False):
+        in_draft_mode = self != self._origin
+        for move in self:
+            # TODO find existing lines; reuse or destroy them.
+            freight_value = sum([line.freight_value for line in move.invoice_line_ids])
+            if float_compare(freight_value, 0.0, precision_rounding=move.currency_id.rounding) > 0:
+                account_freight_out_id = move.company_id.account_freight_out_id.id
+                existing_freight_lines = self.line_ids.filtered(
+                    lambda line: line.account_id.id == account_freight_out_id
+                )
+                print("EXISTING", existing_freight_lines)
+                if existing_freight_lines:
+                    existing_freight_lines[0].write({
+                        "credit": freight_value,
+                        "price_unit": freight_value,
+                        "amount_currency": -freight_value,
+                    })
+                create_method = in_draft_mode and self.env['account.move.line'].new or self.env['account.move.line'].create
+                candidate = create_method({
+                    'name': "frete",
+                    'debit': 0,
+                    'credit': freight_value,
+                    'price_unit': freight_value,
+                    'quantity': 1.0,
+                    'amount_currency': -freight_value,
+                    'move_id': move.id,
+                    'currency_id': move.currency_id.id,
+                    'account_id': move.company_id.account_freight_out_id.id,
+                    'partner_id': move.commercial_partner_id.id,
+                    'exclude_from_invoice_tab': True,
+                })
+        res = super()._recompute_dynamic_lines(recompute_all_taxes, recompute_tax_base_amount)
+        return res
+
     @api.onchange("fiscal_operation_id")
     def _onchange_fiscal_operation_id(self):
         result = super()._onchange_fiscal_operation_id()
