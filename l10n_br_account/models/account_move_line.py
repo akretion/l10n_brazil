@@ -229,24 +229,31 @@ class AccountMoveLine(models.Model):
         # Add index to each dictionary in vals_list
         indexed_vals_list = [(idx, val) for idx, val in enumerate(vals_list)]
 
-        # Reorder vals_list so lines with fiscal_operation_line_id will
-        # be created first
+        # Reorder vals_list so lines with fiscal_operation_line_id will be created first
         sorted_indexed_vals_list = sorted(
             indexed_vals_list,
             key=lambda x: not x[1].get("fiscal_operation_line_id"),
         )
-        original_indexes = [idx for idx, _ in sorted_indexed_vals_list]
         vals_list = [val for _, val in sorted_indexed_vals_list]
+        original_indexes = [idx for idx, _ in sorted_indexed_vals_list]
 
-        # Create the records
+        # Create the records using the reordered list
         result = super(
             AccountMoveLine, self.with_context(create_from_move_line=True)
         ).create(vals_list)
 
-        # Re-order the result according to the initial vals_list order
-        sorted_result = self.env["account.move.line"]
-        for i in original_indexes:
-            sorted_result |= result[i]
+        # Reorder the result according to the initial vals_list order
+        # Create a dictionary to map original index to result records
+        result_mapping = {
+            record.id: original_idx
+            for original_idx, record in zip(original_indexes, result)
+        }
+
+        # Use sorted to reorder records according to their original indexes
+        sorted_result_ids = sorted(result.ids, key=lambda id: result_mapping[id])
+        sorted_result = self.env["account.move.line"].concat(
+            *[result.browse(record_id) for record_id in sorted_result_ids]
+        )
 
         return sorted_result
 
