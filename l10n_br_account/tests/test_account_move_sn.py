@@ -172,8 +172,8 @@ class AccountMoveSimpleNacional(AccountMoveBRCommon):
             "fiscal_position_id": False,
             "payment_reference": "",
             "invoice_payment_term_id": self.pay_terms_a.id,
-            "amount_untaxed": 1000.0,
-            "amount_tax": 0.0,
+            "amount_untaxed": 973.0,  # 1000.0,
+            "amount_tax": 27.0,  # 0.0,
             "amount_total": 1000.0,
         }
 
