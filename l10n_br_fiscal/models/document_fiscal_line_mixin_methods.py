@@ -55,6 +55,7 @@ class FiscalDocumentLineMixinMethods(models.AbstractModel):
         doc,
         view_ref="l10n_br_fiscal.document_fiscal_line_mixin_form",
         xpath_mappings=None,
+        fiscal_detail_group=None,
     ):
         """
         Inject common fiscal fields into view placeholder elements.
@@ -107,15 +108,21 @@ class FiscalDocumentLineMixinMethods(models.AbstractModel):
                     existing_fields = [
                         e.attrib["name"] for e in target_node if e.tag == "field"
                     ]
+                    if (
+                        fiscal_detail_group
+                        and self.user_has_groups(fiscal_detail_group)
+                        and "editable" in target_node.attrib
+                    ):
+                        target_node.attrib["editable"] = ""
+                    tax_node = target_node.find(".//field[@name='fiscal_tax_ids']")
                     for fiscal_node in fiscal_nodes:
                         if fiscal_node.attrib["name"] in existing_fields:
                             continue
-                    for fiscal_node in fiscal_nodes:
                         field = deepcopy(fiscal_node)
                         if not field.attrib.get("optional"):
                             field.attrib["invisible"] = "0"
                             field.attrib["optional"] = "hide"
-                        target_node.append(field)
+                        tax_node.addnext(field)
         return doc
 
     @api.model

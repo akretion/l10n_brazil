@@ -108,7 +108,9 @@ class SaleOrder(models.Model):
     @api.model
     def _get_view(self, view_id=None, view_type="form", **options):
         arch, view = super()._get_view(view_id, view_type, **options)
-        arch = self.env["sale.order.line"].inject_fiscal_fields(arch)
+        arch = self.env["sale.order.line"].inject_fiscal_fields(
+            arch, fiscal_detail_group="l10n_br_sale.group_so_line_fiscal_detail"
+        )
         return arch, view
 
     @api.onchange("fiscal_operation_id")
