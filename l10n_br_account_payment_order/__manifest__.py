@@ -14,7 +14,7 @@
     "depends": [
         "l10n_br_base",
         "account_payment_order",
-        "l10n_br_account_due_list",
+        "account_move_installment",
         "account_due_list_payment_mode",
     ],
     "data": [

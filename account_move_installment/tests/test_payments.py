@@ -71,12 +71,12 @@ class TestPayments(common.TransactionCase):
             line_form.tax_ids.add(self.tax1)
         invoice = invoice_form.save()
         invoice._post()
-        self.assertEqual(len(invoice.financial_move_line_ids), 1)
-        self.assertEqual(invoice.financial_move_line_ids[0].debit, 200)
+        self.assertEqual(len(invoice.receivable_line_ids), 1)
+        self.assertEqual(invoice.receivable_line_ids[0].debit, 200)
         self.assertEqual(
-            invoice.financial_move_line_ids[0].account_id, self.account_receivable
+            invoice.receivable_line_ids[0].account_id, self.account_receivable
         )
-        self.assertEqual(len(invoice.payment_move_line_ids), 0)
+        self.assertEqual(len(invoice.payable_line_ids), 0)
 
         # register payment
         ctx = {
@@ -87,10 +87,10 @@ class TestPayments(common.TransactionCase):
         payment = Form(self.env["account.payment.register"].with_context(**ctx))
         payment_register = payment.save()
         payment_register.action_create_payments()
-        self.assertEqual(len(invoice.payment_move_line_ids), 1)
-        self.assertEqual(invoice.payment_move_line_ids[0].credit, 200)
+        self.assertEqual(len(invoice.payable_line_ids), 1)
+        self.assertEqual(invoice.payable_line_ids[0].credit, 200)
         self.assertEqual(
-            invoice.payment_move_line_ids[0].account_id, self.account_receivable
+            invoice.payable_line_ids[0].account_id, self.account_receivable
         )
 
     def test_02_payable(self):
@@ -110,12 +110,12 @@ class TestPayments(common.TransactionCase):
             line_form.tax_ids.add(self.tax2)
         invoice = invoice_form.save()
         invoice._post()
-        self.assertEqual(len(invoice.financial_move_line_ids), 1)
-        self.assertEqual(invoice.financial_move_line_ids[0].credit, 100)
+        self.assertEqual(len(invoice.receivable_line_ids), 1)
+        self.assertEqual(invoice.receivable_line_ids[0].credit, 100)
         self.assertEqual(
-            invoice.financial_move_line_ids[0].account_id, self.account_payable
+            invoice.receivable_line_ids[0].account_id, self.account_payable
         )
-        self.assertEqual(len(invoice.payment_move_line_ids), 0)
+        self.assertEqual(len(invoice.payable_line_ids), 0)
 
         # register payment
         ctx = {
@@ -126,8 +126,8 @@ class TestPayments(common.TransactionCase):
         payment = Form(self.env["account.payment.register"].with_context(**ctx))
         payment_register = payment.save()
         payment_register.action_create_payments()
-        self.assertEqual(len(invoice.payment_move_line_ids), 1)
-        self.assertEqual(invoice.payment_move_line_ids[0].debit, 100)
+        self.assertEqual(len(invoice.payable_line_ids), 1)
+        self.assertEqual(invoice.payable_line_ids[0].debit, 100)
         self.assertEqual(
-            invoice.payment_move_line_ids[0].account_id, self.account_payable
+            invoice.payable_line_ids[0].account_id, self.account_payable
         )
