@@ -20,11 +20,22 @@ class PartyMixin(models.AbstractModel):
         index=True,
     )
 
+    vat = fields.Char()
     cnpj_cpf = fields.Char(
         string="CNPJ/CPF",
-        size=18,
-        unaccent=False,
+        inverse="_onchange_cnpj_cpf",
+        compute="_compute_cnpj_cpf",
     )
+
+    @api.onchange("cnpj_cpf")
+    def _onchange_cnpj_cpf(self):
+        for partner in self:
+            partner.vat = cnpj_cpf.formata(str(self.cnpj_cpf))
+
+    @api.depends("vat")
+    def _compute_cnpj_cpf(self):
+        for partner in self:
+            partner.cnpj_cpf = partner.vat
 
     inscr_est = fields.Char(
         string="State Tax Number",
@@ -83,10 +94,6 @@ class PartyMixin(models.AbstractModel):
                 )
             else:
                 record.cnpj_cpf_stripped = False
-
-    @api.onchange("cnpj_cpf")
-    def _onchange_cnpj_cpf(self):
-        self.cnpj_cpf = cnpj_cpf.formata(str(self.cnpj_cpf))
 
     @api.onchange("zip")
     def _onchange_zip(self):
