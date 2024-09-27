@@ -12,20 +12,6 @@ class PartyMixin(models.AbstractModel):
     _name = "l10n_br_base.party.mixin"
     _description = "Brazilian partner and company data mixin"
 
-    cnpj_cpf_stripped = fields.Char(
-        string="CNPJ/CPF Stripped",
-        help="CNPJ/CPF without special characters",
-        compute="_compute_cnpj_cpf_stripped",
-        store=True,
-        index=True,
-    )
-
-    cnpj_cpf = fields.Char(
-        string="CNPJ/CPF",
-        size=18,
-        unaccent=False,
-    )
-
     inscr_est = fields.Char(
         string="State Tax Number",
         size=17,
@@ -74,19 +60,9 @@ class PartyMixin(models.AbstractModel):
         size=32,
     )
 
-    @api.depends("cnpj_cpf")
-    def _compute_cnpj_cpf_stripped(self):
-        for record in self:
-            if record.cnpj_cpf:
-                record.cnpj_cpf_stripped = "".join(
-                    char for char in record.cnpj_cpf if char.isalnum()
-                )
-            else:
-                record.cnpj_cpf_stripped = False
-
-    @api.onchange("cnpj_cpf")
-    def _onchange_cnpj_cpf(self):
-        self.cnpj_cpf = cnpj_cpf.formata(str(self.cnpj_cpf))
+    @api.onchange("vat")
+    def _onchange_vat(self):
+        self.vat = cnpj_cpf.formata(str(self.vat))
 
     @api.onchange("zip")
     def _onchange_zip(self):

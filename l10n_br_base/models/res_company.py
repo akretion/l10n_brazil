@@ -87,6 +87,17 @@ class Company(models.Model):
         for company in self:
             company.partner_id.suframa = company.suframa
 
+    # this field helps maintaining the compatibility with the existing codebase:
+    cnpj_cpf = fields.Char(related="vat", readonly=False, string="CNPJ/CPF")
+
+    cnpj_cpf_stripped = fields.Char(
+        string="CNPJ/CPF Stripped",
+        help="CNPJ/CPF without special characters",
+        compute="_compute_cnpj_cpf_stripped",
+        store=True,
+        index=True,
+    )
+
     legal_name = fields.Char(
         compute="_compute_address",
         inverse="_inverse_legal_name",
@@ -142,6 +153,16 @@ class Company(models.Model):
         compute="_compute_address",
         inverse="_inverse_suframa",
     )
+
+    @api.depends("cnpj_cpf")
+    def _compute_cnpj_cpf_stripped(self):
+        for record in self:
+            if record.cnpj_cpf:
+                record.cnpj_cpf_stripped = "".join(
+                    char for char in record.cnpj_cpf if char.isalnum()
+                )
+            else:
+                record.cnpj_cpf_stripped = False
 
     @api.model
     def _fields_view_get(
