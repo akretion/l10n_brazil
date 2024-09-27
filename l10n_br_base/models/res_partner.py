@@ -6,7 +6,7 @@
 
 from erpbrasil.base.fiscal import cnpj_cpf
 
-from odoo import _, api, fields, models
+from odoo import Command, _, api, fields, models
 from odoo.exceptions import ValidationError
 
 from ..tools import check_cnpj_cpf, check_ie
@@ -30,7 +30,22 @@ class Partner(models.Model):
             partner.street = street
         return super(Partner, not_br_partner)._inverse_street_data()
 
-    vat = fields.Char(compute="_compute_vat_from_cnpj_cpf", store=True, recursive=True)
+    # this field helps maintaining the compatibility with the existing codebase:
+    cnpj_cpf = fields.Char(
+        string="CNPJ/CPF",
+        inverse="_inverse_cnpj_cpf",
+        compute="_compute_cnpj_cpf",
+    )
+
+    cnpj_cpf_stripped = fields.Char(
+        string="CNPJ/CPF Stripped",
+        help="CNPJ/CPF without special characters",
+        compute="_compute_cnpj_cpf_stripped",
+        store=True,
+        index=True,
+    )
+
+    l10n_br_cpf_code = fields.Char(string="CPF", help="Natural Persons Register")
 
     is_accountant = fields.Boolean(string="Is accountant?")
 
@@ -53,24 +68,119 @@ class Partner(models.Model):
 
     show_l10n_br = fields.Boolean(
         compute="_compute_show_l10n_br",
-        help="Indicates if Brazilian localization fields should be displayed.",
+        help="Should display Brazilian localization fields?",
     )
 
     is_br_partner = fields.Boolean(
         compute="_compute_br_partner",
-        help="Indicate if is a Brazilian partner",
+        help="Is it a Brazilian partner?",
     )
 
-    @api.constrains("cnpj_cpf", "inscr_est")
+    @api.onchange("cnpj_cpf")
+    def _inverse_cnpj_cpf(self):
+        for partner in self:
+            if partner.cnpj_cpf and len(partner.cnpj_cpf_stripped) > 11:
+                partner.vat = partner.cnpj_cpf
+            else:
+                partner.l10n_br_cpf_code = partner.cnpj_cpf
+
+    @api.depends("vat", "l10n_br_cpf_code")
+    def _compute_cnpj_cpf(self):
+        for partner in self:
+            partner.cnpj_cpf = partner.vat or partner.l10n_br_cpf_code
+
+    @api.depends("cnpj_cpf")
+    def _compute_cnpj_cpf_stripped(self):
+        for record in self:
+            if record.cnpj_cpf:
+                record.cnpj_cpf_stripped = "".join(
+                    char for char in record.cnpj_cpf if char.isalnum()
+                )
+            else:
+                record.cnpj_cpf_stripped = False
+
+    @api.returns("self", lambda value: value.id)
+    def copy(self, default=None):
+        if self.is_br_partner:
+            if default is None:
+                default = {}
+            if "vat" not in default:
+                # CNPJ should be unique:
+                default["vat"] = None
+        return super().copy(default)
+
+    def create_company(self):
+        self.ensure_one()
+        if not self.is_br_partner:
+            return super().create_company()
+        if self.company_name:
+            # Create parent company
+            values = dict(
+                name=self.company_name,
+                is_company=True,
+                vat=self.vat,
+                legal_name=self.company_name,
+                inscr_est=self.inscr_est,
+                inscr_mun=self.inscr_mun,
+            )
+            values.update(self._update_fields_values(self._address_fields()))
+            new_company = self.with_context(allow_vat_duplicate=True).create(values)
+            # Set new company as my parent
+            self.write(
+                {
+                    "parent_id": new_company.id,
+                    "child_ids": [
+                        Command.update(partner_id, dict(parent_id=new_company.id))
+                        for partner_id in self.child_ids.ids
+                    ],
+                }
+            )
+        return True
+
+    def _commercial_sync_from_company(self):
+        """
+        Overriden to avoid copying the CNPJ (vat field) to children companies
+        """
+        if not self.is_br_partner:
+            return super()._commercial_sync_from_company()
+
+        commercial_partner = self.commercial_partner_id
+        if commercial_partner != self:
+            sync_vals = commercial_partner._update_fields_values(
+                [field for field in self._commercial_fields() if field != "vat"]
+            )
+            self.write(sync_vals)
+            self._commercial_sync_to_children()
+
+    def _commercial_sync_to_children(self):
+        """
+        Overriden to avoid copying the CNPJ (vat field) to parent partners
+        """
+        if not self.is_br_partner:
+            return super()._commercial_sync_to_children()
+
+        commercial_partner = self.commercial_partner_id
+        sync_vals = commercial_partner._update_fields_values(
+            [field for field in self._commercial_fields() if field != "vat"]
+        )
+        sync_children = self.child_ids.filtered(lambda c: not c.is_company)
+        for child in sync_children:
+            child._commercial_sync_to_children()
+        res = sync_children.write(sync_vals)
+        sync_children._compute_commercial_partner()
+        return res
+
+    @api.constrains("vat", "inscr_est")
     def _check_cnpj_inscr_est(self):
         for record in self:
             domain = []
 
-            # permite cnpj vazio
             if not record.cnpj_cpf:
                 return
 
-            if self.env.context.get("disable_allow_cnpj_multi_ie"):
+            if self.env.context.get(
+                "disable_allow_cnpj_multi_ie"
+            ) or self.env.context.get("allow_vat_duplicate"):
                 return
 
             allow_cnpj_multi_ie = (
@@ -85,11 +195,23 @@ class Partner(models.Model):
                     ("parent_id", "not in", record.parent_id.ids),
                 ]
 
-            domain += [("cnpj_cpf", "=", record.cnpj_cpf), ("id", "!=", record.id)]
+            if record.vat:
+                domain += [("vat", "=", record.vat), ("id", "!=", record.id)]
+            elif record.l10n_br_cpf_code:
+                domain += [
+                    ("l10n_br_cpf_code", "=", record.l10n_br_cpf_code),
+                    ("id", "!=", record.id),
+                ]
+            else:
+                return
 
-            # se encontrar CNPJ iguais
-            if record.env["res.partner"].search(domain):
+            matches = record.env["res.partner"].search(domain)
+            if matches:
                 if cnpj_cpf.validar_cnpj(record.cnpj_cpf):
+                    if record == matches[0].parent_id or record.parent_id == matches[0]:
+                        # a contact with a CNPJ might have
+                        # a parent company with the same CNPJ
+                        return
                     if allow_cnpj_multi_ie == "True":
                         for partner in record.env["res.partner"].search(domain):
                             if (
@@ -98,34 +220,36 @@ class Partner(models.Model):
                             ):
                                 raise ValidationError(
                                     _(
-                                        "There is already a partner record with this "
-                                        "Estadual Inscription !"
+                                        "There is already a partner %(name)s "
+                                        "(ID %(partner_id)s) with this "
+                                        "Estadual Inscription %(incr_est)s!",
+                                        name=partner.name,
+                                        partner_id=partner.id,
+                                        incr_est=partner.inscr_est,
                                     )
                                 )
                     else:
                         raise ValidationError(
-                            _("There is already a partner record with this CNPJ !")
+                            _(
+                                "There is already a partner %(name)s "
+                                "(ID %(partner_id)s) with this CNPJ %(vat)s!",
+                                name=matches[0].name,
+                                partner_id=matches[0].id,
+                                vat=self.vat,
+                            )
                         )
-                else:
+                elif not record.is_company:
                     raise ValidationError(
-                        _("There is already a partner record with this CPF/RG!")
+                        _(
+                            "There is already a partner %(name)s (ID %(partner_id)s) "
+                            "with this CPF/RG! %(vat)s",
+                            name=matches[0].name,
+                            partner_id=matches[0].id,
+                            vat=matches[0].vat,
+                        )
                     )
 
-    @api.depends(
-        "cnpj_cpf", "is_company", "parent_id", "parent_id.vat", "commercial_partner_id"
-    )
-    def _compute_vat_from_cnpj_cpf(self):
-        for partner in self:
-            if partner.company_name and partner.vat:
-                continue
-            elif partner.commercial_partner_id.cnpj_cpf:
-                partner.vat = partner.commercial_partner_id.cnpj_cpf
-            elif partner.vat:
-                continue
-            else:
-                partner.vat = False
-
-    @api.constrains("cnpj_cpf", "country_id")
+    @api.constrains("vat", "l10n_br_cpf_code", "country_id")
     def _check_cnpj_cpf(self):
         for record in self:
             check_cnpj_cpf(
@@ -200,23 +324,16 @@ class Partner(models.Model):
             else:
                 rec.show_l10n_br = True
 
-    def create_company(self):
-        self.ensure_one()
-        inscr_est = self.inscr_est
-        inscr_mun = self.inscr_mun
-        res = super().create_company()
-        if res:
-            parent = self.parent_id
-            if parent.country_id.code == "BR":
-                parent.legal_name = parent.name
-                parent.cnpj_cpf = parent.vat
-                parent.inscr_est = inscr_est
-                parent.inscr_mun = inscr_mun
-        return res
-
     def _is_br_partner(self):
         """Check if is a Brazilian Partner."""
-        if self.country_id and self.country_id == self.env.ref("base.br"):
+        if (
+            self.country_id
+            and self.country_id == self.env.ref("base.br")
+            or self.vat
+            and cnpj_cpf.validar_cnpj(self.vat)
+            or self.l10n_br_cpf_code
+            and cnpj_cpf.validar_cpf(self.l10n_br_cpf_code)
+        ):
             return True
         return False
 
