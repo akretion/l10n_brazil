@@ -32,7 +32,7 @@ class TestTestSerPro(TestCnpjCommon):
             dummy_basica = self.model.create(
                 {"name": "Dummy Basica", "cnpj_cpf": "34.238.864/0001-68"}
             )
-            dummy_basica._onchange_cnpj_cpf()
+            dummy_basica._onchange_vat()
 
             action_wizard = dummy_basica.action_open_cnpj_search_wizard()
             wizard_context = action_wizard.get("context")
@@ -65,7 +65,7 @@ class TestTestSerPro(TestCnpjCommon):
         invalid = self.model.create(
             {"name": "invalid", "cnpj_cpf": "44.356.113/0001-08"}
         )
-        invalid._onchange_cnpj_cpf()
+        invalid._onchange_vat()
 
         with self.assertRaises(ValidationError):
             action_wizard = invalid.action_open_cnpj_search_wizard()
@@ -125,7 +125,7 @@ class TestTestSerPro(TestCnpjCommon):
                 {"name": "Dummy Empresa", "cnpj_cpf": "34.238.864/0002-49"}
             )
 
-            dummy_empresa._onchange_cnpj_cpf()
+            dummy_empresa._onchange_vat()
             action_wizard = dummy_empresa.action_open_cnpj_search_wizard()
             wizard_context = action_wizard.get("context")
             wizard = (
@@ -160,7 +160,7 @@ class TestTestSerPro(TestCnpjCommon):
                 {"name": "Dummy QSA", "cnpj_cpf": "34.238.864/0001-68"}
             )
 
-            dummy_qsa._onchange_cnpj_cpf()
+            dummy_qsa._onchange_vat()
             action_wizard = dummy_qsa.action_open_cnpj_search_wizard()
             wizard_context = action_wizard.get("context")
             wizard = (
