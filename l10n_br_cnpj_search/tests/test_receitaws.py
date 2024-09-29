@@ -60,7 +60,7 @@ class TestReceitaWS(TestCnpjCommon):
             invalido = self.model.create(
                 {"name": "invalido", "cnpj_cpf": "00000000000000"}
             )
-            invalido._onchange_cnpj_cpf()
+            invalido._onchange_vat()
             action_wizard = invalido.action_open_cnpj_search_wizard()
             wizard_context = action_wizard.get("context")
             self.env["partner.search.wizard"].with_context(**wizard_context).create({})
@@ -71,7 +71,7 @@ class TestReceitaWS(TestCnpjCommon):
             return_value=self.mocked_response_ws_2,
         ):
             isla = self.model.create({"name": "Isla", "cnpj_cpf": "92.666.056/0001-06"})
-            isla._onchange_cnpj_cpf()
+            isla._onchange_vat()
 
             action_wizard = isla.action_open_cnpj_search_wizard()
             wizard_context = action_wizard.get("context")
