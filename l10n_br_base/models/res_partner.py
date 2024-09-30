@@ -61,8 +61,8 @@ class Partner(models.Model):
         help="Indicate if is a Brazilian partner",
     )
 
-    @api.constrains("cnpj_cpf", "inscr_est")
-    def _check_cnpj_inscr_est(self):
+    @api.constrains("cnpj_cpf", "l10n_br_ie_code")
+    def _check_cnpj_l10n_br_ie_code(self):
         for record in self:
             domain = []
 
@@ -93,8 +93,8 @@ class Partner(models.Model):
                     if allow_cnpj_multi_ie == "True":
                         for partner in record.env["res.partner"].search(domain):
                             if (
-                                partner.inscr_est == record.inscr_est
-                                and record.inscr_est
+                                partner.l10n_br_ie_code == record.l10n_br_ie_code
+                                and record.l10n_br_ie_code
                             ):
                                 raise ValidationError(
                                     _(
@@ -134,7 +134,7 @@ class Partner(models.Model):
                 record.country_id,
             )
 
-    @api.constrains("inscr_est", "state_id", "is_company")
+    @api.constrains("l10n_br_ie_code", "state_id", "is_company")
     def _check_ie(self):
         """Checks if company register number in field insc_est is valid,
         this method call others methods because this validation is State wise
@@ -144,7 +144,10 @@ class Partner(models.Model):
         for record in self:
             if record.is_company:
                 check_ie(
-                    record.env, record.inscr_est, record.state_id, record.country_id
+                    record.env,
+                    record.l10n_br_ie_code,
+                    record.state_id,
+                    record.country_id,
                 )
 
     @api.constrains("state_tax_number_ids")
@@ -202,7 +205,7 @@ class Partner(models.Model):
 
     def create_company(self):
         self.ensure_one()
-        inscr_est = self.inscr_est
+        inscr_est = self.l10n_br_ie_code
         inscr_mun = self.inscr_mun
         res = super().create_company()
         if res:
@@ -210,7 +213,7 @@ class Partner(models.Model):
             if parent.country_id.code == "BR":
                 parent.legal_name = parent.name
                 parent.cnpj_cpf = parent.vat
-                parent.inscr_est = inscr_est
+                parent.l10n_br_ie_code = inscr_est
                 parent.inscr_mun = inscr_mun
         return res
 
