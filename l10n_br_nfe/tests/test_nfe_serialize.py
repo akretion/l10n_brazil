@@ -73,5 +73,11 @@ class TestNFeExport(TransactionCase):
             nfe.send_file_id.store_fname,
         )
         _logger.info(f"XML file saved at {output}")
+        import base64
+
+        print("*********", xml_path, nfe.xml_error_message)
+        with open("nfe.xml", "wb") as f:
+            f.write(base64.b64decode(nfe.send_file_id.datas))
+        print(output)
         diff = main.diff_files(output, xml_path)
         return diff
