@@ -77,7 +77,7 @@ def filter_processador_edoc_nfe(record):
 
 class NFe(spec_models.StackedModel):
     _name = "l10n_br_fiscal.document"
-    _inherit = ["l10n_br_fiscal.document", "nfe.40.infnfe", "nfe.40.fat"]
+    _inherit = ["l10n_br_fiscal.document", "nfe.40.infnfe"]
 
     _nfe40_odoo_module = "odoo.addons.l10n_br_nfe_spec.models.v4_0.leiaute_nfe_v4_00"
     _nfe40_stacking_mixin = "nfe.40.infnfe"
@@ -684,7 +684,7 @@ class NFe(spec_models.StackedModel):
                 fields = [
                     f
                     for f in comodel._fields
-                    if f.startswith(self._field_prefix)
+                    if f.startswith(self._spec_prefix())
                     and f in self._fields.keys()
                     and f
                     # don't try to nfe40_fat id when reading nfe40_cobr for instance
@@ -694,7 +694,7 @@ class NFe(spec_models.StackedModel):
                 if not any(
                     v
                     for k, v in sub_tag_read.items()
-                    if k.startswith(self._field_prefix)
+                    if k.startswith(self._spec_prefix())
                 ):
                     return False
 
@@ -1067,9 +1067,13 @@ class NFe(spec_models.StackedModel):
         return super()._exec_after_SITUACAO_EDOC_AUTORIZADA(old_state, new_state)
 
     def _generate_key(self):
-        for record in self.filtered(filter_processador_edoc_nfe):
-            date = fields.Datetime.context_timestamp(record, record.document_date)
+        if self.document_type_id.code not in [
+            MODELO_FISCAL_NFE,
+            MODELO_FISCAL_NFCE,
+        ]:
+            return super()._generate_key()
 
+        for record in self.filtered(filter_processador_edoc_nfe):
             required_fields_gen_edoc = []
             if not record.company_cnpj_cpf:
                 required_fields_gen_edoc.append("CNPJ/CPF")
@@ -1087,6 +1091,7 @@ class NFe(spec_models.StackedModel):
                     _("To Generate EDoc Key, you need to fill the %s field.") % field
                 )
 
+            date = fields.Datetime.context_timestamp(record, record.document_date)
             chave_edoc = ChaveEdoc(
                 ano_mes=date.strftime("%y%m").zfill(4),
                 cnpj_cpf_emitente=record.company_cnpj_cpf,
