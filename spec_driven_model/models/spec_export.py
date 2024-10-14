@@ -33,7 +33,7 @@ class SpecMixinExport(models.AbstractModel):
         for c in set(classes):
             if c is None:
                 continue
-            if not c.startswith("%s." % (self._schema_name,)):
+            if not c.startswith(f"{self._context['spec_schema']}."):
                 continue
             # the following filter to fields to show
             # when several XSD class are injected in the same object
@@ -136,7 +136,7 @@ class SpecMixinExport(models.AbstractModel):
             return self._export_float_monetary(
                 xsd_field, xsd_type, class_obj, xsd_required, export_value
             )
-        elif type(self[xsd_field]) is str:
+        elif isinstance(self[xsd_field], str):
             return self[xsd_field].strip()
         else:
             return self[xsd_field]
@@ -174,7 +174,7 @@ class SpecMixinExport(models.AbstractModel):
             tdec = "".join(filter(lambda x: x.isdigit(), xsd_type))[-2:]
         else:
             tdec = ""
-        my_format = "%.{}f".format(tdec)
+        my_format = f"%.{tdec}f"
         return str(my_format % field_data)
 
     def _export_date(self, field_name):
@@ -202,6 +202,7 @@ class SpecMixinExport(models.AbstractModel):
         self.ensure_one()
         if spec_schema and spec_version:
             self = self.with_context(spec_schema=spec_schema, spec_version=spec_version)
+            self.env[f"spec.mixin.{spec_schema}"]._register_hook()
         if not class_name:
             class_name = self._get_spec_property("stacking_mixin", self._name)
 
@@ -210,9 +211,7 @@ class SpecMixinExport(models.AbstractModel):
         xsd_fields = (
             i
             for i in class_obj._fields
-            if class_obj._fields[i].name.startswith(
-                f"{self._spec_prefix(self._context)}_"
-            )
+            if class_obj._fields[i].name.startswith(f"{self._spec_prefix()}_")
             and "_choice" not in class_obj._fields[i].name
         )
 
