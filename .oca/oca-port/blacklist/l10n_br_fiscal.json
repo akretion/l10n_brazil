@@ -1,0 +1,21 @@
+{
+  "pull_requests": {
+    "OCA/l10n-brazil#2761": "(auto) Nothing to port from PR #2761",
+    "OCA/l10n-brazil#3032": "already in 16.0 via #3053",
+    "OCA/l10n-brazil#3030": "already in 16.0 via #3063",
+    "OCA/l10n-brazil#3016": "done in #2865",
+    "OCA/l10n-brazil#3111": "(auto) Nothing to port from PR #3111",
+    "OCA/l10n-brazil#3093": "done in #3197",
+    "OCA/l10n-brazil#3099": "done in #3198",
+    "OCA/l10n-brazil#3081": "done in #3200",
+    "OCA/l10n-brazil#3165": "done in #3201",
+    "OCA/l10n-brazil#3109": "done in #3202",
+    "OCA/l10n-brazil#3264": "part of the 16.0 migration already (to avoid conflict with account module)",
+    "OCA/l10n-brazil#3012": "done in #3329",
+    "OCA/l10n-brazil#3332": "done in #3356",
+    "OCA/l10n-brazil#3347": "done in 7fe2e2b in v16",
+    "OCA/l10n-brazil#3334": "v14 migration script",
+    "OCA/l10n-brazil#3345": "part of 16.0 dotfiles already",
+    "OCA/l10n-brazil#2849": "done in #3436"
+  }
+}
