@@ -637,20 +637,18 @@ class AccountMoveLucroPresumido(AccountMoveBRCommon):
             "amount_total": 1013.77,
         }
 
-        # TODO MIGRATE to v16: strangely this test works
-        # on my PC and not in the CI. We may fix it after merging...
-        # self.assertInvoiceValues(
-        #     self.move_out_venda_with_icms_reduction,
-        #     [
-        #         product_line_vals_1,
-        #         tax_line_vals_cofins,
-        #         tax_line_vals_icms,
-        #         tax_line_vals_ipi,
-        #         tax_line_vals_pis,
-        #         term_line_vals_1,
-        #     ],
-        #     move_vals,
-        # )
+        self.assertInvoiceValues(
+            self.move_out_venda_with_icms_reduction,
+            [
+                product_line_vals_1,
+                tax_line_vals_cofins,
+                tax_line_vals_icms,
+                tax_line_vals_ipi,
+                tax_line_vals_pis,
+                term_line_vals_1,
+            ],
+            move_vals,
+        )
 
     def test_simples_remessa(self):
         product_line_vals_1 = {
