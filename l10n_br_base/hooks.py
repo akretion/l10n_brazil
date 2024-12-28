@@ -10,3 +10,9 @@ def post_init_hook(cr, registry):
     if module.demo:
         for partner in env["res.partner"].search([("legal_name", "=", False)]):
             partner.legal_name = partner.name
+        env.ref("l10n_br_base.res_partner_cliente2_sp_end_entrega").parent_id = env.ref(
+            "l10n_br_base.res_partner_cliente2_sp"
+        ).id
+        env.ref(
+            "l10n_br_base.res_partner_cliente7_rs_end_cobranca"
+        ).parent_id = env.ref("l10n_br_base.res_partner_cliente7_rs").id
