@@ -4,6 +4,8 @@
 
 from odoo.tests import TransactionCase
 
+from odoo.addons.l10n_br_base.tests.tools import load_fixture_files
+
 
 class TestCustomerInvoice(TransactionCase):
     """
@@ -14,6 +16,7 @@ class TestCustomerInvoice(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        load_fixture_files(cls.env, "base", file_names=["data/res_partner_demo.xml"])
         cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
 
         cls.sale_account = cls.env["account.account"].create(
@@ -52,7 +55,6 @@ class TestCustomerInvoice(TransactionCase):
                         0,
                         0,
                         {
-                            "product_id": cls.env.ref("product.product_product_5").id,
                             "quantity": 10.0,
                             "price_unit": 450.0,
                             "account_id": cls.env["account.account"]

@@ -8,12 +8,14 @@ from pytz import UTC, timezone
 from odoo.tests import TransactionCase
 
 from odoo.addons.l10n_br_fiscal.constants.fiscal import DOCUMENT_ISSUER_PARTNER
+from odoo.addons.l10n_br_fiscal.tests.tools import load_fiscal_fixture_files
 
 
 class TestInvoiceDiscount(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        load_fiscal_fixture_files(cls.env)
         cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
         cls.company = cls.env.ref("l10n_br_base.empresa_lucro_presumido")
 
@@ -53,15 +55,13 @@ class TestInvoiceDiscount(TransactionCase):
         cls.fiscal_operation_id = cls.env.ref("l10n_br_fiscal.fo_venda")
         cls.fiscal_operation_id.deductible_taxes = True
 
-        product_id = cls.env.ref("product.product_product_7")
-
         invoice_line_vals = [
             (
                 0,
                 0,
                 {
                     "account_id": cls.invoice_line_account_id.id,
-                    "product_id": product_id.id,
+                    "name": "some product",
                     "quantity": 1,
                     "price_unit": 1000.0,
                     "discount_value": 100.0,

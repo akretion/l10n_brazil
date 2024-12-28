@@ -5,11 +5,14 @@ from odoo import fields
 from odoo.exceptions import UserError
 from odoo.tests import TransactionCase
 
+from odoo.addons.l10n_br_fiscal.tests.tools import load_fiscal_fixture_files
+
 
 class TestInvoiceRefund(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        load_fiscal_fixture_files(cls.env)
         cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
 
         cls.sale_account = cls.env["account.account"].create(
@@ -41,9 +44,6 @@ class TestInvoiceRefund(TransactionCase):
             dict(
                 name="Test Refund Invoice",
                 move_type="out_invoice",
-                invoice_payment_term_id=cls.env.ref(
-                    "account.account_payment_term_advance"
-                ).id,
                 partner_id=cls.env.ref("l10n_br_base.res_partner_cliente1_sp").id,
                 journal_id=cls.refund_journal.id,
                 document_type_id=cls.env.ref("l10n_br_fiscal.document_55").id,

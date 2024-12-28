@@ -3,11 +3,15 @@
 
 from odoo.tests import TransactionCase
 
+from odoo.addons.l10n_br_base.tests.tools import load_fixture_files
+
 
 class TestInvoiceDiscount(TransactionCase):
     def setUp(self):
         super().setUp()
-
+        load_fixture_files(
+            self.env, "l10n_br_base", file_names=["res_company_demo.xml"]
+        )
         self.company = self.env.ref("l10n_br_base.empresa_lucro_presumido")
 
         # set default user company
@@ -46,15 +50,13 @@ class TestInvoiceDiscount(TransactionCase):
         self.fiscal_operation_id = self.env.ref("l10n_br_fiscal.fo_venda")
         self.fiscal_operation_id.deductible_taxes = True
 
-        product_id = self.env.ref("product.product_product_7")
-
         invoice_line_vals = [
             (
                 0,
                 0,
                 {
                     "account_id": self.invoice_line_account_id.id,
-                    "product_id": product_id.id,
+                    "name": "some product",
                     "quantity": 1,
                     "price_unit": 1000.0,
                     "discount_value": 100.0,
@@ -68,9 +70,6 @@ class TestInvoiceDiscount(TransactionCase):
             .create(
                 {
                     "company_id": self.company.id,
-                    "document_serie_id": self.env.ref(
-                        "l10n_br_fiscal.empresa_lc_document_55_serie_1"
-                    ).id,
                     "journal_id": self.invoice_journal.id,
                     "invoice_user_id": self.env.user.id,
                     "fiscal_operation_id": self.fiscal_operation_id.id,
