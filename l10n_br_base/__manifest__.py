@@ -33,13 +33,12 @@
     },
     "demo": [
         "demo/l10n_br_base_demo.xml",
-        "demo/res_partner_demo.xml",
         "demo/res_company_demo.xml",
         "demo/res_users_demo.xml",
         "demo/res_partner_pix_demo.xml",
     ],
     "installable": True,
-    "pre_init_hook": "pre_init_hook",
+    "post_init_hook": "post_init_hook",
     "development_status": "Mature",
     "external_dependencies": {
         "python": [
