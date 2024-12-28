@@ -3,12 +3,20 @@
 
 from odoo.tests.common import TransactionCase
 
+from odoo.addons.l10n_br_base.tests.tools import load_fixture_files
+
+from .tools import load_fiscal_fixture_files
+
 
 class TestFiscalDocumentNFSe(TransactionCase):
-    def setUp(self):
-        super().setUp()
-
-        self.nfse_same_state = self.env.ref("l10n_br_fiscal.demo_nfse_same_state")
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        load_fiscal_fixture_files(cls.env)
+        load_fixture_files(
+            cls.env, "l10n_br_fiscal", file_names=["fiscal_document_nfse_demo.xml"]
+        )
+        cls.nfse_same_state = cls.env.ref("l10n_br_fiscal.demo_nfse_same_state")
 
     def test_nfse_same_state(self):
         """Test NFSe same state."""
