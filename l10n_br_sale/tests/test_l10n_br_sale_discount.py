@@ -4,11 +4,14 @@
 
 from odoo.tests import Form, TransactionCase
 
+from odoo.addons.l10n_br_base.tests.tools import load_fixture_files
+
 
 class L10nBrSaleDiscount(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        load_fixture_files(cls.env, "l10n_br_base", file_names=["res_company_demo.xml"])
         cls.company = cls.env.ref("base.main_company")
         cls.group_total_discount_id = cls.env.ref(
             "l10n_br_sale.group_total_discount"
