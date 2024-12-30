@@ -16,11 +16,11 @@
         "l10n_br_base",
     ],
     "data": [
-        # security
+        # Security
         "security/fiscal_security.xml",
         "security/ir.model.access.csv",
+
         # Data
-        # Some data is being loaded via post_init_hook in hook file
         "data/l10n_br_fiscal_email_template.xml",
         "data/l10n_br_fiscal_data.xml",
         "data/uom_data.xml",
@@ -38,6 +38,25 @@
         "data/l10n_br_fiscal_server_action.xml",
         "data/ir_cron.xml",
         "data/l10n_br_fiscal_comment_data.xml",
+
+        # the following data files will be loaded as noupdate=True
+        "data/l10n_br_fiscal.cnae.csv",
+        "data/l10n_br_fiscal.cfop.csv",
+        "data/l10n_br_fiscal_cfop_data.xml",
+        "data/l10n_br_fiscal.tax.ipi.control.seal.csv",
+        "data/l10n_br_fiscal.tax.ipi.guideline.csv",
+        "data/l10n_br_fiscal.tax.ipi.guideline.class.csv",
+        "data/l10n_br_fiscal.tax.pis.cofins.base.csv",
+        "data/l10n_br_fiscal.tax.pis.cofins.credit.csv",
+        "data/l10n_br_fiscal.service.type.csv",
+        "data/simplified_tax_data.xml",
+        "data/operation_data.xml",
+        "data/l10n_br_fiscal_tax_icms_data.xml",
+        "data/l10n_br_fiscal.ncm.csv",  # (partial load if demo/test)
+        "data/l10n_br_fiscal.nbm.csv",  # (partial load if demo/test)
+        "data/l10n_br_fiscal.nbs.csv",  # (partial load if demo/test)
+        "data/l10n_br_fiscal.cest.csv", # (partial load if demo/test)
+
         # Views
         "views/cnae_view.xml",
         "views/cfop_view.xml",
@@ -84,15 +103,26 @@
         "views/invalidate_number_view.xml",
         "views/city_taxation_code.xml",
         "views/operation_dashboard_view.xml",
+
         # Actions
         "views/l10n_br_fiscal_action.xml",
+
         # Menus
         "views/l10n_br_fiscal_menu.xml",
     ],
     "demo": [
-        # Some demo data is being loaded via post_init_hook in hook file
+        "demo/city_taxation_code_demo.xml",
+        "demo/company_demo.xml",
+        "demo/product_demo.xml",
+        "demo/partner_demo.xml",
+        "demo/fiscal_document_nfse_demo.xml",
+        "demo/fiscal_operation_demo.xml",
+        "demo/subsequent_operation_demo.xml",
+        "demo/l10n_br_fiscal_document_email.xml",
+        "demo/res_users_demo.xml",
+        "demo/icms_tax_definition_demo.xml",
+        "demo/fiscal_document_demo.xml",
     ],
-    "post_init_hook": "post_init_hook",
     "installable": True,
     "application": True,
     "auto_install": False,
