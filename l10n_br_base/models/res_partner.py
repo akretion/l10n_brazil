@@ -203,7 +203,7 @@ class Partner(models.Model):
     def create_company(self):
         self.ensure_one()
         inscr_est = self.inscr_est
-        inscr_mun = self.inscr_mun
+        inscr_mun = self.l10n_br_im_code
         res = super().create_company()
         if res:
             parent = self.parent_id
@@ -211,7 +211,7 @@ class Partner(models.Model):
                 parent.legal_name = parent.name
                 parent.cnpj_cpf = parent.vat
                 parent.inscr_est = inscr_est
-                parent.inscr_mun = inscr_mun
+                parent.l10n_br_im_code = inscr_mun
         return res
 
     def _is_br_partner(self):
