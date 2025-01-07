@@ -165,7 +165,6 @@
                 <field name="cnae_id" optional="hide" />
                 <field name="ncm_id" optional="hide" />
                 <field name="nbs_id" optional="hide" />
-                <field name="nbm_id" optional="hide" />
                 <field name="cest_id" optional="hide" />
                 <field name="product_uom_id" optional="hide" />
                 <field name="fiscal_genre_id" optional="hide" />
@@ -232,7 +231,6 @@
                 <field name="cnae_id" optional="hide" />
                 <field name="ncm_id" optional="hide" />
                 <field name="nbs_id" optional="hide" />
-                <field name="nbm_id" optional="hide" />
                 <field name="cest_id" optional="hide" />
                 <field name="uom_id" optional="hide" />
                 <field name="fiscal_genre_id" optional="hide" />
@@ -383,10 +381,6 @@
                 />
                 <field
                     name="fiscal_genre_id"
-                    attrs="{'invisible': ['|', ('document_type_id', '=', False), ('tax_icms_or_issqn', '=', 'issqn')]}"
-                />
-                <field
-                    name="nbm_id"
                     attrs="{'invisible': ['|', ('document_type_id', '=', False), ('tax_icms_or_issqn', '=', 'issqn')]}"
                 />
                 <field
