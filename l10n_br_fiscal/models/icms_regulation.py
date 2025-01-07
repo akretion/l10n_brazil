@@ -1930,7 +1930,6 @@ class ICMSRegulation(models.Model):
         partner,
         tax_group_icms=None,
         ncm=None,
-        nbm=None,
         cest=None,
     ):
         self.ensure_one()
@@ -1952,7 +1951,6 @@ class ICMSRegulation(models.Model):
                 ("state_to_ids", "=", partner.state_id.id),
                 ("state_to_ids", "=", company.state_id.id),
                 ("ncm_ids", "=", ncm.id),
-                ("nbm_ids", "=", nbm.id),
                 ("cest_ids", "=", cest.id),
             ]
 
@@ -1964,13 +1962,12 @@ class ICMSRegulation(models.Model):
                 ("state_from_id", "=", company.state_id.id),
                 ("state_to_ids", "=", partner.state_id.id),
                 ("ncm_ids", "=", ncm.id),
-                ("nbm_ids", "=", nbm.id),
                 ("cest_ids", "=", cest.id),
             ]
 
         return domain
 
-    def _tax_definition_search(self, domain, ncm, nbm, cest, product, ind_final=None):
+    def _tax_definition_search(self, domain, ncm, cest, product, ind_final=None):
         tax_definitions = self.env["l10n_br_fiscal.tax.definition"]
         icms_defs = tax_definitions.search(domain)
 
@@ -1980,7 +1977,6 @@ class ICMSRegulation(models.Model):
             icms_defs_benefit = icms_defs.filtered(
                 lambda d: (
                     ncm.id in d.ncm_ids.ids
-                    or nbm.id in d.nbm_ids.ids
                     or cest.id in d.cest_ids.ids
                     or product.id in d.product_ids.ids
                 )
@@ -1989,7 +1985,6 @@ class ICMSRegulation(models.Model):
             icms_defs_specific = icms_defs.filtered(
                 lambda d: (
                     ncm.id in d.ncm_ids.ids
-                    or nbm.id in d.nbm_ids.ids
                     or cest.id in d.cest_ids.ids
                     or product.id in d.product_ids.ids
                 )
@@ -1997,7 +1992,6 @@ class ICMSRegulation(models.Model):
             )
             icms_defs_generic = icms_defs.filtered(
                 lambda d: not d.ncm_ids.ids
-                and not d.nbm_ids.ids
                 and not d.cest_ids.ids
                 and not d.product_ids.ids
                 and not d.is_benefit
@@ -2028,7 +2022,6 @@ class ICMSRegulation(models.Model):
         partner,
         product,
         ncm=None,
-        nbm=None,
         cest=None,
         operation_line=None,
         ind_final=None,
@@ -2050,11 +2043,11 @@ class ICMSRegulation(models.Model):
         else:
             # ICMS
             domain = self._build_map_tax_def_domain(
-                company, partner, tax_group_icms, ncm, nbm, cest
+                company, partner, tax_group_icms, ncm, cest
             )
 
             tax_definitions = self._tax_definition_search(
-                domain, ncm, nbm, cest, product, ind_final
+                domain, ncm, cest, product, ind_final
             )
         return icms_taxes, tax_definitions
 
@@ -2064,7 +2057,6 @@ class ICMSRegulation(models.Model):
         partner,
         product,
         ncm=None,
-        nbm=None,
         cest=None,
         operation_line=None,
         ind_final=None,
@@ -2074,11 +2066,11 @@ class ICMSRegulation(models.Model):
 
         # ICMS ST
         domain = self._build_map_tax_def_domain(
-            company, partner, tax_group_icmsst, ncm, nbm, cest
+            company, partner, tax_group_icmsst, ncm, cest
         )
 
         tax_definitions = self._tax_definition_search(
-            domain, ncm, nbm, cest, product, ind_final
+            domain, ncm, cest, product, ind_final
         )
         return tax_definitions
 
@@ -2088,7 +2080,6 @@ class ICMSRegulation(models.Model):
         partner,
         product,
         ncm=None,
-        nbm=None,
         cest=None,
         operation_line=None,
         ind_final=None,
@@ -2105,11 +2096,11 @@ class ICMSRegulation(models.Model):
             and operation_line.fiscal_operation_type == FISCAL_IN
         ):
             domain = self._build_map_tax_def_domain(
-                partner, partner, tax_group_icms, ncm, nbm, cest
+                partner, partner, tax_group_icms, ncm, cest
             )
 
             tax_definitions = self._tax_definition_search(
-                domain, ncm, nbm, cest, product, ind_final
+                domain, ncm, cest, product, ind_final
             )
         return tax_definitions.mapped("tax_id"), tax_definitions
 
@@ -2119,7 +2110,6 @@ class ICMSRegulation(models.Model):
         partner,
         product,
         ncm=None,
-        nbm=None,
         cest=None,
         operation_line=None,
         ind_final=None,
@@ -2137,11 +2127,11 @@ class ICMSRegulation(models.Model):
             and operation_line.fiscal_operation_type == FISCAL_IN
         ):
             domain = self._build_map_tax_def_domain(
-                partner, partner, tax_group_icmsfcp, ncm, nbm, cest
+                partner, partner, tax_group_icmsfcp, ncm, cest
             )
 
             tax_definitions = self._tax_definition_search(
-                domain, ncm, nbm, cest, product, ind_final
+                domain, ncm, cest, product, ind_final
             )
 
         return tax_definitions
@@ -2152,7 +2142,6 @@ class ICMSRegulation(models.Model):
         partner,
         product,
         ncm=None,
-        nbm=None,
         cest=None,
         operation_line=None,
         ind_final=None,
@@ -2163,11 +2152,11 @@ class ICMSRegulation(models.Model):
 
         # FCP ST
         domain = self._build_map_tax_def_domain(
-            company, partner, tax_group_icmsfcpst, ncm, nbm, cest
+            company, partner, tax_group_icmsfcpst, ncm, cest
         )
 
         tax_definitions = self._tax_definition_search(
-            domain, ncm, nbm, cest, product, ind_final
+            domain, ncm, cest, product, ind_final
         )
 
         return tax_definitions
@@ -2179,7 +2168,6 @@ class ICMSRegulation(models.Model):
         partner,
         product,
         ncm=None,
-        nbm=None,
         cest=None,
         operation_line=None,
         ind_final=None,
@@ -2188,26 +2176,23 @@ class ICMSRegulation(models.Model):
             if not ncm:
                 ncm = product.ncm_id
 
-            if not nbm:
-                nbm = product.nbm_id
-
             if not cest:
                 cest = product.cest_id
 
         icms_taxes, icms_def_taxes = self._map_tax_def_icms(
-            company, partner, product, ncm, nbm, cest, operation_line, ind_final
+            company, partner, product, ncm, cest, operation_line, ind_final
         )
 
         icms_def_taxes |= self._map_tax_def_icmsst(
-            company, partner, product, ncm, nbm, cest, operation_line, ind_final
+            company, partner, product, ncm, cest, operation_line, ind_final
         )
 
         icms_def_taxes |= self._map_tax_def_icmsfcp(
-            company, partner, product, ncm, nbm, cest, operation_line, ind_final
+            company, partner, product, ncm, cest, operation_line, ind_final
         )
 
         icms_def_taxes |= self._map_tax_def_icmsfcpst(
-            company, partner, product, ncm, nbm, cest, operation_line, ind_final
+            company, partner, product, ncm, cest, operation_line, ind_final
         )
 
         icms_taxes |= icms_def_taxes.mapped("tax_id")

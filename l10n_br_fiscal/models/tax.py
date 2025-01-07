@@ -343,7 +343,6 @@ class Tax(models.Model):
         product = kwargs.get("product")
         currency = kwargs.get("currency", company.currency_id)
         ncm = kwargs.get("ncm")
-        nbm = kwargs.get("nbm")
         cest = kwargs.get("cest")
         operation_line = kwargs.get("operation_line")
         cfop = kwargs.get("cfop")
@@ -397,7 +396,7 @@ class Tax(models.Model):
             and operation_line.fiscal_operation_type == FISCAL_IN
         ):
             icms_tax_difal, _ = company.icms_regulation_id.map_tax_def_icms_difal(
-                company, partner, product, ncm, nbm, cest, operation_line, ind_final
+                company, partner, product, ncm, cest, operation_line, ind_final
             )
             icmsfcp_tax_difal = taxes_dict.get("icmsfcp", {})
 
@@ -661,7 +660,6 @@ class Tax(models.Model):
             ii_iof_value,
             ncm,
             nbs,
-            nbm,
             cest,
             operation_line,
             cfop,

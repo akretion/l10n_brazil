@@ -91,7 +91,6 @@ class TestFiscalTax(TransactionCase):
             "ii_iof_value": 0.00,
             "ncm": self.env.ref("l10n_br_fiscal.ncm_72132000"),
             "nbs": False,
-            "nbm": False,
             "cest": False,
             "operation_line": self.env.ref("l10n_br_fiscal.fo_venda_venda"),
             "cfop": self.env.ref("l10n_br_fiscal.cfop_6101"),

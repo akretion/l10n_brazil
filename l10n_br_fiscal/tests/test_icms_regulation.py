@@ -14,7 +14,6 @@ class TestICMSRegulation(TransactionCase):
         cls.partner = cls.env.ref("l10n_br_base.res_partner_akretion")
         cls.company = cls.env.ref("base.main_company")
         cls.product = cls.env.ref("product.product_product_1")
-        cls.nbm = cls.env["l10n_br_fiscal.nbm"]
         cls.icms_regulation = cls.env.ref("l10n_br_fiscal.tax_icms_regulation")
 
         cls.sc_state_id = cls.env.ref("base.state_br_sc")
@@ -70,7 +69,6 @@ class TestICMSRegulation(TransactionCase):
             company=self.company,
             partner=self.partner,
             product=self.product,
-            nbm=self.nbm,
             operation_line=self.venda_operation_line_id,
             ind_final=ind_final,
         )

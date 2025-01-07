@@ -155,29 +155,6 @@
                 <field name="not_in_ncms" />
               </group>
             </page>
-            <page name="nbm_page" string="NBM">
-              <group name="nbms" string="NBMs">
-                <label for="nbms" />
-                <div class="o_row">
-                  <field name="nbms" force_save="1" class="oe_inline" />
-                  <button
-                                        name="action_search_nbms"
-                                        type="object"
-                                        class="oe_inline btn-sm btn-link mb4 fa fa-search oe_edit_only"
-                                        aria-label="Search NBMs"
-                                        title="Search NBMs"
-                                    />
-                </div>
-                <field
-                                    name="nbm_ids"
-                                    options="{'no_create': True}"
-                                    force_save="1"
-                                    nolabel="1"
-                                    colspan="2"
-                                />
-                <field name="not_in_nbms" />
-              </group>
-            </page>
             <page name="cests_page" string="CEST">
               <group name="cests" string="CESTs">
                 <label for="cests" />

@@ -45,7 +45,6 @@ def post_init_hook(cr, registry):
     if is_demo:
         demofiles = [
             "demo/l10n_br_fiscal.ncm-demo.csv",
-            "demo/l10n_br_fiscal.nbm-demo.csv",
             "demo/l10n_br_fiscal.nbs-demo.csv",
             "demo/l10n_br_fiscal.cest-demo.csv",
             "demo/city_taxation_code_demo.xml",
@@ -64,7 +63,6 @@ def post_init_hook(cr, registry):
         # unless a flag mention the contrary
         short_files = {
             "load_ncm": "data/l10n_br_fiscal.ncm.csv",
-            "load_nbm": "data/l10n_br_fiscal.nbm.csv",
             "load_nbs": "data/l10n_br_fiscal.nbs.csv",
             "load_cest": "data/l10n_br_fiscal.cest.csv",
         }
@@ -92,7 +90,6 @@ def post_init_hook(cr, registry):
         # mention the contrary
         skip_prodfiles = {
             "skip_ncm": "data/l10n_br_fiscal.ncm.csv",
-            "skip_nbm": "data/l10n_br_fiscal.nbm.csv",
             "skip_nbs": "data/l10n_br_fiscal.nbs.csv",
             "skip_cest": "data/l10n_br_fiscal.cest.csv",
         }

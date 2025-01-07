@@ -179,27 +179,6 @@ class TaxDefinition(models.Model):
         string="CESTs",
     )
 
-    nbms = fields.Text(
-        string="NBM List",
-        readonly=True,
-        states={"draft": [("readonly", False)]},
-    )
-
-    not_in_nbms = fields.Text(
-        string="Not in NBMs",
-        readonly=True,
-        states={"draft": [("readonly", False)]},
-    )
-
-    nbm_ids = fields.Many2many(
-        comodel_name="l10n_br_fiscal.nbm",
-        relation="tax_definition_nbm_rel",
-        column1="tax_definition_id",
-        column2="nbm_id",
-        readonly=True,
-        string="NBMs",
-    )
-
     product_ids = fields.Many2many(
         comodel_name="product.product",
         relation="tax_definition_product_rel",
@@ -298,10 +277,6 @@ class TaxDefinition(models.Model):
                 domain.append(
                     ("cest_ids", "in", tax_definition.cest_ids.ids),
                 )
-            if tax_definition.nbm_ids:
-                domain.append(
-                    ("nbm_ids", "in", tax_definition.nbm_ids.ids),
-                )
             if tax_definition.product_ids:
                 domain.append(
                     ("product_ids", "in", tax_definition.product_ids.ids),
@@ -365,27 +340,6 @@ class TaxDefinition(models.Model):
             else:
                 r.cest_ids = False
 
-    def action_search_nbms(self):
-        nbm = self.env["l10n_br_fiscal.nbm"]
-        for r in self:
-            domain = []
-
-            if r.nbms:
-                domain += tools.domain_field_codes(r.nbms, code_size=10)
-
-            if r.not_in_nbms:
-                domain += tools.domain_field_codes(
-                    field_codes=r.not_in_nbms,
-                    operator1="!=",
-                    operator2="not ilike",
-                    code_size=10,
-                )
-
-            if domain:
-                r.nbm_ids = nbm.search(domain)
-            else:
-                r.nbm_ids = False
-
     @api.model_create_multi
     def create(self, vals_list):
         create_super = super().create(vals_list)
@@ -397,8 +351,6 @@ class TaxDefinition(models.Model):
                 create_super[index].with_context(
                     do_not_write=True
                 ).action_search_cests()
-            if "nbms" in values.keys():
-                create_super[index].with_context(do_not_write=True).action_search_nbms()
         return create_super
 
     def write(self, values):
@@ -409,8 +361,6 @@ class TaxDefinition(models.Model):
             self.with_context(do_not_write=True).action_search_ncms()
         if "cests" in values.keys() and not do_not_write:
             self.with_context(do_not_write=True).action_search_cests()
-        if "nbms" in values.keys() and not do_not_write:
-            self.with_context(do_not_write=True).action_search_nbms()
         return write_super
 
     def map_tax_definition(
@@ -419,16 +369,12 @@ class TaxDefinition(models.Model):
         partner,
         product,
         ncm=None,
-        nbm=None,
         nbs=None,
         cest=None,
         city_taxation_code=None,
     ):
         if not ncm:
             ncm = product.ncm_id
-
-        if not nbm:
-            nbm = product.nbm_id
 
         if not cest:
             cest = product.cest_id
@@ -442,9 +388,6 @@ class TaxDefinition(models.Model):
             "|",
             ("ncm_ids", "=", False),
             ("ncm_ids", "=", ncm.id),
-            "|",
-            ("nbm_ids", "=", False),
-            ("nbm_ids", "=", nbm.id),
             "|",
             ("cest_ids", "=", False),
             ("cest_ids", "=", cest.id),

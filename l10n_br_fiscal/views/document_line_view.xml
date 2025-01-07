@@ -57,7 +57,6 @@
                 <field name="fiscal_price" />
                 <field name="ncm_id" />
                 <field name="fiscal_genre_id" />
-                <field name="nbm_id" />
                 <field name="cest_id" />
                 <field name="nbs_id" />
                 <field

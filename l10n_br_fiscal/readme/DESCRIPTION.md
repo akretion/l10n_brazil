@@ -13,7 +13,6 @@ Produtos:
 - NCM (com ligações com os impostos)
 - genêro fiscal
 - CEST
-- NBM
 - NBS
 - tipo de serviço
 - unidades fiscais

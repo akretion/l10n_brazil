@@ -18,7 +18,6 @@ from . import cnae
 from . import nbs
 from . import service_type
 from . import ncm
-from . import nbm
 from . import cest
 from . import tax_group
 from . import tax

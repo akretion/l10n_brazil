@@ -60,15 +60,6 @@ class Ncm(models.Model):
         string="CESTs",
     )
 
-    nbm_ids = fields.Many2many(
-        comodel_name="l10n_br_fiscal.nbm",
-        relation="fiscal_nbm_ncm_rel",
-        column1="ncm_id",
-        column2="nbm_id",
-        readonly=True,
-        string="NBMs",
-    )
-
     piscofins_ids = fields.Many2many(
         comodel_name="l10n_br_fiscal.tax.pis.cofins",
         relation="fiscal_pis_cofins_ncm_rel",

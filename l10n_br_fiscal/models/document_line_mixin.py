@@ -120,13 +120,6 @@ class FiscalDocumentLineMixin(models.AbstractModel):
         comodel_name="l10n_br_fiscal.ncm", index=True, string="NCM"
     )
 
-    nbm_id = fields.Many2one(
-        comodel_name="l10n_br_fiscal.nbm",
-        index=True,
-        string="NBM",
-        domain="[('ncm_ids', '=', ncm_id)]",
-    )
-
     cest_id = fields.Many2one(
         comodel_name="l10n_br_fiscal.cest",
         index=True,

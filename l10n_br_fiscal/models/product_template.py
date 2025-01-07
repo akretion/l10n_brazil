@@ -53,10 +53,6 @@ class ProductTemplate(models.Model):
         string="NCM",
     )
 
-    nbm_id = fields.Many2one(
-        comodel_name="l10n_br_fiscal.nbm", index=True, string="NBM"
-    )
-
     tax_icms_or_issqn = fields.Selection(
         selection=TAX_ICMS_OR_ISSQN,
         string="ICMS or ISSQN Tax",

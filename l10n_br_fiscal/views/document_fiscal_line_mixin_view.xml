@@ -20,7 +20,6 @@
           <field name="fiscal_genre_id" force_save="1" invisible="1" />
           <field name="fiscal_genre_code" force_save="1" invisible="1" />
           <field name="ncm_id" force_save="1" invisible="1" />
-          <field name="nbm_id" force_save="1" invisible="1" />
           <field name="cest_id" force_save="1" invisible="1" />
           <field name="nbs_id" force_save="1" invisible="1" />
           <field name="service_type_id" force_save="1" invisible="1" />

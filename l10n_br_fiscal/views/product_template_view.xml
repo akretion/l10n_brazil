@@ -13,11 +13,6 @@
                     filter_domain="[('ncm_id', '=', raw_value)]"
                 />
                 <field
-                    string="NBM"
-                    name="nbm_id"
-                    filter_domain="[('nbm_id', '=', raw_value)]"
-                />
-                <field
                     string="NBS"
                     name="nbs_id"
                     filter_domain="[('nbs_id', '=', raw_value)]"
@@ -110,11 +105,6 @@
                             />
                             <field
                                 name="cest_id"
-                                attrs="{'invisible': [('fiscal_type', '=', '09')]}"
-                                options="{'no_create': True, 'no_create_edit': True}"
-                            />
-                            <field
-                                name="nbm_id"
                                 attrs="{'invisible': [('fiscal_type', '=', '09')]}"
                                 options="{'no_create': True, 'no_create_edit': True}"
                             />

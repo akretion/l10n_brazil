@@ -192,7 +192,6 @@ class FiscalDocumentLineMixinMethods(models.AbstractModel):
             freight_value=self.freight_value,
             ncm=self.ncm_id,
             nbs=self.nbs_id,
-            nbm=self.nbm_id,
             cest=self.cest_id,
             operation_line=self.fiscal_operation_line_id,
             cfop=self.cfop_id,
@@ -375,7 +374,6 @@ class FiscalDocumentLineMixinMethods(models.AbstractModel):
                 partner=self._get_fiscal_partner(),
                 product=self.product_id,
                 ncm=self.ncm_id,
-                nbm=self.nbm_id,
                 nbs=self.nbs_id,
                 cest=self.cest_id,
                 city_taxation_code=self.city_taxation_code_id,
@@ -407,7 +405,6 @@ class FiscalDocumentLineMixinMethods(models.AbstractModel):
             self.fiscal_type = self.product_id.fiscal_type
             self.uom_id = self.product_id.uom_id
             self.ncm_id = self.product_id.ncm_id
-            self.nbm_id = self.product_id.nbm_id
             self.tax_icms_or_issqn = self.product_id.tax_icms_or_issqn
             self.icms_origin = self.product_id.icms_origin
             self.cest_id = self.product_id.cest_id
@@ -428,7 +425,6 @@ class FiscalDocumentLineMixinMethods(models.AbstractModel):
             self.fiscal_type = False
             self.uom_id = False
             self.ncm_id = False
-            self.nbm_id = False
             self.tax_icms_or_issqn = False
             self.icms_origin = False
             self.cest_id = False
