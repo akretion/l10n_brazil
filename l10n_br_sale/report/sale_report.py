@@ -47,8 +47,6 @@ class SaleReport(models.Model):
 
     ncm_id = fields.Many2one(comodel_name="l10n_br_fiscal.ncm", string="NCM")
 
-    nbm_id = fields.Many2one(comodel_name="l10n_br_fiscal.nbm", string="NBM")
-
     icms_value = fields.Float(
         string="ICMS Value",
         digits="Account",
@@ -111,7 +109,6 @@ class SaleReport(models.Model):
                 "cfop_id": ", l.cfop_id as cfop_id",
                 "fiscal_type": ", l.fiscal_type as fiscal_type",
                 "ncm_id": ", l.ncm_id as ncm_id",
-                "nbm_id": ", l.nbm_id as nbm_id",
                 "cest_id": ", l.cest_id as cest_id",
                 "icms_value": ", SUM(l.icms_value) as icms_value",
                 "icmsst_value": ", SUM(l.icmsst_value) as icmsst_value",
@@ -145,7 +142,6 @@ class SaleReport(models.Model):
             , l.cfop_id
             , l.fiscal_type
             , l.ncm_id
-            , l.nbm_id
             , l.cest_id
         """
         return super()._query(

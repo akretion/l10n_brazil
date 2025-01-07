@@ -38,12 +38,6 @@
                     context="{'group_by':'ncm_id'}"
                 />
                 <filter
-                    string="NBM"
-                    icon="terp-stock_symbol-selection"
-                    name="nbm"
-                    context="{'group_by':'nbm_id'}"
-                />
-                <filter
                     string="CEST"
                     icon="terp-stock_symbol-selection"
                     name="cest"
