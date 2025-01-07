@@ -36,8 +36,6 @@ class PurchaseReport(models.Model):
 
     ncm_id = fields.Many2one(comodel_name="l10n_br_fiscal.ncm", string="NCM")
 
-    nbm_id = fields.Many2one(comodel_name="l10n_br_fiscal.nbm", string="NBM")
-
     icms_value = fields.Float(
         string="ICMS Value",
         digits="Account",
@@ -92,7 +90,6 @@ class PurchaseReport(models.Model):
             , l.cfop_id
             , l.fiscal_type
             , l.ncm_id
-            , l.nbm_id
             , l.cest_id
             , SUM(l.icms_value) as icms_value
             , SUM(l.icmsst_value) as icmsst_value
@@ -128,7 +125,6 @@ class PurchaseReport(models.Model):
             , l.cfop_id
             , l.fiscal_type
             , l.ncm_id
-            , l.nbm_id
             , l.cest_id
         """
         return group_by_str
