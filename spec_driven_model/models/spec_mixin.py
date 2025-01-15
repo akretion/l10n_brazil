@@ -1,5 +1,7 @@
-# Copyright 2019-2020 Akretion - Raphael Valyi <raphael.valyi@akretion.com>
+# Copyright 2019-TODAY Akretion - Raphael Valyi <raphael.valyi@akretion.com>
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0.en.html).
+
+from importlib import import_module
 
 from odoo import api, models
 
@@ -21,12 +23,7 @@ class SpecMixin(models.AbstractModel):
     _description = "root abstract model meant for xsd generated fiscal models"
     _name = "spec.mixin"
     _inherit = ["spec.mixin_export", "spec.mixin_import"]
-    _stacking_points = {}
-    # _spec_module = 'override.with.your.python.module'
-    # _binding_module = 'your.pyhthon.binding.module'
-    # _odoo_module = 'your.odoo_module'
-    # _field_prefix = 'your_field_prefix_'
-    # _schema_name = 'your_schema_name'
+    _is_spec_driven = True
 
     def _valid_field_parameter(self, field, name):
         if name in (
@@ -48,26 +45,68 @@ class SpecMixin(models.AbstractModel):
         else:
             return self.env.get(model_name)
 
+    def _spec_prefix(self, split=False):
+        """
+        Get spec_schema and spec_version from context or from class module
+        """
+        if self._context.get("spec_schema") and self._context.get("spec_version"):
+            spec_schema = self._context.get("spec_schema")
+            spec_version = self._context.get("spec_version")
+            if spec_schema and spec_version:
+                spec_version = spec_version.replace(".", "")[:2]
+                if split:
+                    return spec_schema, spec_version
+                return f"{spec_schema}{spec_version}"
+
+        for ancestor in type(self).mro():
+            if not ancestor.__module__.startswith("odoo.addons."):
+                continue
+            mod = import_module(".".join(ancestor.__module__.split(".")[:-1]))
+            if hasattr(mod, "spec_schema"):
+                spec_schema = mod.spec_schema
+                spec_version = mod.spec_version.replace(".", "")[:2]
+                if split:
+                    return spec_schema, spec_version
+                return f"{spec_schema}{spec_version}"
+
+        return None, None if split else None
+
+    def _get_spec_property(self, spec_property="", fallback=None):
+        """
+        Used to access schema wise and version wise automatic mappings properties
+        """
+        return getattr(self, f"_{self._spec_prefix()}_{spec_property}", fallback)
+
+    def _get_stacking_points(self):
+        return self._get_spec_property("stacking_points", {})
+
     def _register_hook(self):
         """
         Called once all modules are loaded.
-        Here we take all spec models that are not injected into existing concrete
+        Here we take all spec models that were not injected into existing concrete
         Odoo models and we make them concrete automatically with
         their _auto_init method that will create their SQL DDL structure.
         """
         res = super()._register_hook()
-        if not hasattr(self, "_spec_module"):
+        spec_schema, spec_version = self._spec_prefix(split=True)
+        if not spec_schema:
             return res
 
-        load_key = "_%s_loaded" % (self._spec_module,)
-        if hasattr(self.env.registry, load_key):  # already done for registry
+        spec_module = self._get_spec_property("odoo_module")
+        odoo_module = spec_module.split("_spec.")[0].split(".")[-1]
+        load_key = f"_{spec_module}_loaded"
+        if hasattr(self.env.registry, load_key):  # hook already done for registry
             return res
         setattr(self.env.registry, load_key, True)
+
         access_data = []
+        access_fields = []
+        field_prefix = f"{spec_schema}{spec_version}"
+        relation_prefix = f"{spec_schema}.{spec_version}.%"
         self.env.cr.execute(
             """SELECT DISTINCT relation FROM ir_model_fields
                    WHERE relation LIKE %s;""",
-            (f"{self._schema_name}.{self._schema_version.replace('.', '')[:2]}.%",),
+            (relation_prefix,),
         )
         # now we will filter only the spec models not injected into some existing class:
         remaining_models = {
@@ -76,19 +115,14 @@ class SpecMixin(models.AbstractModel):
             if self.env.registry.get(i[0])
             and not SPEC_MIXIN_MAPPINGS[self.env.cr.dbname].get(i[0])
         }
-
         for name in remaining_models:
-            spec_class = StackedModel._odoo_name_to_class(name, self._spec_module)
+            spec_class = StackedModel._odoo_name_to_class(name, spec_module)
             if spec_class is None:
                 continue
-            spec_class._module = "fiscal"  # TODO use python_module ?
-            fields = self.env[spec_class._name].fields_get_keys()
+            fields = self.env[spec_class._name]._fields
             rec_name = next(
                 filter(
-                    lambda x: (
-                        x.startswith(self.env[spec_class._name]._field_prefix)
-                        and "_choice" not in x
-                    ),
+                    lambda x: (x.startswith(field_prefix) and "_choice" not in x),
                     fields,
                 )
             )
@@ -98,14 +132,16 @@ class SpecMixin(models.AbstractModel):
                 {
                     "_name": name,
                     "_inherit": spec_class._inherit,
-                    "_original_module": "fiscal",
-                    "_odoo_module": self._odoo_module,
-                    "_spec_module": self._spec_module,
+                    "_original_module": odoo_module,
                     "_rec_name": rec_name,
-                    "_module": self._odoo_module,
+                    "_module": odoo_module,
                 },
             )
-            models.MetaModel.module_to_models[self._odoo_module] += [model_type]
+            # we set _spec_schema and _spec_version because
+            # _build_model will not have context access:
+            model_type._spec_schema = spec_schema
+            model_type._spec_version = spec_version
+            models.MetaModel.module_to_models[odoo_module] += [model_type]
 
             # now we init these models properly
             # a bit like odoo.modules.loading#load_module_graph would do
@@ -126,11 +162,11 @@ class SpecMixin(models.AbstractModel):
                 "perm_create",
                 "perm_unlink",
             ]
-            model._auto_fill_access_data(self.env, self._odoo_module, access_data)
+            model._auto_fill_access_data(self.env, odoo_module, access_data)
 
         self.env["ir.model.access"].load(access_fields, access_data)
         self.env.registry.init_models(
-            self.env.cr, remaining_models, {"module": self._odoo_module}
+            self.env.cr, remaining_models, {"module": odoo_module}
         )
         return res
 
@@ -141,10 +177,7 @@ class SpecMixin(models.AbstractModel):
         """
 
         underline_name = cls._name.replace(".", "_")
-        model_id = "%s_spec.model_%s" % (
-            module_name,
-            underline_name,
-        )
+        model_id = f"{module_name}_spec.model_{underline_name}"
         user_access_name = f"access_{underline_name}_user"
         if not env["ir.model.access"].search(
             [
@@ -157,7 +190,7 @@ class SpecMixin(models.AbstractModel):
                     user_access_name,
                     user_access_name,
                     model_id,
-                    "%s.group_user" % (module_name,),
+                    f"{module_name}.group_user",
                     "1",
                     "0",
                     "0",
@@ -176,7 +209,7 @@ class SpecMixin(models.AbstractModel):
                     manager_access_name,
                     manager_access_name,
                     model_id,
-                    "%s.group_manager" % (module_name,),
+                    f"{module_name}.group_manager",
                     "1",
                     "1",
                     "1",

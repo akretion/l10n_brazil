@@ -21,17 +21,17 @@ class SpecMixinImport(models.AbstractModel):
     _name = "spec.mixin_import"
     _description = """
     A recursive Odoo object builder that works along with the
-    GenerateDS object builder from the parsed XML.
+    xsdata object builder from the parsed XML.
     Here we take into account the concrete Odoo objects where the schema
     mixins where injected and possible matcher or builder overrides.
     """
 
     @api.model
-    def build_from_binding(self, node, dry_run=False):
+    def build_from_binding(self, spec_schema, spec_version, node, dry_run=False):
         """
         Build an instance of an Odoo Model from a pre-populated
         Python binding object. Binding object such as the ones generated using
-        generateDS can indeed be automatically populated from an XML file.
+        xsdata can indeed be automatically populated from an XML file.
         This build method bridges the gap to build the Odoo object.
 
         It uses a pre-order tree traversal of the Python bindings and for each
@@ -42,8 +42,12 @@ class SpecMixinImport(models.AbstractModel):
 
         Defaults values and control options are meant to be passed in the context.
         """
+        self = self.with_context(
+            spec_schema=spec_schema, spec_version=spec_version, dry_run=dry_run
+        )
+        self._register_hook()
         model = self._get_concrete_model(self._name)
-        attrs = model.with_context(dry_run=dry_run).build_attrs(node)
+        attrs = model.build_attrs(node)
         if dry_run:
             return model.new(attrs)
         else:
@@ -69,11 +73,9 @@ class SpecMixinImport(models.AbstractModel):
         value = getattr(node, attr[0])
         if value is None or value == []:
             return False
-        key = "%s%s" % (
-            self._field_prefix,
-            attr[1].metadata.get("name", attr[0]),
-        )
-        child_path = "%s.%s" % (path, key)
+        prefix = f"{self._spec_prefix()}"
+        key = f"{prefix}_{attr[1].metadata.get('name', attr[0])}"
+        child_path = f"{path}.{key}"
 
         # Is attr a xsd SimpleType or a ComplexType?
         # with xsdata a ComplexType can have a type like:
@@ -118,9 +120,9 @@ class SpecMixinImport(models.AbstractModel):
                 comodel_name = fields[key].comodel_name
             else:
                 clean_type = binding_type.lower()
-                comodel_name = "%s.%s.%s" % (
-                    self._schema_name,
-                    self._schema_version.replace(".", "")[0:2],
+                comodel_name = "{}.{}.{}".format(
+                    self._context["spec_schema"],
+                    self._context["spec_version"].replace(".", "")[0:2],
                     clean_type.split(".")[-1],
                 )
 
@@ -194,9 +196,10 @@ class SpecMixinImport(models.AbstractModel):
 
         related_many2ones = {}
         fields = model._fields
+        field_prefix = f"{self._spec_prefix()}_"
         for k, v in fields.items():
             # select schema choices for a friendly UI:
-            if k.startswith("%schoice" % (self._field_prefix,)):
+            if k.startswith(f"{field_prefix}choice"):
                 for item in v.selection or []:
                     if vals.get(item[0]) not in [None, []]:
                         vals[k] = item[0]
@@ -210,7 +213,7 @@ class SpecMixinImport(models.AbstractModel):
                     related = v.related
                 if len(related) == 1:
                     vals[related[0]] = vals.get(k)
-                elif len(related) == 2 and k.startswith(self._field_prefix):
+                elif len(related) == 2 and k.startswith(field_prefix):
                     related_m2o = related[0]
                     # don't mess with _inherits write system
                     if not any(related_m2o == i[1] for i in model._inherits.items()):
@@ -259,7 +262,7 @@ class SpecMixinImport(models.AbstractModel):
         if model is None:
             model = self
         default_key = [model._rec_name or "name"]
-        search_keys = "_%s_search_keys" % (self._schema_name)
+        search_keys = "_%s_search_keys" % (self._context["spec_schema"])
         if hasattr(model, search_keys):
             keys = getattr(model, search_keys) + default_key
         else:
@@ -277,8 +280,8 @@ class SpecMixinImport(models.AbstractModel):
                 if match_ids:
                     if len(match_ids) > 1:
                         _logger.warning(
-                            "!! WARNING more than 1 record found!! model: %s, domain: %s"
-                            % (model, domain)
+                            f"!! WARNING more than 1 record found!! model: {model},"
+                            f" domain:{domain}"
                         )
                     return match_ids[0].id
         return False
